@@ -8,97 +8,17 @@
 #include <units/acceleration.h>
 #include <units/angular_velocity.h>
 #include <units/angular_acceleration.h>
+#include <units/angular_jerk.h>
 
 #include "swerve/ModuleIO.h"
 
-
-const TuningParams turnTune = { 0.22, 0.0, 0, 0, 0.0, 0, 0.0 };      // turn PIDSGVA
-const TuningParams driveTune = { 0.0006, 0.0, 0.0, 0.0, 0.0, 0.12, 0.00087264};   // drive PIDSGVA
-
-const char canivoreCanBus[] = "";
-
-const int pigeon2Id = 13;
-
-const ModuleConfigs flconfig = {
-    1,          // index
-    canivoreCanBus,    // canBus
-    1,          // turnCanId
-    2,          // driveCanId
-    9,          // encoderCanId
-    -0.2229_tr, // absoluteEncoderOffset
-    turnTune,   // turn PIDSGVA
-    driveTune   // drive PIDSGVA
-};
-
-const ModuleConfigs frconfig = {
-    2,          // index
-    canivoreCanBus,    // canBus
-    3,          // turnCanId
-    4,          // driveCanId
-    10,         // encoderCanId
-    -0.1743_tr, // absoluteEncoderOffset
-    turnTune,   // turn PIDSGVA
-    driveTune   // drive PIDSGVA
-};
-
-const ModuleConfigs blconfig = {
-    3,          // index
-    canivoreCanBus,    // canBus
-    5,          // turnCanId
-    6,          // driveCanId
-    11,         // encoderCanId
-    -0.4475_tr, // absoluteEncoderOffset
-    turnTune,   // turn PIDSGVA
-    driveTune   // drive PIDSGVA
-};
-
-const ModuleConfigs brconfig = {
-    4,          // index
-    canivoreCanBus,    // canBus
-    7,          // turnCanId
-    8,          // driveCanId
-    12,         // encoderCanId
-    0.13696_tr, // absoluteEncoderOffset
-    turnTune,   // turn PIDSGVA
-    driveTune   // drive PIDSGVA
-};
+    // Create the jerk unit meters_per_second_cubed
+namespace units {
+UNIT_ADD(jerk, meters_per_second_cubed, meters_per_second_cubed,
+         mps_cu, compound_unit<length::meter, inverse<cubed<time::seconds>>>)
+}
 
 namespace swerve {
-    namespace pidf {
-            // Holonomic Controller Constants
-        constexpr double X_Holo_kP = 1;
-        constexpr double X_Holo_kI = 0;
-        constexpr double X_Holo_kD = 0;
-
-        constexpr double Y_Holo_kP = 1;
-        constexpr double Y_Holo_kI = 0;
-        constexpr double Y_Holo_kD = 0;
-
-        constexpr double Th_Holo_kP = 1;
-        constexpr double Th_Holo_kI = 0;
-        constexpr double Th_Holo_kD = 0;
-
-        constexpr units::radians_per_second_t Th_Holo_MaxVel = 6.28_rad_per_s;
-        constexpr units::radians_per_second_squared_t Th_Holo_MaxAcc = 3.14_rad_per_s_sq;
-    }
-
-    namespace deviceIDs {
-        constexpr int kFrontLeftTurnMotorID = 1;
-        constexpr int kFrontLeftDriveMotorID = 2;
-        constexpr int kFrontRightTurnMotorID = 3;
-        constexpr int kFrontRightDriveMotorID = 4;
-        constexpr int kBackLeftTurnMotorID = 5;
-        constexpr int kBackLeftDriveMotorID = 6;
-        constexpr int kBackRightTurnMotorID = 7;
-        constexpr int kBackRightDriveMotorID = 8;
-
-        constexpr int kFrontLeftAbsoluteEncoderID = 9;
-        constexpr int kFrontRightAbsoluteEncoderID = 10;
-        constexpr int kBackLeftAbsoluteEncoderID = 11;
-        constexpr int kBackRightAbsoluteEncoderID = 12;
-
-        const int kPigeonIMUID = 13;
-    }
 
     namespace physical {
         // The width of the drive base from the center of one module to another adjacent one.
@@ -139,5 +59,66 @@ namespace swerve {
         // The Maximum translation speed for the robot under Joystick control
         constexpr units::meters_per_second_t kDriveSpeedLimit = kMaxDriveSpeed;
 
+    }
+
+    namespace pidf {
+
+        const char swerveCanBus[] = "";
+
+        const int pigeon2Id = 13;
+
+        const TuningParams turnTune = { 100, 0.0, 0.5, 0.0, 0.1, 2.66, 0.0 };      // turn PIDSGVA
+        const TuningParams driveTune = { 0.1, 0.0, 0.0, 0.0, 0.0, 0.124, 0.0 };   // drive PIDSGVA
+
+        const MotionParams<units::radian> turnMP = { 540_deg_per_s, 720_deg_per_s_sq, 0_deg_per_s_cu };
+        const MotionParams<units::radian> driveMP = { 
+            4.5_mps / physical::kDriveMetersPerWheelRotation, 
+            8_mps_sq / physical::kDriveMetersPerWheelRotation, 
+            0_mps_cu / physical::kDriveMetersPerWheelRotation 
+        };
+
+        const ModuleConfigs flconfig = {
+            0,          // index
+            swerveCanBus,    // canBus
+            1,          // driveCanId
+            2,          // turnCanId
+            9,          // encoderCanId
+            -0.2229_tr, // absoluteEncoderOffset
+            {turnTune, turnMP},   // turn control
+            {driveTune, driveMP}  // drive control
+        };
+
+        const ModuleConfigs frconfig = {
+            1,          // index
+            swerveCanBus,    // canBus
+            3,          // driveCanId
+            4,          // turnCanId
+            10,         // encoderCanId
+           -0.1743_tr, // absoluteEncoderOffset
+            {turnTune, turnMP},   // turn control
+            {driveTune, driveMP}  // drive control
+        };
+
+        const ModuleConfigs blconfig = {
+            2,          // index
+            swerveCanBus,    // canBus
+            5,          // driveCanId
+            6,          // turnCanId
+            11,         // encoderCanId
+            -0.4475_tr, // absoluteEncoderOffset
+            {turnTune, turnMP},   // turn control
+            {driveTune, driveMP}  // drive control
+        };
+
+        const ModuleConfigs brconfig = {
+            3,          // index
+            swerveCanBus,    // canBus
+            7,          // driveCanId
+            8,          // turnCanId
+            12,         // encoderCanId
+            0.13696_tr, // absoluteEncoderOffset
+            {turnTune, turnMP},   // turn control
+            {driveTune, driveMP}  // drive control
+        };
     }
 }

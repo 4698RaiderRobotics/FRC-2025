@@ -4,32 +4,59 @@
 
 #include "RobotContainer.h"
 
+#include <frc/RobotBase.h>
 #include <frc2/command/Commands.h>
-#include <frc2/command/RunCommand.h>
-#include <frc2/command/SequentialCommandGroup.h>
-#include <frc2/command/button/JoystickButton.h>
-#include <frc2/command/RepeatCommand.h>
-#include <frc2/command/ParallelCommandGroup.h>
-#include <frc2/command/ConditionalCommand.h>
-#include <frc2/command/FunctionalCommand.h>
-#include <frc2/command/WaitCommand.h>
 
-#include <frc/smartdashboard/SmartDashboard.h>
+#include "swerve/GyroIOPigeon2.h"
+#include "swerve/ModuleIOTalonFX.h"
+#include "swerve/ModuleIOSim.h"
 
-#include "Constants.h"
+#include "swerve/SwerveConstants.h"
+
+#include "command/DriveCommands.h"
 
 RobotContainer::RobotContainer() {
-  ConfigureBindings();
 
-  m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
-    [this] {
-      m_swerveDrive.ArcadeDrive(vx_axis.GetAxis(), vy_axis.GetAxis(), omega_axis.GetAxis());
-   },
-    { &m_swerveDrive }
-    ).WithName("Arcade Drive"));
+  if( frc::RobotBase::IsReal() ) {
+    m_drive = new Drive( 
+    new GyroIOPigeon2( pigeon2Id, flconfig.canBus ), 
+    new ModuleIOTalonFX( flconfig ),
+    new ModuleIOTalonFX( frconfig ),
+    new ModuleIOTalonFX( blconfig ),
+    new ModuleIOTalonFX( brconfig )
+    );
+  } else {
+    m_drive = new Drive( 
+      new GyroIO(), 
+      new ModuleIOSim( ),
+      new ModuleIOSim( ),
+      new ModuleIOSim( ),
+      new ModuleIOSim( )
+    );
+  }
+
+  ConfigureBindings();
 }
 
-void RobotContainer::ConfigureBindings() {}
+void RobotContainer::ConfigureBindings() {
+  m_drive->SetDefaultCommand( 
+    DriveCommands::JoystickDrive( 
+      m_drive,
+      [this] { return -m_controller.GetLeftY(); },
+      [this] { return -m_controller.GetLeftX(); },
+      [this] { return m_controller.GetRightX(); }
+    )
+  );
+
+
+    // Run SysId routines when holding back/start and X/Y.
+    // Note that each routine should be run exactly once in a single log.
+    (m_controller.Back() && m_controller.Y()).WhileTrue(m_drive->SysIdDynamic(frc2::sysid::Direction::kForward));
+    (m_controller.Back() && m_controller.X()).WhileTrue(m_drive->SysIdDynamic(frc2::sysid::Direction::kReverse));
+    (m_controller.Start() && m_controller.Y()).WhileTrue(m_drive->SysIdQuasistatic(frc2::sysid::Direction::kForward));
+    (m_controller.Start() && m_controller.X()).WhileTrue(m_drive->SysIdQuasistatic(frc2::sysid::Direction::kReverse));
+
+}
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Print("No autonomous command configured");

@@ -4,16 +4,10 @@
 
 #pragma once
 
+#include <frc2/command/button/CommandXBoxController.h>
 #include <frc2/command/CommandPtr.h>
 
-#include <frc2/command/button/CommandPS5Controller.h>
-#include <frc2/command/button/CommandXboxController.h>
-#include <frc/smartdashboard/SendableChooser.h>
-
-#include "ControllerAxis.h"
-#include "subsystems/SwerveDriveSubsystem.h"
-
-//#include "commands/Composite.h"
+#include "swerve/Drive.h"
 
 class RobotContainer {
  public:
@@ -24,21 +18,7 @@ class RobotContainer {
  private:
   void ConfigureBindings();
 
-  
-  frc::SendableChooser<int> m_chooser;
+  Drive *m_drive;
 
-  std::vector<frc2::CommandPtr> AutoCommands;
-
-
-  SwerveDriveSubsystem m_swerveDrive;
-
-  frc2::CommandPS5Controller m_driverController{0};
-  frc2::CommandXboxController m_operatorController{1};
-
-  ControllerAxis vx_axis{m_driverController, frc::PS5Controller::Axis::kLeftY, true};
-  ControllerAxis vy_axis{m_driverController, frc::PS5Controller::Axis::kLeftX, true};
-  ControllerAxis omega_axis{m_driverController, frc::PS5Controller::Axis::kRightX, true};
-  ControllerAxis arm_angle_axis{ m_operatorController, frc::XboxController::Axis::kLeftY, true };
-  ControllerAxis wrist_angle_axis{ m_operatorController, frc::XboxController::Axis::kRightY, true };
-  ControllerAxis elevator_axis{ m_operatorController, frc::XboxController::Axis::kLeftX, true };
+  frc2::CommandXboxController m_controller{0};
 };

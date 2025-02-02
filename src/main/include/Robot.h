@@ -8,10 +8,7 @@
 
 #include <frc/TimedRobot.h>
 #include <frc2/command/CommandPtr.h>
-#include <frc/PowerDistribution.h>
-#include <frc/smartdashboard/SmartDashboard.h>
 
-#include "LoggedRobot.h"
 #include "RobotContainer.h"
 
 class Robot : public frc::TimedRobot {

@@ -47,7 +47,12 @@ Drive::Drive(
     pathplanner::RobotConfig config;
     try {
         config = pathplanner::RobotConfig::fromGUISettings();
-    } catch( std::exception *e ) {
+    } catch(const std::exception& e) {
+        fmt::print( "\n\n================> PathPlanner Robot Config NOT FOUND <==================\n" );
+        fmt::print( "{}\n", e.what() );
+        fmt::print( "================> PathPlanner Robot Config NOT FOUND <==================\n\n" );
+        PPalert.Set( true );
+
         config = pathplanner::RobotConfig( 
             70_kg, 
             6.8_kg_sq_m, 
@@ -92,16 +97,6 @@ Drive::Drive(
         }
     } );
 }
-
-// void Drive::ArcadeDrive( double xPercent, double yPercent, double omegaPercent ) {
-//     auto x = xPercent * swerve::physical::kDriveSpeedLimit;
-//     auto y = yPercent * swerve::physical::kDriveSpeedLimit;
-//     auto omega = omegaPercent * swerve::physical::kTurnSpeedLimit;
-
-//     frc::ChassisSpeeds speeds{ x, y, omega };
-
-//     RunVelocity( speeds );
-// }
 
 void Drive::RunVelocity( frc::ChassisSpeeds speeds ) {
 

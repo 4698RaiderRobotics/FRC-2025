@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <frc/Alert.h>
 #include <frc/geometry/Pose2d.h>
 
 #include <frc/kinematics/ChassisSpeeds.h>
@@ -55,6 +56,8 @@ private:
     units::degree_t field_offset;
     units::degree_t driver_offset;
     bool m_have_driver_offset{ false  };
+
+    frc::Alert PPalert{"PathPlanner Robot Config NOT FOUND", frc::Alert::AlertType::kWarning};
 
 public:
     frc::Field2d m_field;

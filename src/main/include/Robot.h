@@ -9,9 +9,10 @@
 #include <frc/TimedRobot.h>
 #include <frc2/command/CommandPtr.h>
 
+#include "util/LoggedRobot.h"
 #include "RobotContainer.h"
 
-class Robot : public frc::TimedRobot {
+class Robot : public LoggedRobot {
  public:
   void RobotInit() override;
   void RobotPeriodic() override;

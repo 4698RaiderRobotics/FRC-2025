@@ -4,8 +4,6 @@
 #include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
 
-#include "DataLogger.h"
-
 #include "command/DriveCommands.h"
 
 #include "swerve/Drive.h"

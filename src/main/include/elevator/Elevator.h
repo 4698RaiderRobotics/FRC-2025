@@ -4,7 +4,7 @@
 
 #include <frc2/command/SubsystemBase.h>
 
-class ElevatorIO;
+#include "ElevatorIO.h"
 
 class Elevator : public frc2::SubsystemBase {
 public:
@@ -12,10 +12,14 @@ public:
     void Periodic() override;
 
     void SetGoal( units::inch_t goal );
+    void Nudge( units::inch_t nudge );
     bool AtGoal();
 
-    frc2::CommandPtr ChangeHeight( units::inch_t elevatorHeightGoal );
+    frc2::CommandPtr ChangeHeight( units::inch_t goal );
 
 private:
-    ElevatorIO *io;
+    std::unique_ptr<ElevatorIO> io;
+    ElevatorIO::Metrics metrics;
+
+    const units::inch_t AT_GOAL_TOLERANCE = 1_in;
 };

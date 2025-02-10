@@ -43,8 +43,5 @@ private:
     ctre::phoenix6::StatusSignal<units::ampere_t> turnCurrent = m_turnMotor.GetSupplyCurrent();
 
         // SDS Mk4i L2 ratios
-    const double driveGearRatio = 6.75;
-    const double turnGearRatio = 150.0 / 7.0;
-
     bool isTurnMotorInverted = true;
 };

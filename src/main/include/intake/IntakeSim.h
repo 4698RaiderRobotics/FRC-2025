@@ -2,19 +2,19 @@
 
 #include "IntakeIO.h"
 
-#include <frc/simulation/DCMotorSim.h>
+#include "util/MotorSim.h"
 
 class IntakeSim : public IntakeIO {
 public:
-    void UpdateMetrics( Metrics &m ) override;
+    IntakeSim();
+    void Update( Metrics &m ) override;
 
     void SpinMotors( double upperSpeed, double lowerSpeed ) override;
-    bool isCenterBroken( ) override { return centerBeamState; }
-    bool isEndBroken( ) override { return endBeamState; }
 private:
-    frc::sim::DCMotorSim upperRoller;
-    frc::sim::DCMotorSim lowerRoller;
+    MotorSim upperRoller;
+    MotorSim lowerRoller;
 
-    bool centerBeamState = false;
-    bool endBeamState = false;
+    bool centerBeamBlocked = false;
+    bool endBeamBlocked = false;
+    bool pipeSwitchTripped = false;
 };

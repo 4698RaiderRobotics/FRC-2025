@@ -17,7 +17,7 @@
 #include <networktables/StringTopic.h>
 #include <networktables/GenericEntry.h>
 
-#include "DataLogger.h"
+#include "util/DataLogger.h"
 
 DataLogger* DataLogger::singleton = nullptr;
 

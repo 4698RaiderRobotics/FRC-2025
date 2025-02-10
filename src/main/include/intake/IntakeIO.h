@@ -18,15 +18,14 @@ public:
         units::volt_t lowerAppliedVolts = 0_V;
         units::ampere_t upperCurrent = 0_A;
         units::ampere_t lowerCurrent = 0_A;
-        bool centerBeam = false;
-        bool endBeam = false;
+        bool centerBeamBroken = false;
+        bool endBeamBroken = false;
+        bool pipeSwitchTripped = false;
 
-        void logMetrics( const std::string &key );
+        void Log( const std::string &key );
     };
 
-    virtual void UpdateMetrics( Metrics &m ) =0;
+    virtual void Update( Metrics &m ) =0;
 
     virtual void SpinMotors( double upperSpeed, double lowerSpeed ) = 0;
-    virtual bool isCenterBroken( ) = 0;
-    virtual bool isEndBroken( ) = 0;
 };

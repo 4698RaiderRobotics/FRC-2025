@@ -7,7 +7,7 @@
 
 class LoggedRobot : public frc::TimedRobot {
   public:
-    void RobotInit() override;
+    LoggedRobot();
     void RobotPeriodic() override;
 
   private:

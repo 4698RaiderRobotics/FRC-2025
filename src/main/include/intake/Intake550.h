@@ -2,15 +2,21 @@
 
 #include "IntakeIO.h"
 
+#include <frc/DigitalInput.h>
+
+#include <rev/SparkMax.h>
 
 class Intake550 : public IntakeIO {
 public:
-    Intake550( int upperCanID, int lowerCanID, int centerPort, int endPort );
-    void UpdateMetrics( Metrics &m ) override;
+    Intake550( );
+    void Update( Metrics &m ) override;
     
     void SpinMotors( double upperSpeed, double lowerSpeed ) override;
-    bool isCenterBroken( ) override;
-    bool isEndBroken( ) override;
 private:
-    //  motor;
+    rev::spark::SparkMax upperMotor;
+    rev::spark::SparkMax lowerMotor;
+
+    frc::DigitalInput centerBeamBreak;   /* True when beam is NOT broken */
+    frc::DigitalInput endBeamBreak;      /* True when beam is NOT broken */
+    frc::DigitalInput pipeSwitch;        /* True when pipe is contacting switch */
 };

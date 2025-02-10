@@ -16,10 +16,10 @@ public:
         units::volt_t appliedVolts = 0_V;
         units::ampere_t current = 0_A;
 
-        void logMetrics( const std::string &key );
+        void Log( const std::string &key );
     };
 
-    virtual void UpdateMetrics( Metrics &m ) =0;
+    virtual void Update( Metrics &m ) =0;
 
-    virtual void SetGoal( units::inch_t goal ) = 0;
+    virtual void SetGoal( units::inch_t goal ) =0;
 };

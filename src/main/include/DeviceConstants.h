@@ -1,13 +1,18 @@
 #pragma once
 
+#include <numbers>
+
 #include <units/length.h>
 #include <units/angle.h>
 #include <units/velocity.h>
 #include <units/acceleration.h>
 #include <units/angular_velocity.h>
 #include <units/angular_acceleration.h>
+#include <units/angular_jerk.h>
 
-namespace pidf {
+#include "util/Tuning.h"
+
+namespace device {
     // *****************     SHOOTER SUBSYSTEM      **********************
 
     // Motion Profile for the shooter angle TrapezoidProfile
@@ -64,6 +69,22 @@ namespace pidf {
     // Maximum acceleration for the elevator height TrapezoidProfile
     constexpr units::meters_per_second_squared_t kElevatorMaxAcceleration = 4_mps_sq;
 
+    constexpr units::inch_t kElevatorGearDiameter = 1.5_in;
+    constexpr double kElevatorGearRatio = 15;
+
+        // Compound unit for the inches per revolution constant.
+    using inches_per_rev = units::compound_unit<units::inches, units::inverse<units::turns>>;
+    using inches_per_rev_t = units::unit_t<inches_per_rev>;
+
+        // The number of inches traveled per rotation of the motor
+        // wheel circumference / gear ratio
+    constexpr inches_per_rev_t kElevatorDistancePerMotorRev = std::numbers::pi * kElevatorGearDiameter / ( kElevatorGearRatio *  1_tr );
+
+    constexpr MotionConfig<units::inches> kElevatorConfig = {
+        { 5.5, 0.0, 0.5, 0.1, 0.45, 9.0, 0.0 },
+        { 2_fps, 4_fps_sq, 0_fps_cu }
+    };
+
     constexpr double kElevatorP = 5.5;
     constexpr double kElevatorI = 0.0;
     constexpr double kElevatorD = 0.5;
@@ -107,7 +128,11 @@ namespace deviceIDs {
 
     constexpr int kClimberID = 19;
 
-    constexpr int kIntakeID = 20;
+    constexpr int kIntakeUpperMotorID = 28;
+    constexpr int kIntakeLowerMotorID = 29;
+    constexpr int kIntakeCenterSensorPort = 0;
+    constexpr int kIntakeEndSensorPort = 1;
+    constexpr int kIntakePipeSwitchPort = 2;
 
     constexpr int kShooterEncoderID = 17;
     constexpr int kArmEncoderID = 23;

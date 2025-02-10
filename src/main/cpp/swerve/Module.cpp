@@ -7,7 +7,7 @@
 #include <frc/geometry/Rotation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-#include "DataLogger.h"
+#include "util/DataLogger.h"
 #include "swerve/SwerveConstants.h"
 #include "swerve/Module.h"
 

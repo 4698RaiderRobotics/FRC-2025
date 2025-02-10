@@ -85,6 +85,14 @@ namespace physical {
     constexpr units::degree_t kWristTrapSpitAngle = 63_deg;
 
 
+    // *****************     INTAKE SUBSYSTEM      **********************
+
+    // Intaking and Ejecting Motor Speed
+    constexpr double kIntakeInOutSpeed = 0.75;
+    // Shift speed of the slower motor
+    constexpr double kIntakeShiftSpeed = 0.5;
+
+
 
     // *****************     ELEVATOR SUBSYSTEM      **********************
 

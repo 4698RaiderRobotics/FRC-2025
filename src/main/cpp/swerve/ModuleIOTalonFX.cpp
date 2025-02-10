@@ -1,4 +1,6 @@
 
+#include "swerve/SwerveConstants.h"
+
 #include "swerve/ModuleIOTalonFX.h"
 #include "swerve/TalonOdometryThread.h"
 
@@ -71,8 +73,8 @@ void ModuleIOTalonFX::UpdateInputs(Inputs& inputs) {
   inputs.driveCurrent = driveCurrent.GetValue();
 
   inputs.turnAbsolutePosition = turnAbsolutePosition.GetValue();
-  inputs.turnPosition = turnPosition.GetValue() / turnGearRatio;
-  inputs.turnVelocity = turnVelocity.GetValue() / turnGearRatio;
+  inputs.turnPosition = turnPosition.GetValue() / swerve::physical::kTurnGearRatio;
+  inputs.turnVelocity = turnVelocity.GetValue() / swerve::physical::kTurnGearRatio;
   inputs.turnAppliedVolts = turnAppliedVolts.GetValue();
   inputs.turnCurrent = turnCurrent.GetValue();
 

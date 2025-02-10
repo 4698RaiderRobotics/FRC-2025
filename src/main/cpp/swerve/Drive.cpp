@@ -4,12 +4,8 @@
 
 #include <units/math.h>
 
-#include "util/DataLogger.h"
-#include "swerve/Drive.h"
-#include "swerve/SwerveConstants.h"
-#include "swerve/TalonOdometryThread.h"
-
 #include <frc/DriverStation.h>
+#include <frc/RobotBase.h>
 #include <frc/Filesystem.h>
 
 #include <frc/geometry/Twist2d.h>
@@ -21,24 +17,45 @@
 #include <pathplanner/lib/util/PathPlannerLogging.h>
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 
+#include "util/DataLogger.h"
+#include "swerve/Drive.h"
+#include "swerve/GyroIOPigeon2.h"
+#include "swerve/ModuleIOSim.h"
+#include "swerve/ModuleIOTalonFX.h"
+#include "swerve/TalonOdometryThread.h"
+#include "swerve/SwerveConstants.h"
 
-Drive::Drive(
-    GyroIO* gyroIO, 
-    ModuleIO* flModule, 
-    ModuleIO* frModule, 
-    ModuleIO* blModule, 
-    ModuleIO* brModule) :     
-    m_gyro{ gyroIO },
+
+Drive::Drive( ) :     
     m_kinematics{ frc::Translation2d{+( swerve::physical::kDriveBaseLength / 2 ), +( swerve::physical::kDriveBaseWidth / 2 )},
                     frc::Translation2d{+( swerve::physical::kDriveBaseLength / 2 ), -( swerve::physical::kDriveBaseWidth / 2 )},
                     frc::Translation2d{-( swerve::physical::kDriveBaseLength / 2 ), +( swerve::physical::kDriveBaseWidth / 2 )},
                     frc::Translation2d{-( swerve::physical::kDriveBaseLength / 2 ), -( swerve::physical::kDriveBaseWidth / 2 )} },
     m_odometry{ m_kinematics, rawGyroRotation, lastModulePositions, frc::Pose2d{} }
 {
-    m_modules[0] = std::unique_ptr<Module>( new Module( flModule, flconfig ) );
-    m_modules[1] = std::unique_ptr<Module>( new Module( frModule, frconfig ) );
-    m_modules[2] = std::unique_ptr<Module>( new Module( blModule, blconfig ) );
-    m_modules[3] = std::unique_ptr<Module>( new Module( brModule, brconfig ) );
+    ModuleIO *flModuleIO;
+    ModuleIO *frModuleIO;
+    ModuleIO *blModuleIO;
+    ModuleIO *brModuleIO;
+    
+    if( frc::RobotBase::IsReal() ) {
+        m_gyro = std::unique_ptr<GyroIOPigeon2>( new GyroIOPigeon2( pigeon2Id, flconfig.canBus ) );
+        flModuleIO = new ModuleIOTalonFX( flconfig );
+        frModuleIO = new ModuleIOTalonFX( frconfig );
+        blModuleIO = new ModuleIOTalonFX( blconfig );
+        brModuleIO = new ModuleIOTalonFX( brconfig );
+    } else {
+        m_gyro = std::unique_ptr<GyroIO>( new GyroIO() ); 
+        flModuleIO = new ModuleIOSim( );
+        frModuleIO = new ModuleIOSim( );
+        blModuleIO = new ModuleIOSim( );
+        brModuleIO = new ModuleIOSim( );
+    }
+
+    m_modules[0] = std::unique_ptr<Module>( new Module( flModuleIO, flconfig ) );
+    m_modules[1] = std::unique_ptr<Module>( new Module( frModuleIO, frconfig ) );
+    m_modules[2] = std::unique_ptr<Module>( new Module( blModuleIO, blconfig ) );
+    m_modules[3] = std::unique_ptr<Module>( new Module( brModuleIO, brconfig ) );
 
     TalonOdometryThread::GetInstance()->Start();
     

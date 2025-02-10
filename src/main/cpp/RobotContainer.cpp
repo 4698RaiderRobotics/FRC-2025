@@ -7,46 +7,39 @@
 #include <frc/RobotBase.h>
 #include <frc2/command/Commands.h>
 
-#include "swerve/GyroIOPigeon2.h"
-#include "swerve/ModuleIOTalonFX.h"
-#include "swerve/ModuleIOSim.h"
-
-#include "swerve/SwerveConstants.h"
+#include "swerve/Drive.h"
+#include "intake/Intake.h"
+#include "elevator/Elevator.h"
 
 #include "command/DriveCommands.h"
 
 RobotContainer::RobotContainer() {
 
-  if( frc::RobotBase::IsReal() ) {
-    m_drive = new Drive( 
-    new GyroIOPigeon2( pigeon2Id, flconfig.canBus ), 
-    new ModuleIOTalonFX( flconfig ),
-    new ModuleIOTalonFX( frconfig ),
-    new ModuleIOTalonFX( blconfig ),
-    new ModuleIOTalonFX( brconfig )
-    );
-  } else {
-    m_drive = new Drive( 
-      new GyroIO(), 
-      new ModuleIOSim( ),
-      new ModuleIOSim( ),
-      new ModuleIOSim( ),
-      new ModuleIOSim( )
-    );
-  }
+    m_drive = new Drive( );
+    m_intake = new Intake( );
+    m_elevator = new Elevator( );
 
-  ConfigureBindings();
+    ConfigureBindings();
 }
 
 void RobotContainer::ConfigureBindings() {
-  m_drive->SetDefaultCommand( 
-    DriveCommands::JoystickDrive( 
-      m_drive,
-      [this] { return -m_controller.GetLeftY(); },
-      [this] { return -m_controller.GetLeftX(); },
-      [this] { return m_controller.GetRightX(); }
-    )
-  );
+    m_drive->SetDefaultCommand( 
+        DriveCommands::JoystickDrive( 
+            m_drive,
+            [this] { return -m_controller.GetLeftY(); },
+            [this] { return -m_controller.GetLeftX(); },
+            [this] { return m_controller.GetRightX(); }
+        )
+    );
+
+    m_elevator->SetDefaultCommand(
+        frc2::cmd::Run( [this] {
+            if(m_controller.GetHID().GetLeftBumper()) {
+              m_elevator->Nudge(elevator_axis.GetAxis() * 0.1_in);
+            }
+        },
+        { m_elevator }
+    ).WithName("Elevator Nudge"));
 
 
     // Run SysId routines when holding back/start and X/Y.
@@ -59,5 +52,5 @@ void RobotContainer::ConfigureBindings() {
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return frc2::cmd::Print("No autonomous command configured");
+    return frc2::cmd::Print("No autonomous command configured");
 }

@@ -15,10 +15,10 @@ Elevator::Elevator()
 {
     SetName( "Elevator" );
 
-    if( frc::RobotBase::IsSimulation() ) {
-        io = std::unique_ptr<ElevatorIO> (new ElevatorSim());
-    } else {
+    if( frc::RobotBase::IsReal() ) {
         io = std::unique_ptr<ElevatorIO> (new ElevatorTalon());
+    } else {
+        io = std::unique_ptr<ElevatorIO> (new ElevatorSim());
     }
 }
 
@@ -35,6 +35,7 @@ void Elevator::SetGoal( units::inch_t goal ) {
     } else {
         metrics.goal = goal;
     }
+    io->SetGoal( metrics.goal );
 }
 
 void Elevator::Nudge( units::inch_t nudge ) {

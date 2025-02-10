@@ -2,7 +2,7 @@
 
 #include "ElevatorIO.h"
 
-#include "util/MotorSim.h"
+#include "util/LinearSim.h"
 
 
 class ElevatorSim : public ElevatorIO {
@@ -13,7 +13,7 @@ public:
 
     void SetGoal( units::inch_t goal ) override;
 private:
-    MotorSim motorSim;
+    LinearSim motorSim;
 };
 
 

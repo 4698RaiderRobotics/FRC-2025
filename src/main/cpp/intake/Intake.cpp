@@ -15,10 +15,10 @@ Intake::Intake()
 {
     SetName( "Intake" );
 
-    if( frc::RobotBase::IsSimulation() ) {
-        io = std::unique_ptr<IntakeSim> (new IntakeSim());
-    } else {
+    if( frc::RobotBase::IsReal() ) {
         io = std::unique_ptr<Intake550> (new Intake550());
+    } else {
+        io = std::unique_ptr<IntakeSim> (new IntakeSim());
     }
 }
 

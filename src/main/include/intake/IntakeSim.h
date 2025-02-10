@@ -2,7 +2,7 @@
 
 #include "IntakeIO.h"
 
-#include "util/MotorSim.h"
+#include "util/AngularSim.h"
 
 class IntakeSim : public IntakeIO {
 public:
@@ -11,8 +11,8 @@ public:
 
     void SpinMotors( double upperSpeed, double lowerSpeed ) override;
 private:
-    MotorSim upperRoller;
-    MotorSim lowerRoller;
+    AngularSim upperRoller;
+    AngularSim lowerRoller;
 
     bool centerBeamBlocked = false;
     bool endBeamBlocked = false;

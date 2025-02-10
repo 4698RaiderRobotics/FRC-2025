@@ -8,7 +8,7 @@
 #include <frc/system/plant/LinearSystemId.h>
 
 ElevatorSim::ElevatorSim()
-: motorSim{ device::kElevatorDistancePerMotorRev }
+: motorSim{ device::elevator::kDistancePerMotorRev }
 {
 
 }
@@ -23,5 +23,5 @@ void ElevatorSim::Update( Metrics &m ) {
 }
 
 void ElevatorSim::SetGoal( units::inch_t goal ) {
-   motorSim.SetMotionControl(  goal );
+   motorSim.SetMotionControl( goal );
 }

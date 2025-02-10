@@ -44,3 +44,12 @@ template<class Distance> struct MotionConfig {
     TuningParams tuner;
     MotionParams<Distance> mp;
 };
+
+#define SET_PIDSVGA( target, tune ) \
+    target.kP = tune.kP; \
+    target.kI = tune.kI; \
+    target.kD = tune.kD; \
+    target.kS = tune.kS; \
+    target.kG = tune.kG; \
+    target.kV = tune.kV; \
+    target.kA = tune.kA; 

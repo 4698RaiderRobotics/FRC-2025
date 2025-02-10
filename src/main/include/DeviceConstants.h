@@ -13,23 +13,9 @@
 #include "util/Tuning.h"
 
 namespace device {
-    // *****************     SHOOTER SUBSYSTEM      **********************
-
-    // Motion Profile for the shooter angle TrapezoidProfile
-    constexpr units::degrees_per_second_t kShooterMaxSpeed = 360_deg_per_s;
-    constexpr units::degrees_per_second_squared_t kShooterMaxAcceleration = 360_deg_per_s_sq;
-
-    constexpr double kShooterP = 0.02;
-    constexpr double kShooterI = 0.0;
-    constexpr double kShooterD = 0.0;
-
-    constexpr double kShooterS = 0.0;
-    constexpr double kShooterG = 0.1;
-    constexpr double kShooterV = 8.0;
-    constexpr double kShooterA = 0.0;
-
 
     // *****************     ARM SUBSYSTEM      **********************
+namespace arm {
 
     // Maximum velocity for the arm angle TrapezoidProfile
     constexpr units::turns_per_second_t kArmMaxSpeed = 2_tps;
@@ -60,17 +46,19 @@ namespace device {
     constexpr double kWristG = 0.022;
     constexpr double kWristV = 0.2;
     constexpr double kWristA = 0.0;
+}
 
 
     // *****************     ELEVATOR SUBSYSTEM      **********************
+namespace elevator {
 
     // Maximum velocity for the elevator height TrapezoidProfile
-    constexpr units::meters_per_second_t kElevatorMaxSpeed = 2_mps;
+    // constexpr units::meters_per_second_t kElevatorMaxSpeed = 2_mps;
     // Maximum acceleration for the elevator height TrapezoidProfile
-    constexpr units::meters_per_second_squared_t kElevatorMaxAcceleration = 4_mps_sq;
+    // constexpr units::meters_per_second_squared_t kElevatorMaxAcceleration = 4_mps_sq;
 
-    constexpr units::inch_t kElevatorGearDiameter = 1.5_in;
-    constexpr double kElevatorGearRatio = 15;
+    constexpr units::inch_t kGearDiameter = 1.5_in;
+    constexpr double kGearRatio = 15;
 
         // Compound unit for the inches per revolution constant.
     using inches_per_rev = units::compound_unit<units::inches, units::inverse<units::turns>>;
@@ -78,29 +66,24 @@ namespace device {
 
         // The number of inches traveled per rotation of the motor
         // wheel circumference / gear ratio
-    constexpr inches_per_rev_t kElevatorDistancePerMotorRev = std::numbers::pi * kElevatorGearDiameter / ( kElevatorGearRatio *  1_tr );
+    constexpr inches_per_rev_t kDistancePerMotorRev = std::numbers::pi * kGearDiameter / ( kGearRatio *  1_tr );
 
-    constexpr MotionConfig<units::inches> kElevatorConfig = {
+    constexpr MotionConfig<units::inches> kMotionConfig = {
         { 5.5, 0.0, 0.5, 0.1, 0.45, 9.0, 0.0 },
         { 2_fps, 4_fps_sq, 0_fps_cu }
     };
+}
 
-    constexpr double kElevatorP = 5.5;
-    constexpr double kElevatorI = 0.0;
-    constexpr double kElevatorD = 0.5;
 
-    constexpr double kElevatorS = 0.1;
-    constexpr double kElevatorG = 0.45;
-    constexpr double kElevatorV = 9.0;
-    constexpr double kElevatorA = 0.0;
+    // *****************     INTAKE SUBSYSTEM      **********************
+namespace intake {
 
-    constexpr double kSpeedP = 0.001;
-    constexpr double kSpeedI = 0.0;
-    constexpr double kSpeedD = 0.0;
-    constexpr double kSpeedFF = 0.00018;
+    constexpr double kGearRatio = 4.5;
+}
 
 
     // *****************     CLIMBER SUBSYSTEM      **********************
+namespace climber {
 
     // Maximum velocity for the climber motion TrapezoidProfile
     constexpr units::meters_per_second_t kClimberMaxSpeed = 0.25_mps;
@@ -114,6 +97,7 @@ namespace device {
     constexpr double kClimberS = 0.0;
     constexpr double kClimberV = 34.0;
     constexpr double kClimberA = 0.0;
+}
 }
 
 namespace deviceIDs {

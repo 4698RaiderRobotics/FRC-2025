@@ -31,13 +31,13 @@ Intake550::Intake550()
 
 void Intake550::Update( Metrics &m )
 {
-    m.upperPosition = upperMotor.GetEncoder().GetPosition() * 1_tr;
-    m.upperVelocity = upperMotor.GetEncoder().GetVelocity() * 1_rpm;
+    m.upperPosition = upperMotor.GetEncoder().GetPosition() * 1_tr / device::intake::kGearRatio;
+    m.upperVelocity = upperMotor.GetEncoder().GetVelocity() * 1_rpm / device::intake::kGearRatio;
     m.upperAppliedVolts = upperMotor.GetAppliedOutput() * upperMotor.GetBusVoltage() * 1_V;
     m.upperCurrent = upperMotor.GetOutputCurrent() * 1_A;
 
-    m.lowerPosition = lowerMotor.GetEncoder().GetPosition() * 1_tr;
-    m.lowerVelocity = lowerMotor.GetEncoder().GetVelocity() * 1_rpm;
+    m.lowerPosition = lowerMotor.GetEncoder().GetPosition() * 1_tr / device::intake::kGearRatio;
+    m.lowerVelocity = lowerMotor.GetEncoder().GetVelocity() * 1_rpm / device::intake::kGearRatio;
     m.lowerAppliedVolts = lowerMotor.GetAppliedOutput() * lowerMotor.GetBusVoltage() * 1_V;
     m.lowerCurrent = lowerMotor.GetOutputCurrent() * 1_A;
 

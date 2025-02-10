@@ -34,7 +34,7 @@ void RobotContainer::ConfigureBindings() {
 
     m_elevator->SetDefaultCommand(
         frc2::cmd::Run( [this] {
-            if(m_controller.GetHID().GetLeftBumper()) {
+            if(m_controller.GetHID().GetLeftBumperButton()) {
               m_elevator->Nudge(elevator_axis.GetAxis() * 0.1_in);
             }
         },

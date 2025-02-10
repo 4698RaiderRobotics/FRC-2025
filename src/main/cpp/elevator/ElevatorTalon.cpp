@@ -5,6 +5,8 @@
 
 #include "elevator/ElevatorTalon.h"
 
+using namespace device::elevator;
+
 ElevatorTalon::ElevatorTalon( )
     : talon{ deviceIDs::kElevatorID, "" }
 {
@@ -13,15 +15,12 @@ ElevatorTalon::ElevatorTalon( )
     talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     talonConfigs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
-    talonConfigs.Slot0.kS = device::kElevatorS;
-    talonConfigs.Slot0.kG = device::kElevatorG;
-    talonConfigs.Slot0.kV = device::kElevatorV;
-    talonConfigs.Slot0.kA = device::kElevatorA;
-    talonConfigs.Slot0.kP = device::kElevatorP;
-    talonConfigs.Slot0.kI = device::kElevatorI;
-    talonConfigs.Slot0.kD = device::kElevatorD;
-    talonConfigs.MotionMagic.MotionMagicCruiseVelocity = device::kElevatorMaxSpeed / device::kElevatorDistancePerMotorRev;
-    talonConfigs.MotionMagic.MotionMagicAcceleration = device::kElevatorMaxAcceleration / device::kElevatorDistancePerMotorRev;
+    
+    SET_PIDSVGA( talonConfigs.Slot0, kMotionConfig.tuner )
+ 
+    talonConfigs.MotionMagic.MotionMagicCruiseVelocity = kMotionConfig.mp.MaxVelocity / kDistancePerMotorRev;
+    talonConfigs.MotionMagic.MotionMagicAcceleration = kMotionConfig.mp.MaxAcceleration / kDistancePerMotorRev;
+    talonConfigs.MotionMagic.MotionMagicJerk = kMotionConfig.mp.MaxJerk / kDistancePerMotorRev;
 
     talon.GetConfigurator().Apply(talonConfigs);
 
@@ -40,13 +39,13 @@ void ElevatorTalon::Update( Metrics &m ) {
 
     ctre::phoenix6::BaseStatusSignal::RefreshAll( talonPosition, talonVelocity, talonAppliedVolts, talonCurrent );
 
-    m.height = talonPosition.GetValue() * device::kElevatorDistancePerMotorRev;
-    m.velocity = talonVelocity.GetValue() * device::kElevatorDistancePerMotorRev;
+    m.height = talonPosition.GetValue() * kDistancePerMotorRev;
+    m.velocity = talonVelocity.GetValue() * kDistancePerMotorRev;
     m.appliedVolts = talonAppliedVolts.GetValue();
     m.current = talonCurrent.GetValue();
 }
 
 void ElevatorTalon::SetGoal( units::inch_t goal ) {
-    units::turn_t turn_goal = goal / device::kElevatorDistancePerMotorRev;
+    units::turn_t turn_goal = goal / kDistancePerMotorRev;
     talon.SetControl( ctre::phoenix6::controls::MotionMagicDutyCycle{ turn_goal } );
 }

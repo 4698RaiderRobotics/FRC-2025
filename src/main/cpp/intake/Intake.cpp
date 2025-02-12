@@ -10,6 +10,7 @@
 #include "intake/IntakeSim.h"
 #include "intake/Intake550.h"
 
+using namespace physical::intake;
 
 Intake::Intake() 
 {
@@ -30,22 +31,22 @@ void Intake::Periodic()
 
 void Intake::SpinIn()
 {
-    io->SpinMotors( physical::kIntakeInOutSpeed, physical::kIntakeInOutSpeed );
+    io->SpinMotors( kIntakeInOutSpeed, kIntakeInOutSpeed );
 }
 
 void Intake::SpinOut()
 {
-    io->SpinMotors( -physical::kIntakeInOutSpeed, -physical::kIntakeInOutSpeed );
+    io->SpinMotors( -kIntakeInOutSpeed, -kIntakeInOutSpeed );
 }
 
 void Intake::ShiftUp()
 {
-    io->SpinMotors( physical::kIntakeInOutSpeed, -physical::kIntakeShiftSpeed );
+    io->SpinMotors( kIntakeInOutSpeed, -kIntakeShiftSpeed );
 }
 
 void Intake::ShiftDown()
 {
-    io->SpinMotors( -physical::kIntakeShiftSpeed, physical::kIntakeInOutSpeed );
+    io->SpinMotors( -kIntakeShiftSpeed, kIntakeInOutSpeed );
 }
 
 void Intake::Stop()

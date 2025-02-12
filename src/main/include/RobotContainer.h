@@ -6,11 +6,14 @@
 
 #include <frc2/command/button/CommandXBoxController.h>
 #include <frc2/command/CommandPtr.h>
+#include <frc2/command/button/Trigger.h>
 
 #include "util/ControllerAxis.h"
 
+class Arm;
 class Drive;
 class Intake;
+class Climber;
 class Elevator;
 
 class RobotContainer {
@@ -22,11 +25,17 @@ public:
 private:
     void ConfigureBindings();
 
+    Arm *m_arm;
     Drive *m_drive;
     Intake *m_intake;
+    Climber *m_climber;
     Elevator *m_elevator;
 
-    frc2::CommandXboxController m_controller{0};
-    ControllerAxis elevator_axis{ m_controller.GetHID(), frc::XboxController::Axis::kLeftX, true };
-
+    frc2::CommandXboxController driverCtrlr{0};
+    frc2::CommandXboxController operatorCtrlr{1};
+    ControllerAxis elevator_nudge_axis;
+    ControllerAxis elbow_nudge_axis;
+    ControllerAxis climber_nudge_axis;
+ 
+    frc2::Trigger nudge_hold_button;
 };

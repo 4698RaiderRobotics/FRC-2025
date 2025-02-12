@@ -11,6 +11,8 @@
 #include "elevator/ElevatorSim.h"
 #include "elevator/ElevatorTalon.h"
 
+using namespace physical::elevator;
+
 Elevator::Elevator()
 {
     SetName( "Elevator" );
@@ -28,10 +30,10 @@ void Elevator::Periodic() {
 }
 
 void Elevator::SetGoal( units::inch_t goal ) {
-    if( goal < 0_in ) {
-         metrics.goal = 0_in;
-    } else if( goal > physical::kElevatorMaxHeight ) {
-         metrics.goal = physical::kElevatorMaxHeight;
+    if( goal < kElevatorMinHeight ) {
+         metrics.goal =  kElevatorMinHeight;
+    } else if( goal >  kElevatorMaxHeight ) {
+         metrics.goal =  kElevatorMaxHeight;
     } else {
         metrics.goal = goal;
     }
@@ -50,7 +52,7 @@ frc2::CommandPtr Elevator::ChangeHeight( units::inch_t goal ) {
     return frc2::cmd::Sequence(
         RunOnce( [this, goal] { SetGoal( goal ); }),
         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
-    ).WithName( "ChangeHeight" );
+    ).WithName( "Elevator Change Height" );
 }
 
 void ElevatorIO::Metrics::Log( const std::string &key ) {

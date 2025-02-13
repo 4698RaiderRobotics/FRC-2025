@@ -41,8 +41,8 @@ ArmTalon550::ArmTalon550()
 
     config
         .Inverted(false)
-        // .SetIdleMode( SparkMaxConfig::IdleMode::kBrake )
-        .SmartCurrentLimit( 40 );
+        .SetIdleMode( SparkMaxConfig::IdleMode::kBrake )
+        .SmartCurrentLimit( 30 );
     // config.closedLoop
     //     .SetFeedbackSensor( ClosedLoopConfig::FeedbackSensor::kPrimaryEncoder )
     //     .Pid(1.0, 0.0, 0.0);
@@ -59,3 +59,18 @@ void ArmTalon550::Update( Metrics &m )
 
 }
 
+void ArmTalon550::SetElbowGoal( units::degree_t goal ) 
+{
+    units::turn_t at_motor_goal = goal * kGearRatio;
+    elbowMtr.SetControl( ctre::phoenix6::controls::MotionMagicDutyCycle{ at_motor_goal } );
+}
+
+void ArmTalon550::SetWristHorizontal( WristPosition pos ) 
+{
+    switch( pos ) {
+    case WristHorizontal:
+        break;
+    case WristVertical:
+        break;
+    }
+}

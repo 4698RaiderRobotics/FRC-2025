@@ -29,18 +29,18 @@ namespace vision {
     // *****************     ARM SUBSYSTEM      **********************
 namespace arm {
 
-    // Maximum angle for the arm position
-    constexpr units::degree_t kArmMaxAngle = 180_deg;
-    // Minimum angle for the arm position
-    constexpr units::degree_t kArmMinAngle = -15_deg;
+    // Maximum angle for the elbow position
+    constexpr units::degree_t kElbowMaxAngle = 120_deg;
+    // Minimum angle for the elbow position
+    constexpr units::degree_t kElbowMinAngle = -15_deg;
 
-    // Angle for the arm to pick up off the ground
+    // Angle for the elbow to pick up off the ground
     constexpr units::degree_t kArmGroundPickUpAngle = -15_deg;
 
-    // Angle for the arm to rest at
+    // Angle for the elbow to rest at
     constexpr units::degree_t kArmPassiveAngle = 155_deg;
 
-    // Angle for the arm to raise the elevator up
+    // Angle for the elbow to raise the elevator up
     constexpr units::degree_t kArmRaiseAngle = 60_deg;
 
 

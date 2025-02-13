@@ -21,5 +21,6 @@ public:
 
     virtual void Update( Metrics &m ) =0;
 
+    virtual void SetOpenLoop( double percentOutput ) =0;
     virtual void SetGoal( units::inch_t goal ) =0;
 };

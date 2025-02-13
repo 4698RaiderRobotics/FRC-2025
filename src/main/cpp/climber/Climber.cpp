@@ -29,7 +29,8 @@ void Climber::Periodic() {
     metrics.Log( "Climber" );
 }
 
-void Climber::SetGoal( units::inch_t goal ) {
+void Climber::SetGoal( units::inch_t goal ) 
+{
     if( goal < kClimberMinHeight ) {
          metrics.goal = kClimberMinHeight;
     } else if( goal > kClimberMaxHeight ) {
@@ -40,22 +41,26 @@ void Climber::SetGoal( units::inch_t goal ) {
     io->SetGoal( metrics.goal );
 }
 
-void Climber::Nudge( units::inch_t nudge ) {
+void Climber::Nudge( units::inch_t nudge ) 
+{
     SetGoal( metrics.goal + nudge );
 }
 
-bool Climber::AtGoal() {
+bool Climber::AtGoal() 
+{
     return units::math::abs( metrics.height - metrics.goal ) < AT_GOAL_TOLERANCE;
 }
 
-frc2::CommandPtr Climber::ChangeHeight( units::inch_t goal ) {
+frc2::CommandPtr Climber::ChangeHeight( units::inch_t goal ) 
+{
     return frc2::cmd::Sequence(
         RunOnce( [this, goal] { SetGoal( goal ); }),
         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
     ).WithName( "Climber Change Height" );
 }
 
-void ClimberIO::Metrics::Log( const std::string &key ) {
+void ClimberIO::Metrics::Log( const std::string &key )
+{
     AUTOLOG( key, height );
     AUTOLOG( key, goal );
     AUTOLOG( key, velocity );

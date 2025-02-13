@@ -10,6 +10,7 @@ public:
 
     void Update( Metrics &m ) override;
 
+    void SetOpenLoop( double percentOutput ) override;
     void SetGoal( units::inch_t goal ) override;
 private:
     ctre::phoenix6::hardware::TalonFX talon;

@@ -6,6 +6,8 @@
 
 #include "ElevatorIO.h"
 
+#include "util/Utility.h"
+
 class Elevator : public frc2::SubsystemBase {
 public:
     Elevator();
@@ -20,6 +22,8 @@ public:
 private:
     std::unique_ptr<ElevatorIO> io;
     ElevatorIO::Metrics metrics;
+
+    util::MotorHomer homer;
 
     const units::inch_t AT_GOAL_TOLERANCE = 1_in;
 };

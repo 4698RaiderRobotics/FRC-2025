@@ -98,7 +98,8 @@ frc2::CommandPtr Intake::EjectCoral()
 
 }
 
-void IntakeIO::Metrics::Log( const std::string &key ) {
+void IntakeIO::Metrics::Log( const std::string &key ) 
+{
     AUTOLOG( key, upperPosition );
     AUTOLOG( key, lowerPosition );
     AUTOLOG( key, upperVelocity );

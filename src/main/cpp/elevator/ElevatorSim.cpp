@@ -13,7 +13,8 @@ ElevatorSim::ElevatorSim()
 
 }
 
-void ElevatorSim::Update( Metrics &m ) {
+void ElevatorSim::Update( Metrics &m ) 
+{
     motorSim.Update();
 
     m.height = motorSim.GetPosition();
@@ -22,6 +23,12 @@ void ElevatorSim::Update( Metrics &m ) {
     m.current = motorSim.GetCurrent();
 }
 
-void ElevatorSim::SetGoal( units::inch_t goal ) {
+void ElevatorSim::SetOpenLoop( double percentOutput )
+{
+    motorSim.SetOpenLoop( percentOutput );
+}
+
+void ElevatorSim::SetGoal( units::inch_t goal ) 
+{
    motorSim.SetMotionControl( goal );
 }

@@ -13,7 +13,8 @@ ClimberSim::ClimberSim()
 
 }
 
-void ClimberSim::Update( Metrics &m ) {
+void ClimberSim::Update( Metrics &m ) 
+{
     motorSim.Update();
 
     m.height = motorSim.GetPosition();
@@ -22,6 +23,7 @@ void ClimberSim::Update( Metrics &m ) {
     m.current = motorSim.GetCurrent();
 }
 
-void ClimberSim::SetGoal( units::inch_t goal ) {
+void ClimberSim::SetGoal( units::inch_t goal ) 
+{
    motorSim.SetMotionControl( goal );
 }

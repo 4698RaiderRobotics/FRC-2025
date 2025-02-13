@@ -35,7 +35,8 @@ ClimberTalon::ClimberTalon( )
     talon.OptimizeBusUtilization();
 }
 
-void ClimberTalon::Update( Metrics &m ) {
+void ClimberTalon::Update( Metrics &m ) 
+{
 
     ctre::phoenix6::BaseStatusSignal::RefreshAll( talonPosition, talonVelocity, talonAppliedVolts, talonCurrent );
 
@@ -45,7 +46,8 @@ void ClimberTalon::Update( Metrics &m ) {
     m.current = talonCurrent.GetValue();
 }
 
-void ClimberTalon::SetGoal( units::inch_t goal ) {
+void ClimberTalon::SetGoal( units::inch_t goal ) 
+{
     units::turn_t turn_goal = goal / kDistancePerMotorRev;
     talon.SetControl( ctre::phoenix6::controls::MotionMagicDutyCycle{ turn_goal } );
 }

@@ -35,7 +35,8 @@ ElevatorTalon::ElevatorTalon( )
     talon.OptimizeBusUtilization();
 }
 
-void ElevatorTalon::Update( Metrics &m ) {
+void ElevatorTalon::Update( Metrics &m ) 
+{
 
     ctre::phoenix6::BaseStatusSignal::RefreshAll( talonPosition, talonVelocity, talonAppliedVolts, talonCurrent );
 
@@ -45,7 +46,13 @@ void ElevatorTalon::Update( Metrics &m ) {
     m.current = talonCurrent.GetValue();
 }
 
-void ElevatorTalon::SetGoal( units::inch_t goal ) {
+void ElevatorTalon::SetOpenLoop( double percentOutput )
+{
+    talon.Set( percentOutput );
+}
+
+void ElevatorTalon::SetGoal( units::inch_t goal ) 
+{
     units::turn_t turn_goal = goal / kDistancePerMotorRev;
     talon.SetControl( ctre::phoenix6::controls::MotionMagicDutyCycle{ turn_goal } );
 }

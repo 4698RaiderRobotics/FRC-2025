@@ -2,10 +2,12 @@
 #include <units/math.h>
 
 #include <frc/RobotBase.h>
+#include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
 
 #include "Constants.h"
 #include "util/DataLogger.h"
+#include "util/Utility.h"
 
 #include "arm/Arm.h"
 #include "arm/ArmSim.h"
@@ -24,19 +26,21 @@ Arm::Arm()
     }
 }
 
-void Arm::Periodic() {
+void Arm::Periodic() 
+{
     io->Update( metrics );
     metrics.Log( "Arm" );
+
+    if( frc::DriverStation::IsDisabled() ) {
+        metrics.elbowGoal = metrics.elbowPosition;
+        return;
+    }
+
 }
 
-void Arm::SetGoal( units::degree_t goal ) {
-    if( goal < kArmMinAngle ) {
-         metrics.elbowGoal = kArmMinAngle;
-    } else if( goal > kArmMaxAngle ) {
-         metrics.elbowGoal = kArmMaxAngle;
-    } else {
-        metrics.elbowGoal = goal;
-    }
+void Arm::SetGoal( units::degree_t goal ) 
+{
+    metrics.elbowGoal = util::clamp( goal, kElbowMinAngle, kElbowMaxAngle );
     io->SetElbowGoal( metrics.elbowGoal );
 }
 
@@ -44,18 +48,21 @@ void Arm::Nudge( units::degree_t nudge ) {
     SetGoal( metrics.elbowGoal + nudge );
 }
 
-bool Arm::AtGoal() {
+bool Arm::AtGoal() 
+{
     return units::math::abs( metrics.elbowPosition - metrics.elbowGoal ) < AT_GOAL_TOLERANCE;
 }
 
-frc2::CommandPtr Arm::ChangeAngle( units::degree_t goal ) {
+frc2::CommandPtr Arm::ChangeAngle( units::degree_t goal ) 
+{
     return frc2::cmd::Sequence(
         RunOnce( [this, goal] { SetGoal( goal ); }),
         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
     ).WithName( fmt::format( "Arm Change Angle {}", goal ) );
 }
 
-void ArmIO::Metrics::Log( const std::string &key ) {
+void ArmIO::Metrics::Log( const std::string &key ) 
+{
     AUTOLOG( key, elbowPosition );
     AUTOLOG( key, elbowGoal );
     AUTOLOG( key, elbowVelocity );

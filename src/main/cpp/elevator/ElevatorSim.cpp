@@ -8,9 +8,10 @@
 #include <frc/system/plant/LinearSystemId.h>
 
 ElevatorSim::ElevatorSim()
-: motorSim{ device::elevator::kDistancePerMotorRev }
+: motorSim{ device::elevator::kDistancePerMotorRev, 1.0, TuningParams{0.08, 0.0, 0.0, 0.0, 0.0, 0.3, 0.0} }
 {
-
+    // Somewhere to home from...
+    motorSim.SetPosition( 1_in );
 }
 
 void ElevatorSim::Update( Metrics &m ) 
@@ -18,9 +19,22 @@ void ElevatorSim::Update( Metrics &m )
     motorSim.Update();
 
     m.height = motorSim.GetPosition();
+    // Don't let the sim go below zero.
+    // Set open loop to zero so velocity is zero and homing works.
+    if( m.height < 0_in ) {
+        m.height = 0_in;
+        motorSim.SetPosition( 0_in );
+        motorSim.SetOpenLoop( 0 );
+    }
+
     m.velocity = motorSim.GetVelocity();
     m.appliedVolts = motorSim.GetVoltage();
     m.current = motorSim.GetCurrent();
+}
+
+void ElevatorSim::SetPosition( units::inch_t position )
+{
+    motorSim.SetPosition( position );
 }
 
 void ElevatorSim::SetOpenLoop( double percentOutput )

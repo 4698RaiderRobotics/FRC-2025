@@ -40,7 +40,7 @@ void RobotContainer::ConfigureBindings() {
               m_arm->Nudge(elbow_nudge_axis.GetAxis() * 0.5_deg);
             }
         },
-        { m_elevator }
+        { m_arm }
     ).WithName("Arm Nudge"));
 
     m_drive->SetDefaultCommand( 
@@ -58,7 +58,7 @@ void RobotContainer::ConfigureBindings() {
               m_climber->Nudge(climber_nudge_axis.GetAxis() * 0.1_in);
             }
         },
-        { m_elevator }
+        { m_climber }
     ).WithName("Climber Nudge"));
 
     m_elevator->SetDefaultCommand(

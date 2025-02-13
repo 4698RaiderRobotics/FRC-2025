@@ -46,5 +46,7 @@ private:
     frc::TrapezoidProfile<units::radian>::State m_Goal;
     frc::TrapezoidProfile<units::radian>::State m_Setpoint;
     double m_gearRatio;
+
+    bool using_motion_control = false;
 };
 

@@ -1,4 +1,6 @@
 
+#include <frc/DriverStation.h>
+
 #include "util/LinearSim.h"
 
 
@@ -28,15 +30,20 @@ LinearSim::LinearSim( inches_per_rev_t mechRatio, double sluggishness, const Mot
     m_Goal = {MotionParams<units::inch>::Distance_t(0), MotionParams<units::inch>::Velocity_t(0) };
 }
 
-void LinearSim::SetOpenLoop( double percentOutput ) { 
-    m_motor.SetInputVoltage( percentOutput * 12_V );  
+void LinearSim::SetOpenLoop( double percentOutput ) 
+{
+    using_motion_control = false;
+    m_motor.SetInputVoltage( percentOutput * 12_V );
 }
 
-void LinearSim::SetMotionControl( units::inch_t goal ) {
+void LinearSim::SetMotionControl( units::inch_t goal ) 
+{
+    using_motion_control = true;
     m_Goal.position = goal; 
 }
 
-void LinearSim::SetPosition( units::inch_t position ) { 
+void LinearSim::SetPosition( units::inch_t position ) 
+{ 
     m_motor.SetState( (position / m_mechRatio), 0_rad_per_s ); 
 }
 
@@ -62,20 +69,26 @@ const units::ampere_t LinearSim::GetCurrent()
     return m_motor.GetCurrentDraw();
 }
 
-void LinearSim::Update() {
-
-    m_Setpoint = m_Profile.Calculate( 20_ms, m_Setpoint, m_Goal);
-
-    units::inch_t currPosition = m_motor.GetAngularPosition() * m_mechRatio;
-    
-    double pidOut = m_softPID.Calculate( currPosition.value(), m_Setpoint.position.value() );
-    units::volt_t ffOut = m_motorFF->Calculate( m_Setpoint.velocity );
-
-    units::volt_t inp_volts = pidOut * 12_V + ffOut;
-    if( inp_volts < -12_V ) inp_volts = -12_V;
-    else if( inp_volts > 12_V ) inp_volts = 12_V;
-
-    m_motor.SetInputVoltage( inp_volts );
-
+void LinearSim::Update() 
+{
     m_motor.Update( 20_ms );
+
+    if( frc::DriverStation::IsDisabled() ) {
+        return;
+    }
+
+    if( using_motion_control ) {
+        m_Setpoint = m_Profile.Calculate( 20_ms, m_Setpoint, m_Goal);
+
+        units::inch_t currPosition = m_motor.GetAngularPosition() * m_mechRatio;
+        
+        double pidOut = m_softPID.Calculate( currPosition.value(), m_Setpoint.position.value() );
+        units::volt_t ffOut = m_motorFF->Calculate( m_Setpoint.velocity );
+
+        units::volt_t inp_volts = pidOut * 12_V + ffOut;
+        if( inp_volts < -12_V ) inp_volts = -12_V;
+        else if( inp_volts > 12_V ) inp_volts = 12_V;
+
+        m_motor.SetInputVoltage( inp_volts );
+    }
 }

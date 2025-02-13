@@ -22,11 +22,14 @@ namespace device {
     // *****************     ARM SUBSYSTEM      **********************
 namespace arm {
 
-        // Gear Ratio
-    constexpr double kGearRatio = 15;
+        // Elbow Gear Ratio
+    constexpr double kElbowGearRatio = 15;
+
+        // Wrist Gear Ratio
+    constexpr double kWristGearRatio = 45;
 
         // PIDSGVA and Motion Profile settings
-    constexpr MotionConfig<units::turns> kMotionConfig = {
+    constexpr MotionConfig<units::turns> kElbowMotionConfig = {
         { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 },
         { 2_tps, 4_tr_per_s_sq, 0_tr_per_s_cu }
     };

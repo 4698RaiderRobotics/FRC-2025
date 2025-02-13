@@ -19,11 +19,11 @@ ArmTalon550::ArmTalon550()
 
     talonConfigs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
     
-    SET_PIDSVGA( talonConfigs.Slot0, kMotionConfig.tuner )
+    SET_PIDSVGA( talonConfigs.Slot0, kElbowMotionConfig.tuner )
  
-    talonConfigs.MotionMagic.MotionMagicCruiseVelocity = kMotionConfig.mp.MaxVelocity;
-    talonConfigs.MotionMagic.MotionMagicAcceleration = kMotionConfig.mp.MaxAcceleration;
-    talonConfigs.MotionMagic.MotionMagicJerk = kMotionConfig.mp.MaxJerk;
+    talonConfigs.MotionMagic.MotionMagicCruiseVelocity = kElbowMotionConfig.mp.MaxVelocity;
+    talonConfigs.MotionMagic.MotionMagicAcceleration = kElbowMotionConfig.mp.MaxAcceleration;
+    talonConfigs.MotionMagic.MotionMagicJerk = kElbowMotionConfig.mp.MaxJerk;
 
     elbowMtr.GetConfigurator().Apply(talonConfigs);
 
@@ -52,8 +52,8 @@ ArmTalon550::ArmTalon550()
 
 void ArmTalon550::Update( Metrics &m )
 {
-    m.wristPosition = wristMtr.GetEncoder().GetPosition() * 1_tr / kGearRatio;
-    m.wristVelocity = wristMtr.GetEncoder().GetVelocity() * 1_rpm / kGearRatio;
+    m.wristPosition = wristMtr.GetEncoder().GetPosition() * 1_tr / kElbowGearRatio;
+    m.wristVelocity = wristMtr.GetEncoder().GetVelocity() * 1_rpm / kElbowGearRatio;
     m.wristAppliedVolts = wristMtr.GetAppliedOutput() * wristMtr.GetBusVoltage() * 1_V;
     m.wristCurrent = wristMtr.GetOutputCurrent() * 1_A;
 
@@ -61,7 +61,7 @@ void ArmTalon550::Update( Metrics &m )
 
 void ArmTalon550::SetElbowGoal( units::degree_t goal ) 
 {
-    units::turn_t at_motor_goal = goal * kGearRatio;
+    units::turn_t at_motor_goal = goal * kElbowGearRatio;
     elbowMtr.SetControl( ctre::phoenix6::controls::MotionMagicDutyCycle{ at_motor_goal } );
 }
 

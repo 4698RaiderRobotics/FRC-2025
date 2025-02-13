@@ -15,23 +15,25 @@ T clamp( const T &val, const T min, const T max ) {
 
 class MotorHomer {
 public:
-    MotorHomer( ) : isHomedDebounced{100_ms} {}
+    MotorHomer( ) {}
     MotorHomer( std::function<void()> start, std::function<void()> stopAndReset, std::function<bool()> homeCondition, units::second_t debounce=100_ms )
-        : startFunc{ start }, stopResetFunc{ stopAndReset }, isHomedFunc{ homeCondition }, isHomedDebounced{debounce}
+        : startFunc{ start }, stopResetFunc{ stopAndReset }, isHomedFunc{ homeCondition }
     {
-
+        isHomedDebounced = std::unique_ptr<frc::Debouncer>( new frc::Debouncer(debounce) );
     }
 
     void Home( ) 
     {
-        if( homing_is_done ) return;
+        if( homing_is_done || isHomedDebounced == nullptr ) return;
 
         if( !homing_is_active ) {
             startFunc();
             homing_is_active = true;
+                // Reset the debouncer.
+            isHomedDebounced->Calculate(false);
         }
 
-        if( isHomedDebounced.Calculate( isHomedFunc() ) ) {
+        if( isHomedDebounced->Calculate( isHomedFunc() ) ) {
             stopResetFunc();
             homing_is_active = false;
             homing_is_done = true;
@@ -49,7 +51,7 @@ private:
     std::function<bool()> isHomedFunc;
     bool homing_is_done = false;
     bool homing_is_active = false;
-    frc::Debouncer isHomedDebounced;
+    std::unique_ptr<frc::Debouncer> isHomedDebounced;
 };
 
 }

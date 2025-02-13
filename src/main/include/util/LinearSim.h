@@ -39,7 +39,7 @@ private:
 
     inline static const units::kilogram_square_meter_t DEFAULT_MOI = 0.0005_kg_sq_m;
 
-    inline static const  MotionConfig<units::inch> DEFAULT_MC = { {1.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0 }, {1_fps, 3_fps_sq, 0_fps_cu}};
+    inline static const  MotionConfig<units::inch> DEFAULT_MC = { {0.05, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0 }, {1_fps, 3_fps_sq, 0_fps_cu}};
 
     frc::PIDController m_softPID;
     frc::SimpleMotorFeedforward<units::inch> *m_motorFF;
@@ -47,5 +47,7 @@ private:
     frc::TrapezoidProfile<units::inch>::State m_Goal;
     frc::TrapezoidProfile<units::inch>::State m_Setpoint;
     inches_per_rev_t m_mechRatio;
+
+    bool using_motion_control = false;
 };
 

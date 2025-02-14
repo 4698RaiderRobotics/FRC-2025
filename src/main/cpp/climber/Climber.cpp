@@ -4,6 +4,7 @@
 #include <frc/RobotBase.h>
 #include <frc2/command/Commands.h>
 
+#include "Robot.h"
 #include "Constants.h"
 #include "util/DataLogger.h"
 
@@ -27,6 +28,10 @@ Climber::Climber()
 void Climber::Periodic() {
     io->Update( metrics );
     metrics.Log( "Climber" );
+
+    // Update the mechanism2d
+    // Angle is related to height approximately by height=bar_length*theta
+    climber_lig->SetAngle( 180_deg - ( metrics.height / 11_in )*1_rad );
 }
 
 void Climber::SetGoal( units::inch_t goal ) 

@@ -30,6 +30,10 @@ RobotContainer::RobotContainer()
     m_climber = new Climber( );
     m_elevator = new Elevator( );
 
+    // Extra deadband for the climber and elevator nudge
+    climber_nudge_axis.SetDeadband( 0.25 );
+    elevator_nudge_axis.SetDeadband( 0.25 );
+
     ConfigureBindings();
 }
 
@@ -37,11 +41,16 @@ void RobotContainer::ConfigureBindings() {
     m_arm->SetDefaultCommand(
         frc2::cmd::Run( [this] {
             if( nudge_hold_button.Get() ) {
-              m_arm->Nudge(elbow_nudge_axis.GetAxis() * 0.5_deg);
+                m_arm->NudgeElbow(elbow_nudge_axis.GetAxis() * 0.5_deg);
+                if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) > 0.75 ) {
+                    m_arm->SetWristPosition( ArmIO::WristHorizontal);
+                } else if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) < -0.75 ) {
+                    m_arm->SetWristPosition( ArmIO::WristVertical);
+                }
             }
         },
         { m_arm }
-    ).WithName("Arm Nudge"));
+    ).WithName("Elbow/Wrist Nudge"));
 
     m_drive->SetDefaultCommand( 
         DriveCommands::JoystickDrive( 
@@ -55,7 +64,7 @@ void RobotContainer::ConfigureBindings() {
     m_climber->SetDefaultCommand(
         frc2::cmd::Run( [this] {
             if( nudge_hold_button.Get() ) {
-              m_climber->Nudge(climber_nudge_axis.GetAxis() * 0.1_in);
+                m_climber->Nudge(climber_nudge_axis.GetAxis() * -0.25_in);
             }
         },
         { m_climber }
@@ -64,7 +73,7 @@ void RobotContainer::ConfigureBindings() {
     m_elevator->SetDefaultCommand(
         frc2::cmd::Run( [this] {
             if( nudge_hold_button.Get() ) {
-              m_elevator->Nudge(elevator_nudge_axis.GetAxis() * 0.1_in);
+                m_elevator->Nudge(elevator_nudge_axis.GetAxis() * 0.25_in);
             }
         },
         { m_elevator }

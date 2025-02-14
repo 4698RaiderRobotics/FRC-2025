@@ -5,6 +5,7 @@
 #include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
 
+#include "Robot.h"
 #include "Constants.h"
 #include "util/DataLogger.h"
 
@@ -18,6 +19,12 @@ Elevator::Elevator()
 {
     SetName( "Elevator" );
 
+    if( frc::RobotBase::IsReal() ) {
+        io = std::unique_ptr<ElevatorIO> (new ElevatorTalon());
+    } else {
+        io = std::unique_ptr<ElevatorIO> (new ElevatorSim());
+    }
+
     homer = util::MotorHomer(
         // Start routine
         [this] { io->SetOpenLoop(-0.1); },
@@ -26,18 +33,16 @@ Elevator::Elevator()
         // Home Condition
         [this] { return units::math::abs( metrics.velocity ) < 0.01_fps; }
     );
-
-    if( frc::RobotBase::IsReal() ) {
-        io = std::unique_ptr<ElevatorIO> (new ElevatorTalon());
-    } else {
-        io = std::unique_ptr<ElevatorIO> (new ElevatorSim());
-    }
 }
 
 void Elevator::Periodic() 
 {
     io->Update( metrics );
     metrics.Log( "Elevator" );
+
+    // Update the mechanism2d
+    // Angle is related to height approximately by height=bar_length*theta
+    elevator_lig->SetLength( units::meter_t(metrics.height + 12_in).value() );
 
     if( frc::DriverStation::IsDisabled() ) {
         metrics.goal = metrics.height;

@@ -19,8 +19,13 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
 {
     return frc2::cmd::Run( [d, xSupplier, ySupplier, omegaSupplier] {
         // Apply deadband
-        double linearMagnitude = frc::ApplyDeadband<double>( std::hypot( xSupplier(), ySupplier() ), DEADBAND );
-        frc::Rotation2d linearDirection{ xSupplier(), ySupplier() };
+        double x_val = xSupplier();
+        double y_val = ySupplier();
+        double linearMagnitude = frc::ApplyDeadband<double>( std::hypot( x_val, y_val ), DEADBAND );
+        if( fabs( linearMagnitude ) < 0.0001 ) {
+            return;
+        }
+        frc::Rotation2d linearDirection{ x_val, y_val };
         double omega = frc::ApplyDeadband<double>( omegaSupplier(), DEADBAND );
 
         // Apply expo by squaring

@@ -18,11 +18,11 @@ namespace ctrl {
 
     constexpr int nudge_modifier = frc::XboxController::Button::kLeftBumper;
     constexpr int nudge_elevator_axis = frc::XboxController::Axis::kLeftY;
-    constexpr int nudge_elbow_axis = frc::XboxController::Axis::kLeftX;
-    constexpr int nudge_wrist_toggle = frc::XboxController::Button::kBack;
+    constexpr int nudge_elbow_axis = frc::XboxController::Axis::kRightX;
+    constexpr int nudge_wrist_axis = frc::XboxController::Axis::kRightY;
     constexpr int nudge_intake_spin_in = frc::XboxController::Button::kB;
     constexpr int nudge_intake_spin_out = frc::XboxController::Button::kX;
     constexpr int nudge_intake_shift_up = frc::XboxController::Button::kY;
     constexpr int nudge_intake_shift_down = frc::XboxController::Button::kA;
-    constexpr int nudge_climber_axis = frc::XboxController::Axis::kRightY;
+    constexpr int nudge_climber_axis = frc::XboxController::Axis::kLeftX;
 }

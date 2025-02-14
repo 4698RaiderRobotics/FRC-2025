@@ -5,6 +5,7 @@
 #include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
 
+#include "Robot.h"
 #include "Constants.h"
 #include "util/DataLogger.h"
 #include "util/Utility.h"
@@ -24,6 +25,16 @@ Arm::Arm()
     } else {
         io = std::unique_ptr<ArmIO> (new ArmSim());
     }
+
+    elbowHomer = util::MotorHomer(
+        // Start routine
+        [this] { io->SetWristOpenLoop(-0.1); },
+        // Stop and Reset Routine
+        [this] { io->SetWristOpenLoop(0.0); io->SetWristAngle( 0_deg ); },
+        // Home Condition
+        [this] { return units::math::abs( metrics.wristVelocity ) < 1_rpm; }
+    );
+
 }
 
 void Arm::Periodic() 
@@ -31,34 +42,63 @@ void Arm::Periodic()
     io->Update( metrics );
     metrics.Log( "Arm" );
 
+    // Update the mechanism2d
+    elbow_lig->SetAngle( 96_deg - metrics.elbowPosition );
+    wrist_lig1->SetLength( (2 + 6 * units::math::sin(metrics.wristPosition))/39.0 );
+    wrist_lig2->SetLength( (2 + 6 * units::math::sin(metrics.wristPosition))/39.0 );
+
     if( frc::DriverStation::IsDisabled() ) {
         metrics.elbowGoal = metrics.elbowPosition;
         return;
     }
 
+    elbowHomer.Home();
 }
 
-void Arm::SetGoal( units::degree_t goal ) 
+void Arm::SetElbowGoal( units::degree_t goal ) 
 {
     metrics.elbowGoal = util::clamp( goal, kElbowMinAngle, kElbowMaxAngle );
     io->SetElbowGoal( metrics.elbowGoal );
 }
 
-void Arm::Nudge( units::degree_t nudge ) {
-    SetGoal( metrics.elbowGoal + nudge );
+void Arm::NudgeElbow( units::degree_t nudge ) {
+    SetElbowGoal( metrics.elbowGoal + nudge );
+}
+
+void Arm::SetWristPosition( ArmIO::WristPosition pos )
+{
+    switch( pos ) {
+    case ArmIO::WristHorizontal:
+        metrics.wristGoal = 0_deg;
+        break;
+    case ArmIO::WristVertical:
+        metrics.wristGoal = 90_deg;
+        break;
+    }
+
+    io->SetWristPosition( pos );
 }
 
 bool Arm::AtGoal() 
 {
-    return units::math::abs( metrics.elbowPosition - metrics.elbowGoal ) < AT_GOAL_TOLERANCE;
+    return units::math::abs( metrics.elbowPosition - metrics.elbowGoal ) < AT_GOAL_TOLERANCE &&
+           units::math::abs( metrics.wristPosition - metrics.wristGoal ) < AT_GOAL_TOLERANCE;
 }
 
-frc2::CommandPtr Arm::ChangeAngle( units::degree_t goal ) 
+frc2::CommandPtr Arm::ChangeElbowAngle( units::degree_t goal ) 
 {
     return frc2::cmd::Sequence(
-        RunOnce( [this, goal] { SetGoal( goal ); }),
+        RunOnce( [this, goal] { SetElbowGoal( goal ); }),
         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
-    ).WithName( fmt::format( "Arm Change Angle {}", goal ) );
+    ).WithName( fmt::format( "Change Arm Angle to {}", goal ) );
+}
+
+frc2::CommandPtr Arm::ChangeWristPosition( ArmIO::WristPosition pos ) 
+{
+    return frc2::cmd::Sequence(
+        RunOnce( [this, pos] { SetWristPosition( pos ); }),
+        frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
+    ).WithName( "Change Wrist Position" );
 }
 
 void ArmIO::Metrics::Log( const std::string &key ) 

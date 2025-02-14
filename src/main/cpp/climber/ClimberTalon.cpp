@@ -11,6 +11,7 @@ ClimberTalon::ClimberTalon( )
     : talon{ deviceIDs::kElevatorID, "" }
 {
     ctre::phoenix6::configs::TalonFXConfiguration talonConfigs{};
+    talonConfigs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
     talonConfigs.CurrentLimits.SupplyCurrentLimit = 70_A;
     talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 

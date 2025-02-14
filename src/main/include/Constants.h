@@ -34,29 +34,15 @@ namespace arm {
     // Minimum angle for the elbow position
     constexpr units::degree_t kElbowMinAngle = -15_deg;
 
-    // Angle for the elbow to pick up off the ground
-    constexpr units::degree_t kArmGroundPickUpAngle = -15_deg;
+    // Elevator Raise / Lower Position
+    constexpr units::degree_t kElbowRaiseAngle = 60_deg;
 
-    // Angle for the elbow to rest at
-    constexpr units::degree_t kArmPassiveAngle = 155_deg;
+    // Elbow Positions for Each Reef Height
+     constexpr units::degree_t kElbowCoralL1 = 0_deg;
+     constexpr units::degree_t kElbowCoralL2 = 25_deg;
+     constexpr units::degree_t kElbowCoralL3 = 25_deg;
+     constexpr units::degree_t kElbowCoralL4 = 5_deg;
 
-    // Angle for the elbow to raise the elevator up
-    constexpr units::degree_t kArmRaiseAngle = 60_deg;
-
-
-    // Angle for the wrist to spit note in amp
-    constexpr units::degree_t kWristAmpSpitAngle = 125_deg;
-     // Angle for the wrist to drop down from amp
-    constexpr units::degree_t kWristAmpDropAngle = 80_deg;
-    // Angle for the arm to drop down from amp
-    constexpr units::degree_t kArmAmpDropAngle = 70_deg;
-
-    // Angle for the wrist to miss the speaker on initial climb
-    constexpr units::degree_t kWristPreClimbAngle = 95_deg;
-    // Angle for the arm to miss the speaker on initial climb
-    constexpr units::degree_t kArmPreClimbAngle = 70_deg;
-    // Angle for the wrist to eject into trap
-    constexpr units::degree_t kWristTrapSpitAngle = 63_deg;
 }
 
     // *****************     INTAKE SUBSYSTEM      **********************
@@ -73,15 +59,15 @@ namespace intake {
 namespace elevator {
 
     // Maximum height for the elevator position
-    constexpr units::inch_t kElevatorMaxHeight = 27_in;
+    constexpr units::inch_t kElevatorMaxHeight = 65_in;
     // Minimum height for the elevator position
     constexpr units::inch_t kElevatorMinHeight = 0_in;
 
-    // Height for the elevator to place in amp
-    constexpr units::inch_t kElevatorAmpHeight = 21.5_in;
-
-    // Height for the elevator to place in trap
-    constexpr units::inch_t kElevatorTrapHeight = 25_in;
+    // Height for the elevator to place on Reef
+    constexpr units::inch_t kCoralL1Height = 15_in;
+    constexpr units::inch_t kCoralL2Height = 25_in;
+    constexpr units::inch_t kCoralL3Height = 40_in;
+    constexpr units::inch_t kCoralL4Height = 65_in;
 }
 
     // *****************     CLIMBER SUBSYSTEM      **********************

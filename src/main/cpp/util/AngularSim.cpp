@@ -22,10 +22,9 @@ AngularSim::AngularSim( double gearRatio, double sluggishness, const TuningParam
 
 AngularSim::AngularSim( double gearRatio, double sluggishness, const MotionConfig<units::radian> &mc )
     : m_motor{ frc::LinearSystemId::DCMotorSystem( frc::DCMotor::KrakenX60(1), DEFAULT_MOI * sluggishness, gearRatio), frc::DCMotor::KrakenX60(1) }, 
-      m_softPID{ mc.tuner.kP, mc.tuner.kI, mc.tuner.kD },
-      m_Profile{ {mc.mp.MaxVelocity, mc.mp.MaxAcceleration} }, 
-      m_gearRatio{gearRatio} 
+      m_Profile{ {mc.mp.MaxVelocity, mc.mp.MaxAcceleration} }
 {
+    m_softPID = new frc::PIDController( mc.tuner.kP * gearRatio, mc.tuner.kI * gearRatio, mc.tuner.kD * gearRatio );
     m_motorFF = new frc::SimpleMotorFeedforward<units::radian>{ 
         units::volt_t{mc.tuner.kS},
         units::unit_t<frc::SimpleMotorFeedforward<units::radian>::kv_unit>{mc.tuner.kV}, 
@@ -48,7 +47,7 @@ void AngularSim::SetMotionControl( units::radian_t goal )
 
 void AngularSim::SetPosition( units::radian_t position ) 
 { 
-    m_motor.SetState( units::radian_t(position.value() / m_gearRatio), 0_rad_per_s ); 
+    m_motor.SetState( units::radian_t(position.value()), 0_rad_per_s ); 
 }
 
 void AngularSim::Update() 
@@ -62,9 +61,9 @@ void AngularSim::Update()
     if( using_motion_control ) {
         m_Setpoint = m_Profile.Calculate( 20_ms, m_Setpoint, m_Goal);
 
-        units::radian_t currPosition = m_motor.GetAngularPosition() * m_gearRatio;
+        units::radian_t currPosition = m_motor.GetAngularPosition();
 
-        double pidOut = m_softPID.Calculate( currPosition.value(), m_Setpoint.position.value() );
+        double pidOut = m_softPID->Calculate( currPosition.value(), m_Setpoint.position.value() );
         units::volt_t ffOut = m_motorFF->Calculate( m_Setpoint.velocity );
 
         units::volt_t inp_volts = pidOut * 12_V + ffOut;
@@ -74,3 +73,24 @@ void AngularSim::Update()
         m_motor.SetInputVoltage( pidOut * 12_V + ffOut );
     }
 }
+
+const units::radian_t AngularSim::GetPosition()
+{
+    return m_motor.GetAngularPosition();
+}
+
+const units::radians_per_second_t AngularSim::GetVelocity()
+{
+    return m_motor.GetAngularVelocity();
+}
+
+const units::volt_t AngularSim::GetVoltage()
+{
+    return m_motor.GetInputVoltage();
+}
+
+const units::ampere_t AngularSim::GetCurrent()
+{
+    return m_motor.GetCurrentDraw();
+}
+

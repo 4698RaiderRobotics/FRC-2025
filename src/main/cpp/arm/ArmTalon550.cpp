@@ -14,6 +14,7 @@ ArmTalon550::ArmTalon550()
     wristMtr{ deviceIDs::kWristMotorID, rev::spark::SparkLowLevel::MotorType::kBrushless }
 {
     ctre::phoenix6::configs::TalonFXConfiguration talonConfigs{};
+    talonConfigs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
     talonConfigs.CurrentLimits.SupplyCurrentLimit = 40_A;
     talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
@@ -65,7 +66,7 @@ void ArmTalon550::SetElbowGoal( units::degree_t goal )
     elbowMtr.SetControl( ctre::phoenix6::controls::MotionMagicDutyCycle{ at_motor_goal } );
 }
 
-void ArmTalon550::SetWristHorizontal( WristPosition pos ) 
+void ArmTalon550::SetWristPosition( WristPosition pos ) 
 {
     switch( pos ) {
     case WristHorizontal:
@@ -73,4 +74,14 @@ void ArmTalon550::SetWristHorizontal( WristPosition pos )
     case WristVertical:
         break;
     }
+}
+
+void ArmTalon550::SetWristAngle( units::degree_t position )
+{
+
+}
+
+void ArmTalon550::SetWristOpenLoop( double percentOutput )
+{
+    
 }

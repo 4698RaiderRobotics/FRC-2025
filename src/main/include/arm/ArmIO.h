@@ -31,5 +31,7 @@ public:
     virtual void Update( Metrics &m ) =0;
 
     virtual void SetElbowGoal( units::degree_t goal ) =0;
-    virtual void SetWristHorizontal( WristPosition pos ) =0;
+    virtual void SetWristPosition( WristPosition pos ) =0;
+    virtual void SetWristAngle( units::degree_t position ) =0;
+    virtual void SetWristOpenLoop( double percentOutput ) =0;
 };

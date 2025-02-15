@@ -11,9 +11,6 @@
 #include "swerve/SwerveConstants.h"
 #include "swerve/Module.h"
 
-// #include "DataLogger.h"
-
-
 Module::Module( ModuleIO* io, const ModuleConfigs& configs ) :
     io{std::move(io)},
     m_turnPIDController{ configs.turnTune.kP, configs.turnTune.kI, configs.turnTune.kD },

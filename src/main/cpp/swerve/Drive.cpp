@@ -200,7 +200,18 @@ void Drive::Periodic( void ) {
     m_field.SetRobotPose( m_odometry.GetEstimatedPosition() );
 }
 
-wpi::array<frc::SwerveModuleState,4U>& Drive::GetModuleStates() {
+void Drive::Stop() 
+{
+    frc::ChassisSpeeds stop;
+    stop.vx = 0_mps;
+    stop.vy = 0_mps;
+    stop.omega = 0_rpm;
+
+    RunVelocity( stop );
+}
+
+wpi::array<frc::SwerveModuleState,4U>& Drive::GetModuleStates() 
+{
     static wpi::array<frc::SwerveModuleState,4U> states{wpi::empty_array};
     for( int i=0; i<4; ++i ) {
         states[i] = m_modules[i]->GetState();
@@ -214,8 +225,14 @@ frc::Pose2d Drive::GetPose( void ) {
 }
 
 // Returns the rotation of the robot
-frc::Rotation2d Drive::GetRotation( void ) {
+frc::Rotation2d Drive::GetRotation( void ) 
+{
     return GetPose().Rotation();
+}
+
+frc::ChassisSpeeds Drive::GetChassisSpeeds()
+{
+    return m_kinematics.ToChassisSpeeds( GetModuleStates() );
 }
 
 

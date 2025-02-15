@@ -16,6 +16,7 @@
 #include "elevator/Elevator.h"
 
 #include "command/DriveCommands.h"
+#include "command/DriveToPose.h"
 
 RobotContainer::RobotContainer()
     : elevator_nudge_axis{ operatorCtrlr.GetHID(), ctrl::nudge_elevator_axis, true },
@@ -78,6 +79,11 @@ void RobotContainer::ConfigureBindings() {
         },
         { m_elevator }
     ).WithName("Elevator Nudge"));
+
+
+    driverCtrlr.A().OnTrue( DriveToPose( m_drive, frc::Pose2d{ 5_m, 5_m, 0_deg } ).ToPtr() );
+
+
 
     if( !frc::DriverStation::IsFMSAttached() ) {
         // Run SysId routines when holding back/start and X/Y.

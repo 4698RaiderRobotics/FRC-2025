@@ -1,4 +1,6 @@
 
+#include "swerve/SwerveConstants.h"
+
 #include "swerve/ModuleIOTalonFX.h"
 #include "swerve/TalonOdometryThread.h"
 

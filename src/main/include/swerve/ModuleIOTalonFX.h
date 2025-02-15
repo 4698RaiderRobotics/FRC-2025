@@ -49,5 +49,6 @@ private:
     ctre::phoenix6::StatusSignal<units::volt_t> turnAppliedVolts = m_turnMotor.GetMotorVoltage();
     ctre::phoenix6::StatusSignal<units::ampere_t> turnCurrent = m_turnMotor.GetSupplyCurrent();
 
+        // SDS Mk4i L2 ratios
     bool isTurnMotorInverted = true;
 };

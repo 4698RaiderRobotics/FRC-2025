@@ -4,12 +4,8 @@
 
 #include <units/math.h>
 
-#include "DataLogger.h"
-#include "swerve/Drive.h"
-#include "swerve/SwerveConstants.h"
-#include "swerve/TalonOdometryThread.h"
-
 #include <frc/DriverStation.h>
+#include <frc/RobotBase.h>
 #include <frc/Filesystem.h>
 
 #include <frc/geometry/Twist2d.h>
@@ -21,24 +17,45 @@
 #include <pathplanner/lib/util/PathPlannerLogging.h>
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 
+#include "util/DataLogger.h"
+#include "swerve/Drive.h"
+#include "swerve/GyroIOPigeon2.h"
+#include "swerve/ModuleIOSim.h"
+#include "swerve/ModuleIOTalonFX.h"
+#include "swerve/TalonOdometryThread.h"
+#include "swerve/SwerveConstants.h"
 
-Drive::Drive(
-    GyroIO* gyroIO, 
-    ModuleIO* flModule, 
-    ModuleIO* frModule, 
-    ModuleIO* blModule, 
-    ModuleIO* brModule) :     
-    m_gyro{ gyroIO },
+
+Drive::Drive( ) :     
     m_kinematics{ frc::Translation2d{+( swerve::physical::kDriveBaseLength / 2 ), +( swerve::physical::kDriveBaseWidth / 2 )},
                     frc::Translation2d{+( swerve::physical::kDriveBaseLength / 2 ), -( swerve::physical::kDriveBaseWidth / 2 )},
                     frc::Translation2d{-( swerve::physical::kDriveBaseLength / 2 ), +( swerve::physical::kDriveBaseWidth / 2 )},
                     frc::Translation2d{-( swerve::physical::kDriveBaseLength / 2 ), -( swerve::physical::kDriveBaseWidth / 2 )} },
     m_odometry{ m_kinematics, rawGyroRotation, lastModulePositions, frc::Pose2d{} }
 {
-    m_modules[0] = std::unique_ptr<Module>( new Module( flModule ) );
-    m_modules[1] = std::unique_ptr<Module>( new Module( frModule ) );
-    m_modules[2] = std::unique_ptr<Module>( new Module( blModule ) );
-    m_modules[3] = std::unique_ptr<Module>( new Module( brModule ) );
+    ModuleIO *flModuleIO;
+    ModuleIO *frModuleIO;
+    ModuleIO *blModuleIO;
+    ModuleIO *brModuleIO;
+    
+    if( frc::RobotBase::IsReal() ) {
+        m_gyro = std::unique_ptr<GyroIOPigeon2>( new GyroIOPigeon2( swerve::pidf::pigeon2Id, swerve::pidf::swerveCanBus ) );
+        flModuleIO = new ModuleIOTalonFX( swerve::pidf::flconfig );
+        frModuleIO = new ModuleIOTalonFX( swerve::pidf::frconfig );
+        blModuleIO = new ModuleIOTalonFX( swerve::pidf::blconfig );
+        brModuleIO = new ModuleIOTalonFX( swerve::pidf::brconfig );
+    } else {
+        m_gyro = std::unique_ptr<GyroIO>( new GyroIO() ); 
+        flModuleIO = new ModuleIOSim( swerve::pidf::flconfig );
+        frModuleIO = new ModuleIOSim( swerve::pidf::frconfig );
+        blModuleIO = new ModuleIOSim( swerve::pidf::blconfig );
+        brModuleIO = new ModuleIOSim( swerve::pidf::brconfig );
+    }
+
+    m_modules[0] = std::unique_ptr<Module>( new Module( flModuleIO ) );
+    m_modules[1] = std::unique_ptr<Module>( new Module( frModuleIO ) );
+    m_modules[2] = std::unique_ptr<Module>( new Module( blModuleIO ) );
+    m_modules[3] = std::unique_ptr<Module>( new Module( brModuleIO ) );
 
     TalonOdometryThread::GetInstance()->Start();
     
@@ -47,7 +64,12 @@ Drive::Drive(
     pathplanner::RobotConfig config;
     try {
         config = pathplanner::RobotConfig::fromGUISettings();
-    } catch( std::exception *e ) {
+    } catch(const std::exception& e) {
+        fmt::print( "\n\n================> PathPlanner Robot Config NOT FOUND <==================\n" );
+        fmt::print( "{}\n", e.what() );
+        fmt::print( "================> PathPlanner Robot Config NOT FOUND <==================\n\n" );
+        PPalert.Set( true );
+
         config = pathplanner::RobotConfig( 
             70_kg, 
             6.8_kg_sq_m, 
@@ -190,8 +212,18 @@ void Drive::SetDriveVelocity( units::meters_per_second_t vel ) {
     }
 }
 
+void Drive::Stop() 
+{
+    frc::ChassisSpeeds stop;
+    stop.vx = 0_mps;
+    stop.vy = 0_mps;
+    stop.omega = 0_rpm;
 
-wpi::array<frc::SwerveModuleState,4U>& Drive::GetModuleStates() {
+    RunVelocity( stop );
+}
+
+wpi::array<frc::SwerveModuleState,4U>& Drive::GetModuleStates() 
+{
     static wpi::array<frc::SwerveModuleState,4U> states{wpi::empty_array};
     for( int i=0; i<4; ++i ) {
         states[i] = m_modules[i]->GetState();
@@ -205,8 +237,14 @@ frc::Pose2d Drive::GetPose( void ) {
 }
 
 // Returns the rotation of the robot
-frc::Rotation2d Drive::GetRotation( void ) {
+frc::Rotation2d Drive::GetRotation( void ) 
+{
     return GetPose().Rotation();
+}
+
+frc::ChassisSpeeds Drive::GetChassisSpeeds()
+{
+    return m_kinematics.ToChassisSpeeds( GetModuleStates() );
 }
 
 

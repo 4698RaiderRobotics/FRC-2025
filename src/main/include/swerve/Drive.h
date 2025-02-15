@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <frc/Alert.h>
 #include <frc/geometry/Pose2d.h>
 
 #include <frc/kinematics/ChassisSpeeds.h>
@@ -20,7 +21,7 @@
 
 class Drive : public frc2::SubsystemBase {
 public:
-    Drive(GyroIO*, ModuleIO*, ModuleIO*, ModuleIO*, ModuleIO*);
+    Drive();
     
     void RunVelocity( frc::ChassisSpeeds speeds );
     void Periodic();
@@ -34,6 +35,7 @@ public:
     void ResetDriverOrientation( units::degree_t angle );
 
     wpi::array<frc::SwerveModuleState,4U>& GetModuleStates();
+    frc::ChassisSpeeds GetChassisSpeeds();
 
     void SetWheelAngles( std::vector<units::radian_t> );
     void SetDriveVelocity( units::meters_per_second_t );
@@ -56,6 +58,8 @@ private:
     units::degree_t field_offset;
     units::degree_t driver_offset;
     bool m_have_driver_offset{ false };
+
+    frc::Alert PPalert{"PathPlanner Robot Config NOT FOUND", frc::Alert::AlertType::kWarning};
 
 public:
     frc::Field2d m_field;

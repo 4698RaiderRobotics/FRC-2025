@@ -6,30 +6,40 @@
 
 #include <optional>
 
-#include <frc/TimedRobot.h>
 #include <frc2/command/CommandPtr.h>
+#include <frc/smartdashboard/Mechanism2d.h>
+#include <frc/smartdashboard/MechanismLigament2d.h>
 
+#include "util/LoggedRobot.h"
 #include "RobotContainer.h"
 
-class Robot : public frc::TimedRobot {
- public:
-  void RobotInit() override;
-  void RobotPeriodic() override;
-  void DisabledInit() override;
-  void DisabledPeriodic() override;
-  void DisabledExit() override;
-  void AutonomousInit() override;
-  void AutonomousPeriodic() override;
-  void AutonomousExit() override;
-  void TeleopInit() override;
-  void TeleopPeriodic() override;
-  void TeleopExit() override;
-  void TestInit() override;
-  void TestPeriodic() override;
-  void TestExit() override;
+    // Global variables of mech2d
+extern frc::Mechanism2d robot_mech;
+extern frc::MechanismLigament2d* elevator_lig;
+extern frc::MechanismLigament2d* elbow_lig;
+extern frc::MechanismLigament2d* wrist_lig1;
+extern frc::MechanismLigament2d* wrist_lig2;
+extern frc::MechanismLigament2d* climber_lig;
 
- private:
-  std::optional<frc2::CommandPtr> m_autonomousCommand;
+class Robot : public LoggedRobot {
+public:
+    Robot();
+    void RobotPeriodic() override;
+    void DisabledInit() override;
+    void DisabledPeriodic() override;
+    void DisabledExit() override;
+    void AutonomousInit() override;
+    void AutonomousPeriodic() override;
+    void AutonomousExit() override;
+    void TeleopInit() override;
+    void TeleopPeriodic() override;
+    void TeleopExit() override;
+    void TestInit() override;
+    void TestPeriodic() override;
+    void TestExit() override;
 
-  RobotContainer m_container;
+private:
+    std::optional<frc2::CommandPtr> m_autonomousCommand;
+
+    RobotContainer m_container;
 };

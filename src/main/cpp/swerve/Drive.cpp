@@ -214,12 +214,9 @@ void Drive::SetDriveVelocity( units::meters_per_second_t vel ) {
 
 void Drive::Stop() 
 {
-    frc::ChassisSpeeds stop;
-    stop.vx = 0_mps;
-    stop.vy = 0_mps;
-    stop.omega = 0_rpm;
-
-    RunVelocity( stop );
+    for( int i=0; i<4; ++i ) {
+        m_modules[i]->Stop();
+    }
 }
 
 wpi::array<frc::SwerveModuleState,4U>& Drive::GetModuleStates() 

@@ -81,7 +81,9 @@ void RobotContainer::ConfigureBindings() {
     ).WithName("Elevator Nudge"));
 
 
-    driverCtrlr.A().OnTrue( DriveToPose( m_drive, frc::Pose2d{ 5_m, 5_m, 0_deg } ).ToPtr() );
+    driverCtrlr.A().OnTrue( DriveToPose( m_drive, [] { return frc::Pose2d{ 5_m, 5_m, 0_deg }; } ).ToPtr() );
+    driverCtrlr.B().OnTrue( DriveCommands::DriveDeltaPose( m_drive, frc::Transform2d{ 1_m, 1_m, 90_deg }, false ) );
+    driverCtrlr.X().OnTrue( DriveCommands::DriveDeltaPose( m_drive, frc::Transform2d{ 1_m, 1_m, 90_deg }, true ) );
 
 
 

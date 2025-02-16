@@ -5,6 +5,7 @@
 #include <frc2/command/Commands.h>
 
 #include "command/DriveCommands.h"
+#include "command/DriveToPose.h"
 
 #include "swerve/Drive.h"
 #include "swerve/SwerveConstants.h"
@@ -12,7 +13,7 @@
 const double DEADBAND = 0.1;
 
 frc2::CommandPtr DriveCommands::JoystickDrive( 
-    Drive* d, 
+    Drive *d, 
     std::function<double()> xSupplier, 
     std::function<double()> ySupplier, 
     std::function<double()> omegaSupplier)
@@ -50,3 +51,24 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
     {d}
     ).WithName( "Joystick Drive" );
 }
+
+frc2::CommandPtr DriveCommands::DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotCoords )
+{
+    return DriveToPose( d, [d, move, robotCoords] {
+        frc::Pose2d newPose;
+        frc::Pose2d currentPose = d->GetPose();
+
+        if( robotCoords ) {
+            // Move the current pose in the Robot Pose coordinate system.
+            // The robot coordinate system is X-forward and Y-left.
+            newPose = currentPose.TransformBy( move );
+        } else {
+            // Move the current pose in the field coordinate system.
+            newPose = {currentPose.Translation() + move.Translation(), move.Rotation() };
+        }
+
+        return newPose;
+    }
+    ).WithName("DriveDeltaPose");
+}
+

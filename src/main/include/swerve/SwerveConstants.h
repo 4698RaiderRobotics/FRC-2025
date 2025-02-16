@@ -12,12 +12,6 @@
 
 #include "swerve/ModuleIO.h"
 
-    // Create the jerk unit meters_per_second_cubed
-namespace units {
-UNIT_ADD(jerk, meters_per_second_cubed, meters_per_second_cubed,
-         mps_cu, compound_unit<length::meter, inverse<cubed<time::seconds>>>)
-}
-
 namespace swerve {
 
     namespace physical {
@@ -94,7 +88,7 @@ namespace swerve {
             3,          // driveCanId
             4,          // turnCanId
             10,         // encoderCanId
-           -0.1743_tr, // absoluteEncoderOffset
+            -0.1743_tr, // absoluteEncoderOffset
             {turnTune, turnMP},   // turn control
             {driveTune, driveMP}  // drive control
         };

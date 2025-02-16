@@ -21,7 +21,7 @@
 class Drive;
 
 /**
- * Drive the Robot to a Field coordinate position.
+ * Drive the Robot to a Field pose.
  * 
  * Use trapezoidal profiles for each of the x-axis, y-axis, and rotation.
  */
@@ -44,21 +44,25 @@ class DriveToPose
   frc::Pose2d m_targetPose;
   frc::Pose2d m_profileStartPose;
 
-  units::degree_t m_profileDirection;
+  // units::degree_t m_profileDirection;
 
   frc::ChassisSpeeds m_speeds;
 
-  frc::TrapezoidProfile<units::meters> m_translationProfile{{12_fps, 10_fps_sq}};
-  frc::TrapezoidProfile<units::degrees> m_rotationProfile{{360_deg_per_s, 900_deg_per_s_sq}};
+  frc::TrapezoidProfile<units::meters> m_XProfile{{12_fps, 10_fps_sq}};
+  frc::TrapezoidProfile<units::meters> m_YProfile{{12_fps, 10_fps_sq}};
+  frc::TrapezoidProfile<units::degrees> m_RProfile{{360_deg_per_s, 900_deg_per_s_sq}};
 
-  frc::TrapezoidProfile<units::meters>::State m_translationSetpoint;
-  frc::TrapezoidProfile<units::degrees>::State m_rotationSetpoint;
+  frc::TrapezoidProfile<units::meters>::State m_XSetpoint;
+  frc::TrapezoidProfile<units::meters>::State m_YSetpoint;
+  frc::TrapezoidProfile<units::degrees>::State m_RSetpoint;
 
-  frc::TrapezoidProfile<units::meters>::State m_translationGoal;
-  frc::TrapezoidProfile<units::degrees>::State m_rotationGoal;
+  frc::TrapezoidProfile<units::meters>::State m_XGoal;
+  frc::TrapezoidProfile<units::meters>::State m_YGoal;
+  frc::TrapezoidProfile<units::degrees>::State m_RGoal;
 
-  frc::PIDController m_transPID{ 4.0, 0.0, 0.0 };
-  frc::PIDController m_rotPID{ 4.0, 0.0, 0.0 };
+  frc::PIDController m_Xpid{ 4.0, 0.0, 0.0 };
+  frc::PIDController m_Ypid{ 4.0, 0.0, 0.0 };
+  frc::PIDController m_Rpid{ 4.0, 0.0, 0.0 };
 
   units::second_t m_startTime;
 };

@@ -43,4 +43,7 @@ private:
     units::radian_t turnAbsoluteInitPosition;
     units::volt_t driveAppliedVolts;
     units::volt_t turnAppliedVolts;
+
+    static inline const TuningParams simDrive_PID = { 0.1, 0.0, 0.0, 0.0, 0.0, 0.124, 0.0 };
+    static inline const TuningParams simTurn_PID = { 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 };

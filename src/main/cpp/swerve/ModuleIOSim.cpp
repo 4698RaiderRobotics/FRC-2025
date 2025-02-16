@@ -15,16 +15,17 @@ ModuleIOSim::ModuleIOSim( const ModuleConfigs& configs ) :
     index{ configs.index },
     driveSim{ frc::LinearSystemId::DCMotorSystem( frc::DCMotor::NEO(), 0.025_kg_sq_m, swerve::physical::kDriveGearRatio ), frc::DCMotor::NEO()},
     turnSim{ frc::LinearSystemId::DCMotorSystem(frc::DCMotor::NEO(), 0.004_kg_sq_m, swerve::physical::kTurnGearRatio), frc::DCMotor::NEO()},
-    m_turnPIDController{ configs.turnTune.tuner.kP, configs.turnTune.tuner.kI, configs.turnTune.tuner.kD },
-    m_drivePIDController{ configs.driveTune.tuner.kP, configs.driveTune.tuner.kI, configs.driveTune.tuner.kD }
+    m_turnPIDController{ simTurn_PID.kP, simTurn_PID.kI, simTurn_PID.kD },
+    m_drivePIDController{ simDrive_PID.kP, simDrive_PID.kI, simDrive_PID.kD }
 {
     m_driveFF = new frc::SimpleMotorFeedforward<units::radian>{ 
-        units::volt_t{configs.driveTune.tuner.kS},
-        units::unit_t<frc::SimpleMotorFeedforward<units::radian>::kv_unit>{configs.driveTune.tuner.kV}, 
-        units::unit_t<frc::SimpleMotorFeedforward<units::radian>::ka_unit>{configs.driveTune.tuner.kA}
+        units::volt_t{simDrive_PID.kS},
+        units::unit_t<frc::SimpleMotorFeedforward<units::radian>::kv_unit>{simDrive_PID.kV}, 
+        units::unit_t<frc::SimpleMotorFeedforward<units::radian>::ka_unit>{simDrive_PID.kA}
     };
-    m_turnPIDController.EnableContinuousInput( -std::numbers::pi , std::numbers::pi );    std::srand(std::time(nullptr));
-
+    m_turnPIDController.EnableContinuousInput( -std::numbers::pi , std::numbers::pi );    
+    
+    std::srand(std::time(nullptr));
     double random_number = std::rand() / (1.0 * RAND_MAX );  // [0 - 1.0] range
     turnAbsoluteInitPosition = units::radian_t( random_number * 2.0 * std::numbers::pi );
 }

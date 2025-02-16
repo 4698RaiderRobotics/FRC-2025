@@ -10,40 +10,7 @@
 
 #include <frc/geometry/Rotation2d.h>
 
-/**
- * Controller Parameters kP, kI, kD, kS, kG, kV, kA
-*/
-struct TuningParams {
-    double kP;
-    double kI;
-    double kD;
-    double kS;
-    double kG;
-    double kV;
-    double kA;
-};
-
-template<class Distance> struct MotionParams {
-    using Distance_t = units::unit_t<Distance>;
-    using Velocity =
-        units::compound_unit<Distance, units::inverse<units::seconds>>;
-    using Velocity_t = units::unit_t<Velocity>;
-    using Acceleration =
-        units::compound_unit<Velocity, units::inverse<units::seconds>>;
-    using Acceleration_t = units::unit_t<Acceleration>;
-    using Jerk =
-        units::compound_unit<Acceleration, units::inverse<units::seconds>>;
-    using Jerk_t = units::unit_t<Jerk>;
-
-    Velocity_t MaxVelocity;
-    Acceleration_t MaxAcceleration;
-    Jerk_t MaxJerk;
-};
-
-template<class Distance> struct MotionConfig {
-    TuningParams tuner;
-    MotionParams<Distance> mp;
-};
+#include "util/Tuning.h"
 
 struct ModuleConfigs {
     int index;

@@ -51,8 +51,12 @@ private:
     wpi::array<frc::SwerveModulePosition,4> lastModulePositions{wpi::empty_array};
 
     frc::SwerveDriveKinematics<4> m_kinematics;
+
+public:
+    // This is public so it can be passed to the vision subsystem
     frc::SwerveDrivePoseEstimator<4> m_odometry;
 
+private:
     std::unique_ptr<frc2::sysid::SysIdRoutine> sysId;
 
     units::degree_t field_offset;

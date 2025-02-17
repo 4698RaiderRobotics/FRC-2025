@@ -14,6 +14,7 @@
 #include "intake/Intake.h"
 #include "climber/Climber.h"
 #include "elevator/Elevator.h"
+#include "vision/Vision.h"
 
 #include "command/DriveCommands.h"
 #include "command/DriveToPose.h"
@@ -30,6 +31,7 @@ RobotContainer::RobotContainer()
     m_intake = new Intake( );
     m_climber = new Climber( );
     m_elevator = new Elevator( );
+    m_vision = new Vision( &m_drive->m_odometry );
 
     // Extra deadband for the climber and elevator nudge
     climber_nudge_axis.SetDeadband( 0.25 );

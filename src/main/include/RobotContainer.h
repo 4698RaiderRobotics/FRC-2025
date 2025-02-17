@@ -15,6 +15,7 @@ class Drive;
 class Intake;
 class Climber;
 class Elevator;
+class Vision;
 
 class RobotContainer {
 public:
@@ -30,6 +31,7 @@ private:
     Intake *m_intake;
     Climber *m_climber;
     Elevator *m_elevator;
+    Vision *m_vision;
 
     frc2::CommandXboxController driverCtrlr{0};
     frc2::CommandXboxController operatorCtrlr{1};

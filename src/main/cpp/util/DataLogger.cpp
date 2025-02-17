@@ -47,9 +47,10 @@ void DataLogger::Log( const std::string& s, const std::string& val )
 template<>
 void DataLogger::Log( const std::string &s, const std::optional<frc::Pose2d>& opt ) {
     if( opt.has_value() ) {
-        DataLogger::Log( s, opt.value() );
+        std::vector<frc::Pose2d> v{ opt.value() };
+        DataLogger::Log( s, v );
     } else {
-        DataLogger::Log( s, std::span<double>{} );
+        DataLogger::Log( s, std::span<frc::Pose2d>{} );
     }
 }
 

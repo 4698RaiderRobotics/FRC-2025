@@ -1,6 +1,7 @@
 
 #include <frc/RobotBase.h>
 #include <frc/DriverStation.h>
+#include <frc/apriltag/AprilTagFieldLayout.h>
 
 #include "util/DataLogger.h"
 #include "Constants.h"
@@ -26,7 +27,11 @@ Vision::Vision( frc::SwerveDrivePoseEstimator<4> *odom ) : odometry{odom}
     // Create array of pose estimators and each estimator.
     estimators = new photon::PhotonPoseEstimator *[ kNumberOfCameras ];
     for( int i=0; i<kNumberOfCameras; ++ i ) {
-       estimators[i] = new photon::PhotonPoseEstimator{ aprilTags, photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR, cameraInfo[i].robotToCamera };
+        estimators[i] = new photon::PhotonPoseEstimator{ 
+            aprilTags, 
+            photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR, 
+            cameraInfo[i].robotToCamera
+        };
     }
 
     if( frc::RobotBase::IsSimulation() ) {

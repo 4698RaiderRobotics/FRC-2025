@@ -44,12 +44,10 @@ private:
     frc::Pose2d m_targetPose;
     frc::Pose2d m_profileStartPose;
 
-    // units::degree_t m_profileDirection;
-
     frc::ChassisSpeeds m_speeds;
 
-    frc::TrapezoidProfile<units::meters> m_XProfile{{12_fps, 10_fps_sq}};
-    frc::TrapezoidProfile<units::meters> m_YProfile{{12_fps, 10_fps_sq}};
+    frc::TrapezoidProfile<units::meters> m_XProfile{{12_fps, 100_fps_sq}};
+    frc::TrapezoidProfile<units::meters> m_YProfile{{12_fps, 100_fps_sq}};
     frc::TrapezoidProfile<units::degrees> m_RProfile{{360_deg_per_s, 900_deg_per_s_sq}};
 
     frc::TrapezoidProfile<units::meters>::State m_XSetpoint;

@@ -16,10 +16,10 @@
 struct VisionResultData {
     std::optional<frc::Pose2d> visionPose;
     std::vector<frc::Pose3d> trackedTags;
-    units::meter_t tagDistance;
-    units::meter_t deltaDistance;
-    double std_dev;
-    units::second_t timestamp;
+    units::meter_t tagDistance{0_m};
+    units::meter_t deltaDistance{0_m};
+    double std_dev{0.0};
+    units::second_t timestamp{0_s};
     bool addToOdometry{false};
 };
 

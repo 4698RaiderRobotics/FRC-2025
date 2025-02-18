@@ -71,10 +71,10 @@ namespace elevator {
     constexpr units::inch_t kElevatorMinHeight = 0_in;
 
     // Height for the elevator to place on Reef
-    constexpr units::inch_t kCoralL1Height = 15_in;
-    constexpr units::inch_t kCoralL2Height = 25_in;
-    constexpr units::inch_t kCoralL3Height = 40_in;
-    constexpr units::inch_t kCoralL4Height = 65_in;
+    constexpr units::inch_t kHeightCoralL1 = 15_in;
+    constexpr units::inch_t kHeightCoralL2 = 25_in;
+    constexpr units::inch_t kHeightCoralL3 = 40_in;
+    constexpr units::inch_t kHeightCoralL4 = 65_in;
 }
 
     // *****************     CLIMBER SUBSYSTEM      **********************

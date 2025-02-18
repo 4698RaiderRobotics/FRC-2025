@@ -19,7 +19,8 @@ void DriveToPose::Init() {
     m_targetPose = m_poseFunc();
 
     frc::Pose2d currentPose = m_drive->GetPose();
-    frc::ChassisSpeeds currentSpeed = m_drive->GetChassisSpeeds();
+    frc::ChassisSpeeds currentSpeed = 
+        frc::ChassisSpeeds::FromRobotRelativeSpeeds( m_drive->GetChassisSpeeds(), currentPose.Rotation() );
 
     m_Xpid.Reset();
     m_Ypid.Reset();
@@ -78,12 +79,12 @@ void DriveToPose::Execute() {
     frc::Pose2d trajectoryPose{ setptXField, setptYField, m_RSetpoint.position };
 
     DataLogger::Log( "DriveToPose/TrajectoryPose", trajectoryPose );
-    DataLogger::Log( "DriveToPose/setptXField", setptXField );
-    DataLogger::Log( "DriveToPose/setptYField", setptYField );
-    DataLogger::Log( "DriveToPose/xFF", xFF );
-    DataLogger::Log( "DriveToPose/yFF", yFF );
-    DataLogger::Log( "DriveToPose/xFeedback", xFeedback );
-    DataLogger::Log( "DriveToPose/yFeedback", yFeedback );
+    // DataLogger::Log( "DriveToPose/setptXField", setptXField );
+    // DataLogger::Log( "DriveToPose/setptYField", setptYField );
+    // DataLogger::Log( "DriveToPose/xFF", xFF );
+    // DataLogger::Log( "DriveToPose/yFF", yFF );
+    // DataLogger::Log( "DriveToPose/xFeedback", xFeedback );
+    // DataLogger::Log( "DriveToPose/yFeedback", yFeedback );
 
     m_speeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(xFF + xFeedback,
 			yFF + yFeedback, m_RSetpoint.velocity + rotFeedback,

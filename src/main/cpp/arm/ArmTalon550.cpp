@@ -44,33 +44,34 @@ ArmTalon550::ArmTalon550()
         elbowAppliedVolts, 
         elbowCurrent
     );
-
     elbowMtr.OptimizeBusUtilization();
 
-    SparkMaxConfig config{};
 
+    SparkMaxConfig config{};
     config
         .Inverted(false)
         .SetIdleMode( SparkMaxConfig::IdleMode::kBrake )
         .SmartCurrentLimit( 30 );
-    // config.closedLoop
-    //     .SetFeedbackSensor( ClosedLoopConfig::FeedbackSensor::kPrimaryEncoder )
-    //     .Pid(1.0, 0.0, 0.0);
+    config.closedLoop
+        .SetFeedbackSensor( ClosedLoopConfig::FeedbackSensor::kPrimaryEncoder )
+        .Pid( kWristMotionConfig.tuner.kP, kWristMotionConfig.tuner.kI, kWristMotionConfig.tuner.kD);
+    config.closedLoop.maxMotion
+        .MaxVelocity( units::revolutions_per_minute_t{kWristMotionConfig.mp.MaxVelocity}.value() )
+        .MaxAcceleration( units::revolutions_per_minute_per_second_t{kWristMotionConfig.mp.MaxAcceleration}.value() );
         
     wristMtr.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 }
 
 void ArmTalon550::Update( Metrics &m )
 {
-
-   ctre::phoenix6::BaseStatusSignal::RefreshAll( elbowPosition, elbowVelocity, elbowAppliedVolts, elbowCurrent );
+    ctre::phoenix6::BaseStatusSignal::RefreshAll( elbowPosition, elbowVelocity, elbowAppliedVolts, elbowCurrent );
     m.elbowPosition = elbowPosition.GetValue();
     m.elbowVelocity = elbowVelocity.GetValue();
     m.elbowAppliedVolts = elbowAppliedVolts.GetValue();
     m.elbowCurrent = elbowCurrent.GetValue();
 
-    m.wristPosition = wristMtr.GetEncoder().GetPosition() * 1_tr / kElbowGearRatio;
-    m.wristVelocity = wristMtr.GetEncoder().GetVelocity() * 1_rpm / kElbowGearRatio;
+    m.wristPosition = wristMtr.GetEncoder().GetPosition() * 1_tr / kWristGearRatio;
+    m.wristVelocity = wristMtr.GetEncoder().GetVelocity() * 1_rpm / kWristGearRatio;
     m.wristAppliedVolts = wristMtr.GetAppliedOutput() * wristMtr.GetBusVoltage() * 1_V;
     m.wristCurrent = wristMtr.GetOutputCurrent() * 1_A;
 
@@ -91,9 +92,9 @@ void ArmTalon550::SetWristPosition( WristPosition pos )
     }
 }
 
-void ArmTalon550::SetWristAngle( units::degree_t position )
+void ArmTalon550::ResetWristAngle( units::degree_t position )
 {
-    units::turn_t turns = position;
+    units::turn_t turns = position * kWristGearRatio;
     wristMtr.GetEncoder().SetPosition( turns.value() );
 }
 

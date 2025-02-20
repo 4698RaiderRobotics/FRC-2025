@@ -32,7 +32,7 @@ void ElevatorSim::Update( Metrics &m )
     m.current = motorSim.GetCurrent();
 }
 
-void ElevatorSim::SetPosition( units::inch_t position )
+void ElevatorSim::ResetPosition( units::inch_t position )
 {
     motorSim.SetPosition( position );
 }

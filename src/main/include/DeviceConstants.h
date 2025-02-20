@@ -33,6 +33,10 @@ namespace arm {
         { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 },
         { 2_tps, 4_tr_per_s_sq, 0_tr_per_s_cu }
     };
+    constexpr MotionConfig<units::turns> kWristMotionConfig = {
+        { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 },
+        { 2_tps, 4_tr_per_s_sq, 0_tr_per_s_cu }
+    };
 }
 
 

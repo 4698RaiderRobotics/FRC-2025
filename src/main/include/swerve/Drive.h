@@ -61,7 +61,8 @@ private:
 
     units::degree_t field_offset;
     units::degree_t driver_offset;
-    bool m_have_driver_offset{ false };
+    bool m_have_driver_offset{false};
+    bool m_missing_PP_config{false};
 
     frc::Alert PPalert{"PathPlanner Robot Config NOT FOUND", frc::Alert::AlertType::kWarning};
 

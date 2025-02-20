@@ -9,6 +9,11 @@
 #include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/NamedCommands.h>
+
 #include "arm/Arm.h"
 #include "swerve/Drive.h"
 #include "intake/Intake.h"
@@ -39,6 +44,9 @@ RobotContainer::RobotContainer()
     elevator_nudge_axis.SetDeadband( 0.25 );
 
     ConfigureBindings();
+    ConfigureAutos();
+
+  frc::SmartDashboard::PutData("Auto Mode", &m_chooser);
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -54,7 +62,7 @@ void RobotContainer::ConfigureBindings() {
             }
         },
         { m_arm }
-    ).WithName("Elbow/Wrist Nudge"));
+    ).WithName("Elbow-Wrist Nudge"));
 
     m_drive->SetDefaultCommand( 
         DriveCommands::JoystickDrive( 
@@ -102,6 +110,47 @@ void RobotContainer::ConfigureBindings() {
 
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-    return frc2::cmd::Print("No autonomous command configured");
+void RobotContainer::ConfigureAutos() {
+
+    pathplanner::NamedCommands::registerCommand( 
+        "DriveToReefPose", 
+        std::move( ReefCommands::DriveToReefPose( m_drive, true ))
+    );
+
+    std::vector<AutoNameMap> autos = {
+        // { "One Piece", "THEOnePiece" },
+        // { "Source Four Piece", "SourceFourPiece" },
+        // { "Source Three Piece", "SourceThreePiece" },
+        // { "Source Two Piece", "SourceTwoPiece" },
+        // { "Source Two Piece Center", "SourceTwoPieceCenter" },
+        // { "Source Three Piece Center", "SourceThreePieceCenter" },
+        // { "Source Three Piece Center Wait", "SourceThreePieceCenterWait" },
+        // { "Source Four Piece Center", "SourceFourPieceCenter" },
+        // { "Source One Piece Taxi", "SourceOnePieceTaxi" },
+
+        // { "Amp Four Piece", "AmpFourPiece" },
+        // { "Amp Three Piece", "AmpThreePiece" },
+        // { "Amp Two Piece", "AmpTwoPiece" },
+        // { "Amp Three Piece Center", "AmpThreePieceCenter" },
+        // { "Amp Four Piece Center", "AmpFourPieceCenter" },
+
+        // { "Middle Four Piece", "MiddleFourPiece" },
+        // { "Middle Three Piece Amp", "MiddleThreePieceAmp" },
+        // { "Middle Three Piece Source", "MiddleThreePieceSource" },
+        // { "Middle Two Piece", "MiddleTwoPiece" },
+        // { "Middle Four Piece Center Amp", "MiddleFourPieceCenterAmp" },
+        // { "Middle Four Piece Center Source", "MiddleFourPieceCenterSource" },
+        { "Middle Five Piece Amp", "TestAuto" }
+    };
+
+    for( unsigned int i=0; i<autos.size(); ++i ) {
+        m_chooser.AddOption( autos[i].Description, i );
+        AutoCommands.push_back( pathplanner::PathPlannerAuto( autos[i].AutoName ).WithName(autos[i].AutoName) );
+    }
+     m_chooser.SetDefaultOption( autos[0].Description, 0 );
+
+}
+
+frc2::Command* RobotContainer::GetAutonomousCommand() {
+    return AutoCommands[ m_chooser.GetSelected() ].get();
 }

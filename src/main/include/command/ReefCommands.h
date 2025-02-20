@@ -11,7 +11,7 @@ class ReefPlacingPoses {
 public:
     ReefPlacingPoses();
 
-    frc::Pose2d GetClosest( frc::Pose2d currentPose, bool isRedAlliance, bool onRightSide );
+    frc::Pose2d GetClosest( frc::Pose2d currentPose, bool onRightSide );
 
 private:
     frc::AprilTagFieldLayout aprilTags;

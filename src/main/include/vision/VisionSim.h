@@ -13,4 +13,6 @@ public:
 private:
     photon::VisionSystemSim visionSim{ "main" };
     photon::PhotonCameraSim **camSims;
+
+    bool sim_start_position{true};
 };

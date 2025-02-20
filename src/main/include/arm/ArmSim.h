@@ -15,6 +15,7 @@ public:
     void SetWristPosition( WristPosition pos ) override;
     void SetWristAngle( units::degree_t position ) override;
     void SetWristOpenLoop( double percentOutput ) override;
+    void UpdateElbowOffset() override {}
 private:
     AngularSim elbowSim;
     AngularSim wristSim;

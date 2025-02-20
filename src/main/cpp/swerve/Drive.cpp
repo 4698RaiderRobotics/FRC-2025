@@ -68,7 +68,7 @@ Drive::Drive( ) :
         fmt::print( "\n\n================> PathPlanner Robot Config NOT FOUND <==================\n" );
         fmt::print( "{}\n", e.what() );
         fmt::print( "================> PathPlanner Robot Config NOT FOUND <==================\n\n" );
-        PPalert.Set( true );
+        m_missing_PP_config = true;
 
         config = pathplanner::RobotConfig( 
             70_kg, 
@@ -133,6 +133,8 @@ void Drive::RunVelocity( frc::ChassisSpeeds speeds ) {
 }
 
 void Drive::Periodic( void ) {
+        // Set PathPlanner config alert condition
+    PPalert.Set( m_missing_PP_config );
 
         // Get new input values
     TalonOdometryThread::GetInstance()->odometryMutex.lock();

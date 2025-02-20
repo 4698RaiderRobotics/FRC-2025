@@ -34,4 +34,5 @@ public:
     virtual void SetWristPosition( WristPosition pos ) =0;
     virtual void SetWristAngle( units::degree_t position ) =0;
     virtual void SetWristOpenLoop( double percentOutput ) =0;
+    virtual void UpdateElbowOffset() =0;
 };

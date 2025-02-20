@@ -1,4 +1,5 @@
 
+#include <frc/DriverStation.h>
 #include <frc/apriltag/AprilTagFieldLayout.h>
 #include <photon/simulation/VisionSystemSim.h>
 
@@ -34,6 +35,14 @@ VisionSim::VisionSim( photon::PhotonCamera **camera )
 
 void VisionSim::Update( frc::Pose2d pose )
 {
-    visionSim.Update( pose );
+    if( frc::DriverStation::IsDisabled() && sim_start_position ) {
+        visionSim.Update( frc::Pose2d{ 10_m, 5_m, -30_deg} );
+    } else {
+        visionSim.Update( pose );
+    }
+
+    if( frc::DriverStation::IsEnabled() ) {
+        sim_start_position = false;
+    }
 }
 

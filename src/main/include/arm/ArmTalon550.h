@@ -21,10 +21,12 @@ public:
 private:
     ctre::phoenix6::hardware::TalonFX elbowMtr;
     ctre::phoenix6::hardware::CANcoder elbowEncoder;
-    rev::spark::SparkMax wristMtr;
 
     ctre::phoenix6::StatusSignal<units::turn_t> elbowPosition = elbowMtr.GetPosition();
     ctre::phoenix6::StatusSignal<units::turns_per_second_t> elbowVelocity = elbowMtr.GetVelocity();
     ctre::phoenix6::StatusSignal<units::volt_t> elbowAppliedVolts = elbowMtr.GetMotorVoltage();
     ctre::phoenix6::StatusSignal<units::ampere_t> elbowCurrent = elbowMtr.GetSupplyCurrent();
+
+    rev::spark::SparkMax wristMtr;
+    rev::spark::SparkClosedLoopController wristCtrlr = wristMtr.GetClosedLoopController();
 };

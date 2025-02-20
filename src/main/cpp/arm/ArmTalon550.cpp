@@ -52,6 +52,9 @@ ArmTalon550::ArmTalon550()
         .Inverted(false)
         .SetIdleMode( SparkMaxConfig::IdleMode::kBrake )
         .SmartCurrentLimit( 30 );
+    config.encoder
+        .PositionConversionFactor( kWristGearRatio * 360.0 )        // Convert to degrees at intake
+        .VelocityConversionFactor( kWristGearRatio );               // Convert to RPM of intake
     config.closedLoop
         .SetFeedbackSensor( ClosedLoopConfig::FeedbackSensor::kPrimaryEncoder )
         .Pid( kWristMotionConfig.tuner.kP, kWristMotionConfig.tuner.kI, kWristMotionConfig.tuner.kD);
@@ -70,8 +73,8 @@ void ArmTalon550::Update( Metrics &m )
     m.elbowAppliedVolts = elbowAppliedVolts.GetValue();
     m.elbowCurrent = elbowCurrent.GetValue();
 
-    m.wristPosition = wristMtr.GetEncoder().GetPosition() * 1_tr / kWristGearRatio;
-    m.wristVelocity = wristMtr.GetEncoder().GetVelocity() * 1_rpm / kWristGearRatio;
+    m.wristPosition = wristMtr.GetEncoder().GetPosition() * 1_deg;      // PositionConversionFactor() set so this returns degrees
+    m.wristVelocity = wristMtr.GetEncoder().GetVelocity() * 1_rpm;      // VelocityConversionFactor() set so this returns RPM
     m.wristAppliedVolts = wristMtr.GetAppliedOutput() * wristMtr.GetBusVoltage() * 1_V;
     m.wristCurrent = wristMtr.GetOutputCurrent() * 1_A;
 
@@ -86,14 +89,18 @@ void ArmTalon550::SetWristPosition( WristPosition pos )
 {
     switch( pos ) {
     case WristHorizontal:
+        wristCtrlr.SetReference( 0.0, SparkBase::ControlType::kMAXMotionPositionControl );
         break;
     case WristVertical:
+        wristCtrlr.SetReference( 90.0, SparkBase::ControlType::kMAXMotionPositionControl );
         break;
     }
 }
 
 void ArmTalon550::ResetWristAngle( units::degree_t position )
 {
+        // Not sure if this is already converted with PositionConversionFactor()
+        // or not.  Luckily it is called with 0.0 
     units::turn_t turns = position * kWristGearRatio;
     wristMtr.GetEncoder().SetPosition( turns.value() );
 }

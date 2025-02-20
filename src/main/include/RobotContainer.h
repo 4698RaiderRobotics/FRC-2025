@@ -10,6 +10,8 @@
 
 #include "util/ControllerAxis.h"
 
+#include <frc/smartdashboard/SendableChooser.h>
+
 class Arm;
 class Drive;
 class Intake;
@@ -21,10 +23,11 @@ class RobotContainer {
 public:
     RobotContainer();
 
-    frc2::CommandPtr GetAutonomousCommand();
+    frc2::Command* GetAutonomousCommand();
 
 private:
     void ConfigureBindings();
+    void ConfigureAutos();
 
     Arm *m_arm;
     Drive *m_drive;
@@ -40,4 +43,13 @@ private:
     ControllerAxis climber_nudge_axis;
  
     frc2::Trigger nudge_hold_button;
+
+    frc::SendableChooser<int> m_chooser;
+
+  std::vector<frc2::CommandPtr> AutoCommands;
+
+   struct AutoNameMap {
+    std::string Description;
+    std::string AutoName;
+  };
 };

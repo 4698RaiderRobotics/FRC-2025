@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterTo1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DriveToReefPoseRight"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1ToLeftSource"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftSideSource5"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "CenterStart",
+  "choreoAuto": false
+}

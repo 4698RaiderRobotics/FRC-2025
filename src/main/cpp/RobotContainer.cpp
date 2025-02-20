@@ -20,6 +20,16 @@
 #include "command/ReefCommands.h"
 #include "command/DriveToPose.h"
 
+
+
+
+
+#include <frc/smartdashboard/SmartDashboard.h>
+
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/NamedCommands.h>
+
+
 RobotContainer::RobotContainer()
     : elevator_nudge_axis{ operatorCtrlr.GetHID(), ctrl::nudge_elevator_axis, true },
     elbow_nudge_axis{ operatorCtrlr.GetHID(), ctrl::nudge_elbow_axis, true },
@@ -39,6 +49,8 @@ RobotContainer::RobotContainer()
     elevator_nudge_axis.SetDeadband( 0.25 );
 
     ConfigureBindings();
+    ConfigureAutos();
+    frc::SmartDashboard::PutData("Auto Mode", &m_chooser);
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -102,6 +114,27 @@ void RobotContainer::ConfigureBindings() {
 
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-    return frc2::cmd::Print("No autonomous command configured");
+void RobotContainer::ConfigureAutos(){
+    pathplanner::NamedCommands::registerCommand("DriveToReefPoseLeft", ReefCommands::DriveToReefPose( m_drive, true ));
+    pathplanner::NamedCommands::registerCommand("DriveToReefPoseRight", ReefCommands::DriveToReefPose( m_drive, false ));
+  std::vector<AutoNameMap> autos = {
+   
+    {"Center to left source two piece", "CenterToLeftSideSourceTwoPiece"},
+    {"Center to right source two piece", "CenterToRightSideSourceTwoPiece"},
+   
+    {"Left One Piece", "LeftOnePiece"},
+    {"Left Two Piece", "LeftTwoPiece"},
+   
+    {"Right One Piece", "RightOnePiece"},
+    {"Right Two Piece", "RightTwoPiece"}
+
+  };
+  for( unsigned int i=0; i<autos.size(); ++i ) {
+      m_chooser.AddOption( autos[i].Description, i );
+      AutoCommands.push_back( pathplanner::PathPlannerAuto(autos[i].AutoName).WithName(autos[i].AutoName) );
+  }
+  m_chooser.SetDefaultOption( autos[0].Description, 0 );
+}
+frc2::Command* RobotContainer::GetAutonomousCommand() {
+  return AutoCommands[ m_chooser.GetSelected() ].get();
 }

@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterTo1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1ToRightSource"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightSideSource3"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "CenterStart",
+  "choreoAuto": false
+}

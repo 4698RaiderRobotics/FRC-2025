@@ -7,6 +7,7 @@
 #include <frc2/command/button/CommandXBoxController.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/Trigger.h>
+#include <frc/smartdashboard/SendableChooser.h>
 
 #include "util/ControllerAxis.h"
 
@@ -24,10 +25,20 @@ public:
     RobotContainer();
 
     frc2::Command* GetAutonomousCommand();
+    void UpdateElbowOffset() { m_arm->UpdateElbowOffset(); }
 
 private:
     void ConfigureBindings();
     void ConfigureAutos();
+
+    frc::SendableChooser<int> m_chooser;
+
+    std::vector<frc2::CommandPtr> AutoCommands;
+    
+    struct AutoNameMap {
+        std::string Description;
+        std::string AutoName;
+    };
 
     Arm *m_arm;
     Drive *m_drive;

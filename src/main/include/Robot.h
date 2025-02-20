@@ -34,12 +34,9 @@ public:
     void TeleopInit() override;
     void TeleopPeriodic() override;
     void TeleopExit() override;
-    void TestInit() override;
-    void TestPeriodic() override;
-    void TestExit() override;
 
 private:
-    frc2::Command* m_autonomousCommand;
+    frc2::Command* m_autonomousCommand{nullptr};
 
     RobotContainer m_container;
 };

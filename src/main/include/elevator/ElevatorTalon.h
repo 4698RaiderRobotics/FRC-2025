@@ -10,7 +10,7 @@ public:
 
     void Update( Metrics &m ) override;
 
-    void SetPosition( units::inch_t position ) override;
+    void ResetPosition( units::inch_t position ) override;
     void SetOpenLoop( double percentOutput ) override;
     void SetGoal( units::inch_t goal ) override;
 private:

@@ -30,7 +30,7 @@ Arm::Arm()
         // Start routine
         [this] { io->SetWristOpenLoop(-0.1); },
         // Stop and Reset Routine
-        [this] { io->SetWristOpenLoop(0.0); io->SetWristAngle( 0_deg ); },
+        [this] { io->SetWristOpenLoop(0.0); io->ResetWristAngle( 0_deg ); },
         // Home Condition
         [this] { return units::math::abs( metrics.wristVelocity ) < 1_rpm; }
     );

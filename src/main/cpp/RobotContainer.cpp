@@ -9,6 +9,11 @@
 #include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/NamedCommands.h>
+
 #include "arm/Arm.h"
 #include "swerve/Drive.h"
 #include "intake/Intake.h"
@@ -66,7 +71,7 @@ void RobotContainer::ConfigureBindings() {
             }
         },
         { m_arm }
-    ).WithName("Elbow/Wrist Nudge"));
+    ).WithName("Elbow-Wrist Nudge"));
 
     m_drive->SetDefaultCommand( 
         DriveCommands::JoystickDrive( 

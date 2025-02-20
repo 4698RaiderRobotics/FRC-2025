@@ -29,7 +29,7 @@ Elevator::Elevator()
         // Start routine
         [this] { io->SetOpenLoop(-0.1); },
         // Stop and Reset Routine
-        [this] { io->SetOpenLoop(0.0); io->SetPosition( 0_in ); metrics.goal = 0_in; },
+        [this] { io->SetOpenLoop(0.0); io->ResetPosition( 0_in ); metrics.goal = 0_in; },
         // Home Condition
         [this] { return units::math::abs( metrics.velocity ) < 0.01_fps; }
     );

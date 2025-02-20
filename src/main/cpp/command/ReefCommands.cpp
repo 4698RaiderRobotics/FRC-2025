@@ -74,11 +74,7 @@ frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide )
     return DriveToPose( d, [d, onRightSide] {
         frc::Pose2d currentPose = d->GetPose();
 
-        return ReefCommands::reefPoses.GetClosest( 
-            currentPose, 
-            frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed,
-            onRightSide
-        );
+        return ReefCommands::reefPoses.GetClosest( currentPose, onRightSide );
     }
     ).WithName("DriveToReefPose");
 }
@@ -93,9 +89,9 @@ frc2::CommandPtr ReefCommands::PlaceCoralL1( Arm *arm, Intake *intake, Elevator 
     ).WithName( "Place Coral in L1" );
 }
 
-frc::Pose2d ReefPlacingPoses::GetClosest( frc::Pose2d currentPose, bool isRedAlliance, bool onRightSide ) 
+frc::Pose2d ReefPlacingPoses::GetClosest( frc::Pose2d currentPose, bool onRightSide ) 
 {
-    if( isRedAlliance ) {
+    if( frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed ) {
         if( onRightSide ) {
             return currentPose.Nearest( redRightReefPlacingPoses );
         } else {

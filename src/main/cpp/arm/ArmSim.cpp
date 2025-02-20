@@ -58,7 +58,7 @@ void ArmSim::SetWristPosition( WristPosition pos )
     }
 }
 
-void ArmSim::SetWristAngle( units::degree_t position )
+void ArmSim::ResetWristAngle( units::degree_t position )
 {
     wristSim.SetPosition( position );
 }

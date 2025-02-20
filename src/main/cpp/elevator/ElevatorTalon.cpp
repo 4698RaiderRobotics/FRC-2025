@@ -47,7 +47,7 @@ void ElevatorTalon::Update( Metrics &m )
     m.current = talonCurrent.GetValue();
 }
 
-void ElevatorTalon::SetPosition( units::inch_t position )
+void ElevatorTalon::ResetPosition( units::inch_t position )
 {
     units::turn_t turn_pos = position / kDistancePerMotorRev;
     talon.SetPosition( turn_pos );

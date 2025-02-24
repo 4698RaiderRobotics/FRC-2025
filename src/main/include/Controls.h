@@ -7,14 +7,15 @@ namespace ctrl {
     constexpr int drive_Y_axis = frc::XboxController::Axis::kLeftX;
     constexpr int drive_theta_axis = frc::XboxController::Axis::kRightX;
 
-    constexpr int intake_from_coral_station = frc::XboxController::Button::kB;
-    constexpr int intake_from_ground = frc::XboxController::Button::kA;
+    constexpr int intake_coral_station = 0;     // POV direction (up)
+    constexpr int intake_ground = 180;          // POV direction (down)
 
     constexpr int pick_L1_level = frc::XboxController::Button::kA;
     constexpr int pick_L2_level = frc::XboxController::Button::kB;
     constexpr int pick_L3_level = frc::XboxController::Button::kY;
     constexpr int pick_L4_level = frc::XboxController::Button::kRightBumper;
-    constexpr int place_on_reef = frc::XboxController::Axis::kRightTrigger;
+    constexpr int place_on_reef_left = frc::XboxController::Axis::kLeftTrigger;
+    constexpr int place_on_reef_right = frc::XboxController::Axis::kRightTrigger;
 
     constexpr int nudge_modifier = frc::XboxController::Button::kLeftBumper;
     constexpr int nudge_elevator_axis = frc::XboxController::Axis::kLeftY;

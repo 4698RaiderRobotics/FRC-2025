@@ -97,17 +97,17 @@ void RobotContainer::ConfigureBindings()
     ).WithName("Elevator Nudge"));
 
 
-    operatorCtrlr.A().OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L1 ); }) );
-    operatorCtrlr.B().OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L2 ); }) );
-    operatorCtrlr.Y().OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L3 ); }) );
-    operatorCtrlr.RightBumper().OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L4 ); }) );
-    operatorCtrlr.RightTrigger().OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true ) );
-    operatorCtrlr.LeftTrigger().OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false ) );
+    operatorCtrlr.Button( ctrl::pick_L1_level ).OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L1 ); }) );
+    operatorCtrlr.Button( ctrl::pick_L2_level ).OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L2 ); }) );
+    operatorCtrlr.Button( ctrl::pick_L3_level ).OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L3 ); }) );
+    operatorCtrlr.Button( ctrl::pick_L4_level ).OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L4 ); }) );
+    operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_left, 0.75 ).OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false ) );
+    operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_right, 0.75 ).OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true ) );
 
-    operatorCtrlr.POVDown()
+    operatorCtrlr.POV( ctrl::intake_ground )
         .WhileTrue( IntakeCommands::GroundPickup( m_arm, m_intake, m_elevator ) )
         .OnFalse( frc2::cmd::RunOnce( [] { /* Do Nothing. Just interrupt */ }, {m_arm, m_intake, m_elevator} ) );
-    operatorCtrlr.POVUp().OnTrue( IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator ) );
+    operatorCtrlr.POV( ctrl::intake_coral_station ).OnTrue( IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator ) );
 
     m_intake->HasCoralTrigger().OnTrue( 
         frc2::cmd::Parallel(

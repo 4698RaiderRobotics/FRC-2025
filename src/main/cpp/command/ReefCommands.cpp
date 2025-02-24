@@ -73,16 +73,22 @@ frc2::CommandPtr ElevatorRaisePosition( Arm *arm )
 frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide )
 {
     return frc2::cmd::Sequence(
-        DriveToReefPose( d, onRightSide ),
-        frc2::cmd::Select<ReefPlacement>( 
-            [] { return next_reef_place; }, 
-            std::pair{ ReefPlacement::NONE, frc2::cmd::Print( "No Reef Level Selected!!") },
-            std::pair{ ReefPlacement::PLACING_L1, PlaceCoralL1( arm, intake, elevator ) },
-            std::pair{ ReefPlacement::PLACING_L2, PlaceCoralL2( arm, intake, elevator ) },
-            std::pair{ ReefPlacement::PLACING_L3, PlaceCoralL3( arm, intake, elevator ) },
-            std::pair{ ReefPlacement::PLACING_L4, PlaceCoralL4( arm, intake, elevator ) }
-        ),
-        frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement(ReefPlacement::NONE); })
+        frc2::cmd::Either( 
+            frc2::cmd::Sequence(
+                DriveToReefPose( d, onRightSide ),
+                frc2::cmd::Select<ReefPlacement>( 
+                    [] { return next_reef_place; }, 
+                    std::pair{ ReefPlacement::NONE, frc2::cmd::Print( "No Reef Level Selected!!") },
+                    std::pair{ ReefPlacement::PLACING_L1, PlaceCoralL1( arm, intake, elevator ) },
+                    std::pair{ ReefPlacement::PLACING_L2, PlaceCoralL2( arm, intake, elevator ) },
+                    std::pair{ ReefPlacement::PLACING_L3, PlaceCoralL3( arm, intake, elevator ) },
+                    std::pair{ ReefPlacement::PLACING_L4, PlaceCoralL4( arm, intake, elevator ) }
+                ),
+                frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement(ReefPlacement::NONE); })
+            ),
+            frc2::cmd::Print( "No Reef Level Selected!!"),
+            [] { return next_reef_place != ReefPlacement::NONE; }
+        )
     ).WithName("PlaceOnReef");
 }
 

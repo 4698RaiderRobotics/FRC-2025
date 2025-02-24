@@ -27,9 +27,9 @@ void CoralViz::Execute() {
     elbowAngle =  96_deg + elbow_lig->GetAngle() * 1_deg;
     wristAngle = asin( (39 * wrist_lig2->GetLength() - 2) / 6 ) * 1_rad;
 
-    frc::Translation2d elevPos = { elevator_lig->GetLength() * 1_m + 5.5_in, 0_m };
+    frc::Translation2d elevPos = { elevator_lig->GetLength() * 1_m, 0_m };
     elevPos = elevPos.RotateBy( 6_deg );
-    elevTransform = { 6.5_in - elevPos.Y(), 0_m, elevPos.X(), { 0_deg, 0_deg, 90_deg }  };
+    elevTransform = { 8_in - elevPos.Y(), 0_m, elevPos.X() + 5.0_in, { 0_deg, 0_deg, 90_deg }  };
 
         // Rotate in the coral Y-Z plane
     frc::Translation2d elbowPos = { 20_in, 0_in };

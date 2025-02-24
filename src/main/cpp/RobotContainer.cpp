@@ -8,6 +8,7 @@
 #include <frc/RobotBase.h>
 #include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
+#include <frc2/command/ScheduleCommand.h>
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
@@ -23,16 +24,9 @@
 
 #include "command/DriveCommands.h"
 #include "command/ReefCommands.h"
+#include "command/IntakeCommands.h"
 #include "command/DriveToPose.h"
-
-
-
-
-
-#include <frc/smartdashboard/SmartDashboard.h>
-
-#include <pathplanner/lib/commands/PathPlannerAuto.h>
-#include <pathplanner/lib/auto/NamedCommands.h>
+#include "command/CoralViz.h"
 
 
 RobotContainer::RobotContainer()
@@ -56,9 +50,11 @@ RobotContainer::RobotContainer()
     ConfigureBindings();
     ConfigureAutos();
     frc::SmartDashboard::PutData("Auto Mode", &m_chooser);
+    ReefCommands::SetReefPlacement( ReefPlacement::NONE );
 }
 
-void RobotContainer::ConfigureBindings() {
+void RobotContainer::ConfigureBindings() 
+{
     m_arm->SetDefaultCommand(
         frc2::cmd::Run( [this] {
             if( nudge_hold_button.Get() ) {
@@ -101,11 +97,30 @@ void RobotContainer::ConfigureBindings() {
     ).WithName("Elevator Nudge"));
 
 
-    driverCtrlr.RightTrigger().OnTrue( ReefCommands::DriveToReefPose( m_drive, true ) );
-    driverCtrlr.LeftTrigger().OnTrue( ReefCommands::DriveToReefPose( m_drive, false ) );
-    driverCtrlr.B().OnTrue( DriveCommands::DriveDeltaPose( m_drive, frc::Transform2d{ 1_m, 1_m, 90_deg }, false ) );
-    driverCtrlr.X().OnTrue( DriveCommands::DriveDeltaPose( m_drive, frc::Transform2d{ 1_m, 1_m, 90_deg }, true ) );
+    operatorCtrlr.A().OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L1 ); }) );
+    operatorCtrlr.B().OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L2 ); }) );
+    operatorCtrlr.Y().OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L3 ); }) );
+    operatorCtrlr.RightBumper().OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L4 ); }) );
+    operatorCtrlr.RightTrigger().OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true ) );
+    operatorCtrlr.LeftTrigger().OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false ) );
 
+    operatorCtrlr.POVDown()
+        .WhileTrue( IntakeCommands::GroundPickup( m_arm, m_intake, m_elevator ) )
+        .OnFalse( frc2::cmd::RunOnce( [] { /* Do Nothing. Just interrupt */ }, {m_arm, m_intake, m_elevator} ) );
+    operatorCtrlr.POVUp().OnTrue( IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator ) );
+
+    m_intake->HasCoralTrigger().OnTrue( 
+        frc2::cmd::Parallel(
+            CoralViz( [this] { return m_drive->GetPose(); }, [this] {return m_intake->isCenterBroken();} ).ToPtr(),
+            frc2::cmd::Sequence(
+                frc2::cmd::RunOnce( [this] { operatorCtrlr.SetRumble( frc::GenericHID::kBothRumble, 0.9 ); } ),
+                frc2::cmd::RunOnce( [this] { driverCtrlr.SetRumble( frc::GenericHID::kBothRumble, 0.9 ); } ),
+                frc2::cmd::Wait( 0.5_s ),
+                frc2::cmd::RunOnce( [this] { operatorCtrlr.SetRumble( frc::GenericHID::kBothRumble, 0 ); } ),
+                frc2::cmd::RunOnce( [this] { driverCtrlr.SetRumble( frc::GenericHID::kBothRumble, 0 ); } )
+            )
+        )
+    );
 
 
     if( !frc::DriverStation::IsFMSAttached() ) {
@@ -119,27 +134,49 @@ void RobotContainer::ConfigureBindings() {
 
 }
 
-void RobotContainer::ConfigureAutos(){
+void RobotContainer::ConfigureAutos()
+{
     pathplanner::NamedCommands::registerCommand("DriveToReefPoseLeft", ReefCommands::DriveToReefPose( m_drive, true ));
     pathplanner::NamedCommands::registerCommand("DriveToReefPoseRight", ReefCommands::DriveToReefPose( m_drive, false ));
-  std::vector<AutoNameMap> autos = {
-   
-    {"Center to left source two piece", "CenterToLeftSideSourceTwoPiece"},
-    {"Center to right source two piece", "CenterToRightSideSourceTwoPiece"},
-   
-    {"Left One Piece", "LeftOnePiece"},
-    {"Left Two Piece", "LeftTwoPiece"},
-   
-    {"Right One Piece", "RightOnePiece"},
-    {"Right Two Piece", "RightTwoPiece"}
+  
+    std::vector<AutoNameMap> autos = { 
+        {"Center to left source two piece", "CenterToLeftSideSourceTwoPiece"},
+        {"Center to right source two piece", "CenterToRightSideSourceTwoPiece"},
+    
+        {"Left One Piece", "LeftOnePiece"},
+        {"Left Two Piece", "LeftTwoPiece"},
+    
+        {"Right One Piece", "RightOnePiece"},
+        {"Right Two Piece", "RightTwoPiece"}
+    };
 
-  };
-  for( unsigned int i=0; i<autos.size(); ++i ) {
-      m_chooser.AddOption( autos[i].Description, i );
-      AutoCommands.push_back( pathplanner::PathPlannerAuto(autos[i].AutoName).WithName(autos[i].AutoName) );
-  }
-  m_chooser.SetDefaultOption( autos[0].Description, 0 );
+    // std::vector<AutoNameMap> choreoAutos = { 
+    //     {"Test Choreo", "TestPath"}
+    // };
+
+    for( unsigned int i=0; i<autos.size(); ++i ) {
+        m_chooser.AddOption( autos[i].Description, i );
+        AutoCommands.push_back( pathplanner::PathPlannerAuto(autos[i].AutoName).WithName(autos[i].AutoName) );
+    }
+    m_chooser.SetDefaultOption( autos[0].Description, 0 );
+
+    // for( unsigned int i=0; i<choreoAutos.size(); ++i ) {
+    //     m_chooser.AddOption( choreoAutos[i].Description, i + autos.size() );
+
+    //     AutoCommands.push_back( 
+    //         pathplanner::AutoBuilder::followPath( 
+    //             pathplanner::PathPlannerPath::fromChoreoTrajectory(choreoAutos[i].AutoName)
+    //         ).WithName(choreoAutos[i].AutoName) 
+    //     );
+    // }
 }
-frc2::Command* RobotContainer::GetAutonomousCommand() {
-  return AutoCommands[ m_chooser.GetSelected() ].get();
+
+frc2::Command* RobotContainer::GetAutonomousCommand() 
+{
+    return AutoCommands[ m_chooser.GetSelected() ].get();
+}
+
+void RobotContainer::UpdateElbowOffset()
+{ 
+    m_arm->UpdateElbowOffset(); 
 }

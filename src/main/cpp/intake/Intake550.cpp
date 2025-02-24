@@ -46,8 +46,8 @@ void Intake550::Update( Metrics &m )
     m.pipeSwitchTripped = pipeSwitch.Get();
 }
 
-void Intake550::SpinMotors( double upperSpeed, double lowerSpeed )
+void Intake550::SpinMotors( const SpinSpeed &s )
 {
-    upperMotor.Set( upperSpeed );
-    lowerMotor.Set( lowerSpeed );
+    upperMotor.Set( s.upperSpeed );
+    lowerMotor.Set( s.lowerSpeed );
 }

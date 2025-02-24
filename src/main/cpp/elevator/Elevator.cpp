@@ -72,7 +72,7 @@ frc2::CommandPtr Elevator::ChangeHeight( units::inch_t goal )
 {
     return frc2::cmd::Sequence(
         RunOnce( [this, goal] { SetGoal( goal ); }),
-        frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
+        frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 3_s )
     ).WithName( "Elevator Change Height" );
 }
 

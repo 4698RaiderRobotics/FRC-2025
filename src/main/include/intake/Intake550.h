@@ -11,7 +11,7 @@ public:
     Intake550( );
     void Update( Metrics &m ) override;
     
-    void SpinMotors( double upperSpeed, double lowerSpeed ) override;
+    void SpinMotors( const SpinSpeed &s ) override;
 private:
     rev::spark::SparkMax upperMotor;
     rev::spark::SparkMax lowerMotor;

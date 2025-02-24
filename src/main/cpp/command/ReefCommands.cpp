@@ -17,6 +17,7 @@
 
 using namespace physical;
 
+ReefPlacement ReefCommands::next_reef_place = ReefPlacement::NONE;
 
 ReefPlacingPoses ReefCommands::reefPoses = ReefPlacingPoses();
 
@@ -24,7 +25,7 @@ ReefPlacingPoses::ReefPlacingPoses() {
     const int Red_Reef_Tag_IDs[] = { 6, 7, 8, 9, 10, 11 };
     const int Blue_Reef_Tag_IDs[] = { 17, 18, 19, 20, 21, 22 };
     const units::inch_t pose_shift_out = 21_in;
-    const units::inch_t pose_shift_lateral = 8_in;
+    const units::inch_t pose_shift_lateral = 7_in;
 
     aprilTags = frc::AprilTagFieldLayout::LoadField( frc::AprilTagField::k2025ReefscapeWelded );
 
@@ -63,10 +64,26 @@ ReefPlacingPoses::ReefPlacingPoses() {
 
 frc2::CommandPtr ElevatorRaisePosition( Arm *arm )
 {
-    return frc2::cmd::Parallel(
+    return frc2::cmd::Sequence(
         arm->ChangeElbowAngle( arm::kElbowRaiseAngle ),
         arm->ChangeWristPosition( ArmIO::WristHorizontal )
     );
+}
+
+frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide )
+{
+    return frc2::cmd::Sequence(
+        DriveToReefPose( d, onRightSide ),
+        frc2::cmd::Select<ReefPlacement>( 
+            [] { return next_reef_place; }, 
+            std::pair{ ReefPlacement::NONE, frc2::cmd::Print( "No Reef Level Selected!!") },
+            std::pair{ ReefPlacement::PLACING_L1, PlaceCoralL1( arm, intake, elevator ) },
+            std::pair{ ReefPlacement::PLACING_L2, PlaceCoralL2( arm, intake, elevator ) },
+            std::pair{ ReefPlacement::PLACING_L3, PlaceCoralL3( arm, intake, elevator ) },
+            std::pair{ ReefPlacement::PLACING_L4, PlaceCoralL4( arm, intake, elevator ) }
+        ),
+        frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement(ReefPlacement::NONE); })
+    ).WithName("PlaceOnReef");
 }
 
 frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide )
@@ -83,10 +100,52 @@ frc2::CommandPtr ReefCommands::PlaceCoralL1( Arm *arm, Intake *intake, Elevator 
 {
     return frc2::cmd::Sequence(
         ElevatorRaisePosition( arm ),
-        elevator->ChangeHeight( elevator::kHeightCoralL1 ),
-        arm->ChangeElbowAngle( arm::kElbowCoralL1 ),
-        intake->EjectCoral()
+        frc2::cmd::Parallel(
+            elevator->ChangeHeight( elevator::kHeightCoralL1 ),
+            arm->ChangeElbowAngle( arm::kElbowCoralL1 )
+        ),
+        arm->ChangeWristPosition( ArmIO::WristHorizontal ),
+        intake->EjectCoralL1()
     ).WithName( "Place Coral in L1" );
+}
+
+frc2::CommandPtr ReefCommands::PlaceCoralL2( Arm *arm, Intake *intake, Elevator *elevator )
+{
+    return frc2::cmd::Sequence(
+        ElevatorRaisePosition( arm ),
+        frc2::cmd::Parallel(
+            elevator->ChangeHeight( elevator::kHeightCoralL2 ),
+            arm->ChangeElbowAngle( arm::kElbowCoralL2 )
+        ),
+        arm->ChangeWristPosition( ArmIO::WristVertical ),
+        intake->EjectCoralL2_4()
+    ).WithName( "Place Coral in L2" );
+}
+
+frc2::CommandPtr ReefCommands::PlaceCoralL3( Arm *arm, Intake *intake, Elevator *elevator )
+{
+    return frc2::cmd::Sequence(
+        ElevatorRaisePosition( arm ),
+        frc2::cmd::Parallel(
+            elevator->ChangeHeight( elevator::kHeightCoralL3 ),
+            arm->ChangeElbowAngle( arm::kElbowCoralL3 )
+        ),
+        arm->ChangeWristPosition( ArmIO::WristVertical ),
+        intake->EjectCoralL2_4()
+    ).WithName( "Place Coral in L3" );
+}
+
+frc2::CommandPtr ReefCommands::PlaceCoralL4( Arm *arm, Intake *intake, Elevator *elevator )
+{
+    return frc2::cmd::Sequence(
+        ElevatorRaisePosition( arm ),
+        frc2::cmd::Parallel(
+            elevator->ChangeHeight( elevator::kHeightCoralL4 ),
+            arm->ChangeElbowAngle( arm::kElbowCoralL4 )
+        ),
+        arm->ChangeWristPosition( ArmIO::WristVertical ),
+        intake->EjectCoralL2_4()
+    ).WithName( "Place Coral in L4" );
 }
 
 frc::Pose2d ReefPlacingPoses::GetClosest( frc::Pose2d currentPose, bool onRightSide ) 
@@ -104,4 +163,27 @@ frc::Pose2d ReefPlacingPoses::GetClosest( frc::Pose2d currentPose, bool onRightS
             return currentPose.Nearest( blueLeftReefPlacingPoses );
         }
     }
+}
+
+void ReefCommands::SetReefPlacement( ReefPlacement p )
+{
+    std::string logStr = "NONE";
+    next_reef_place = p;
+
+    switch( p ) {
+    case ReefPlacement::PLACING_L1:
+        logStr = "PLACING_L1";
+        break;
+    case ReefPlacement::PLACING_L2:
+        logStr = "PLACING_L2";
+        break;
+    case ReefPlacement::PLACING_L3:
+        logStr = "PLACING_L3";
+        break;
+    case ReefPlacement::PLACING_L4:
+        logStr = "PLACING_L4";
+        break;
+    }
+
+    DataLogger::Log( "ReefCommands/Reef Place", logStr );
 }

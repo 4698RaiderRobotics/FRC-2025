@@ -9,7 +9,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
     // Global variables of mech2d
-frc::Mechanism2d robot_mech{ 1.5, 2.5 };  // units are meters
+frc::Mechanism2d robot_mech{ 60/39.0, 100/39.0 };  // units are meters
 frc::MechanismLigament2d* elevator_lig;
 frc::MechanismLigament2d* elbow_lig;
 frc::MechanismLigament2d* wrist_lig1;
@@ -18,15 +18,15 @@ frc::MechanismLigament2d* climber_lig;
 
 Robot::Robot() 
 {
-    frc::MechanismRoot2d* elev_root = robot_mech.GetRoot("elev_root", 24/39.0, 5/39.0);
-    elevator_lig = elev_root->Append<frc::MechanismLigament2d>("elevator", 9/39.0, 84_deg);
-    elbow_lig = elevator_lig->Append<frc::MechanismLigament2d>("elbow", 15/39.0, 186_deg, 6, frc::Color8Bit{frc::Color::kGreen});
+    frc::MechanismRoot2d* elev_root = robot_mech.GetRoot("elev_root", 38/39.0, 5/39.0);
+    elevator_lig = elev_root->Append<frc::MechanismLigament2d>("elevator", 9/39.0, 96_deg);
+    elbow_lig = elevator_lig->Append<frc::MechanismLigament2d>("elbow", 15/39.0, -96_deg, 6, frc::Color8Bit{frc::Color::kGreen});
     frc::MechanismLigament2d* wrist_link = elbow_lig->Append<frc::MechanismLigament2d>("wristlink", 2/39.0, 0_deg, 6, frc::Color8Bit{frc::Color::kPurple});
     wrist_lig1 = wrist_link->Append<frc::MechanismLigament2d>("wrist1", 2/39.0, 90_deg, 10, frc::Color8Bit{frc::Color::kPurple});
     wrist_lig2 = wrist_link->Append<frc::MechanismLigament2d>("wrist2", 2/39.0, 270_deg, 10, frc::Color8Bit{frc::Color::kPurple});
 
-    frc::MechanismRoot2d* climber_root = robot_mech.GetRoot("climber_root", 42/39.0, 6/39.0);
-    climber_lig = climber_root->Append<frc::MechanismLigament2d>("climber", 11/39.0, 165_deg, 6, frc::Color8Bit{frc::Color::kRed});
+    frc::MechanismRoot2d* climber_root = robot_mech.GetRoot("climber_root", 14/39.0, 6/39.0);
+    climber_lig = climber_root->Append<frc::MechanismLigament2d>("climber", 11/39.0, 15_deg, 6, frc::Color8Bit{frc::Color::kRed});
 
     frc::SmartDashboard::PutData( "Robot/Mechanism2d", &robot_mech );
     if( !frc::DriverStation::IsFMSAttached() ) {
@@ -44,9 +44,9 @@ void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() 
 {
     if( !frc::DriverStation::IsFMSAttached() ) {
-        if( frc::SmartDashboard::GetBoolean("Update Arm Preferences", false) ) {
+        if( frc::SmartDashboard::GetBoolean("Update Elbow Offset", false) ) {
             m_container.UpdateElbowOffset();
-            frc::SmartDashboard::PutBoolean("Update Arm Preferences", false);
+            frc::SmartDashboard::PutBoolean("Update Elbow Offset", false);
         }
     }
 }

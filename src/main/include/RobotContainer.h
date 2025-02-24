@@ -25,7 +25,7 @@ public:
     RobotContainer();
 
     frc2::Command* GetAutonomousCommand();
-    void UpdateElbowOffset() { m_arm->UpdateElbowOffset(); }
+    void UpdateElbowOffset();
 
 private:
     void ConfigureBindings();
@@ -54,13 +54,4 @@ private:
     ControllerAxis climber_nudge_axis;
  
     frc2::Trigger nudge_hold_button;
-
-    frc::SendableChooser<int> m_chooser;
-
-  std::vector<frc2::CommandPtr> AutoCommands;
-
-   struct AutoNameMap {
-    std::string Description;
-    std::string AutoName;
-  };
 };

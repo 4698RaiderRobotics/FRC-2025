@@ -2,6 +2,15 @@
 
 #include <frc2/command/CommandPtr.h>
 
+enum class ReefPlacement {
+    NONE,
+    PLACING_L1,
+    PLACING_L2,
+    PLACING_L3,
+    PLACING_L4,
+};
+
+
 class Arm;
 class Drive;
 class Intake;
@@ -24,6 +33,7 @@ private:
 class ReefCommands {
 public:
 
+    static frc2::CommandPtr PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide );
     static frc2::CommandPtr DriveToReefPose( Drive *d, bool onRightSide );
     static frc2::CommandPtr PlaceCoralL1( Arm *, Intake *, Elevator * );
     static frc2::CommandPtr PlaceCoralL2( Arm *, Intake *, Elevator * );
@@ -32,9 +42,11 @@ public:
 
     static frc2::CommandPtr RemoveAlgae( Arm *, Intake *, Elevator * );
 
+    static void SetReefPlacement( ReefPlacement );
+
 private:
     ReefCommands() = default;
 
     static ReefPlacingPoses reefPoses;
-
+    static ReefPlacement next_reef_place;
 };

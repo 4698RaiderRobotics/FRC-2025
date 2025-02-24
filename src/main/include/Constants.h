@@ -50,6 +50,9 @@ namespace arm {
      constexpr units::degree_t kElbowCoralL3 = 25_deg;
      constexpr units::degree_t kElbowCoralL4 = 5_deg;
 
+    // Elbow Positions for Coral Station and Ground Pickup
+     constexpr units::degree_t kElbowCoralStation = 135_deg;
+     constexpr units::degree_t kElbowGroundPickup = -20_deg;
 }
 
     // *****************     INTAKE SUBSYSTEM      **********************
@@ -70,11 +73,15 @@ namespace elevator {
     // Minimum height for the elevator position
     constexpr units::inch_t kElevatorMinHeight = 0_in;
 
-    // Height for the elevator to place on Reef
+    // Heights for the elevator to place on Reef
     constexpr units::inch_t kHeightCoralL1 = 15_in;
     constexpr units::inch_t kHeightCoralL2 = 25_in;
     constexpr units::inch_t kHeightCoralL3 = 40_in;
     constexpr units::inch_t kHeightCoralL4 = 65_in;
+
+    // Heights for the elevator for Coral Station and Ground Pickup
+     constexpr units::inch_t kHeightCoralStation = 20_in;
+     constexpr units::inch_t kHeightGroundPickup = 0_in;
 }
 
     // *****************     CLIMBER SUBSYSTEM      **********************

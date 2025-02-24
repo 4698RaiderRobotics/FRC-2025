@@ -7,8 +7,10 @@
 #include <frc/simulation/DCMotorSim.h>
 #include <frc/system/plant/LinearSystemId.h>
 
+const MotionConfig<units::inch> simMotion = { {0.05, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0 }, {8_fps, 35_fps_sq, 0_fps_cu}};
+
 ElevatorSim::ElevatorSim()
-: motorSim{ device::elevator::kDistancePerMotorRev, 1.0, TuningParams{0.08, 0.0, 0.0, 0.0, 0.0, 0.3, 0.0} }
+: motorSim{ device::elevator::kDistancePerMotorRev, 1.0, simMotion }
 {
     // Somewhere to home from...
     motorSim.SetPosition( 1_in );

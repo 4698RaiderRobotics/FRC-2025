@@ -25,7 +25,19 @@ public:
         void Log( const std::string &key );
     };
 
+    struct SpinSpeed {
+        double upperSpeed{0};
+        double lowerSpeed{0};
+    };
+
     virtual void Update( Metrics &m ) =0;
 
-    virtual void SpinMotors( double upperSpeed, double lowerSpeed ) = 0;
+    virtual void SpinMotors( const SpinSpeed &s ) = 0;
+
+    // This is only for simulation so it can know when to
+    // simulate the pipe switch being tripped. Otherwise it 
+    // does nothing
+    virtual void PollingPipeSwitch() {};
+
+    static const SpinSpeed spin_in, spin_out, shift_up, shift_down, spin_stop;
 };

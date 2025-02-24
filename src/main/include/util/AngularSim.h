@@ -38,7 +38,7 @@ private:
 
     inline static const units::kilogram_square_meter_t DEFAULT_MOI = 0.0005_kg_sq_m;
 
-    inline static const  MotionConfig<units::radian> DEFAULT_MC = { {0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, {1_tps, 3_tr_per_s_sq, 0_tr_per_s_cu}};
+    inline static const  MotionConfig<units::radian> DEFAULT_MC = { {0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, {3_tps, 12_tr_per_s_sq, 0_tr_per_s_cu}};
 
     frc::PIDController *m_softPID;
     frc::SimpleMotorFeedforward<units::radian> *m_motorFF;

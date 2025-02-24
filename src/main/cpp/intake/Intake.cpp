@@ -12,6 +12,12 @@
 
 using namespace physical::intake;
 
+const IntakeIO::SpinSpeed IntakeIO::spin_in{ kIntakeInOutSpeed, kIntakeInOutSpeed };
+const IntakeIO::SpinSpeed IntakeIO::spin_out{ -kIntakeInOutSpeed, -kIntakeInOutSpeed };
+const IntakeIO::SpinSpeed IntakeIO::shift_up{ kIntakeInOutSpeed, -kIntakeShiftSpeed };
+const IntakeIO::SpinSpeed IntakeIO::shift_down{ -kIntakeShiftSpeed, kIntakeInOutSpeed };
+const IntakeIO::SpinSpeed IntakeIO::spin_stop{ 0.0, 0.0 };
+
 Intake::Intake() 
 {
     SetName( "Intake" );
@@ -21,6 +27,7 @@ Intake::Intake()
     } else {
         io = std::unique_ptr<IntakeSim> (new IntakeSim());
     }
+
 }
 
 void Intake::Periodic()
@@ -31,27 +38,27 @@ void Intake::Periodic()
 
 void Intake::SpinIn()
 {
-    io->SpinMotors( kIntakeInOutSpeed, kIntakeInOutSpeed );
+    io->SpinMotors( IntakeIO::spin_in );
 }
 
 void Intake::SpinOut()
 {
-    io->SpinMotors( -kIntakeInOutSpeed, -kIntakeInOutSpeed );
+    io->SpinMotors( IntakeIO::spin_out );
 }
 
 void Intake::ShiftUp()
 {
-    io->SpinMotors( kIntakeInOutSpeed, -kIntakeShiftSpeed );
+    io->SpinMotors( IntakeIO::shift_up );
 }
 
 void Intake::ShiftDown()
 {
-    io->SpinMotors( -kIntakeShiftSpeed, kIntakeInOutSpeed );
+    io->SpinMotors( IntakeIO::shift_down );
 }
 
 void Intake::Stop()
 {
-    io->SpinMotors( 0.0, 0.0 );
+    io->SpinMotors( IntakeIO::spin_stop );
 }
 
 bool Intake::isCenterBroken()
@@ -66,7 +73,13 @@ bool Intake::isEndBroken()
 
 bool Intake::isPipeTripped()
 {
-     return metrics.pipeSwitchTripped;
+    // This is just for simulation and does nothing
+    // on the real robot.
+    io->PollingPipeSwitch();
+
+    fmt::print( "Pipe switch = {}\n", metrics.pipeSwitchTripped );
+    
+    return metrics.pipeSwitchTripped;
 }
 
 frc2::CommandPtr Intake::IntakeCoral()
@@ -83,18 +96,40 @@ frc2::CommandPtr Intake::IntakeCoral()
             // If No Coral in the intake
             frc2::cmd::None(),
             [this] {return isCenterBroken(); }
-        )
+        ),
+        frc2::cmd::RunOnce( [this] { Stop(); })
     );
 }
 
-frc2::CommandPtr Intake::EjectCoral()
+frc2::CommandPtr Intake::EjectCoralL1()
 {
     return frc2::cmd::Sequence( 
-        frc2::cmd::RunOnce( [this] { ShiftDown(); }),
+        frc2::cmd::Run( [this] { SpinOut(); })
+            .Until( [this] { return !isCenterBroken(); } )
+            .WithTimeout( 1_s ),
         frc2::cmd::Wait( 0.5_s ),
-        frc2::cmd::RunOnce( [this] { SpinOut(); }),
-        frc2::cmd::Wait( 0.5_s )
-    );
+        frc2::cmd::RunOnce( [this] { Stop(); })
+    ).WithName( "Eject Coral L1");
+}
+
+frc2::CommandPtr Intake::EjectCoralL2_4()
+{
+    return frc2::cmd::Sequence( 
+        frc2::cmd::WaitUntil( [this] {return isPipeTripped();} ).WithTimeout( 5_s ),
+        frc2::cmd::Either( 
+            // If Pipe Switch tripped (instead of timed out) then Eject coral.
+            frc2::cmd::Sequence( 
+                frc2::cmd::StartEnd( [this] { ShiftDown(); }, [this] {SpinOut(); })
+                    .Until( [this] { return !metrics.centerBeamBroken; } )
+                    .WithTimeout( 1_s ),
+                frc2::cmd::Wait( 0.5_s ),
+                frc2::cmd::RunOnce( [this] { Stop(); })
+            ), 
+            // If No Coral in the intake
+            frc2::cmd::None(),
+            [this] {return isPipeTripped(); }
+        )
+    ).WithName( "Eject Coral L2-4");
 
 }
 

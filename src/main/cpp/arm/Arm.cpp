@@ -43,7 +43,7 @@ void Arm::Periodic()
     metrics.Log( "Arm" );
 
     // Update the mechanism2d
-    elbow_lig->SetAngle( 96_deg - metrics.elbowPosition );
+    elbow_lig->SetAngle( metrics.elbowPosition - 96_deg );
     wrist_lig1->SetLength( (2 + 6 * units::math::sin(metrics.wristPosition))/39.0 );
     wrist_lig2->SetLength( (2 + 6 * units::math::sin(metrics.wristPosition))/39.0 );
 

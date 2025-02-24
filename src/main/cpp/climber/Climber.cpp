@@ -31,7 +31,7 @@ void Climber::Periodic() {
 
     // Update the mechanism2d
     // Angle is related to height approximately by height=bar_length*theta
-    climber_lig->SetAngle( 180_deg - ( metrics.height / 11_in )*1_rad );
+    climber_lig->SetAngle( 10_deg + ( metrics.height / 11_in )*1_rad );
 }
 
 void Climber::SetGoal( units::inch_t goal ) 

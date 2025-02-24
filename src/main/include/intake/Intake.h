@@ -20,7 +20,8 @@ public:
     bool isPipeTripped();
 
     frc2::CommandPtr IntakeCoral();
-    frc2::CommandPtr EjectCoral();
+    frc2::CommandPtr EjectCoralL1();
+    frc2::CommandPtr EjectCoralL2_4();
 
     frc2::Trigger HasCoralTrigger() {return frc2::Trigger( [this] { return metrics.centerBeamBroken; } ); }
 

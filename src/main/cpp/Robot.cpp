@@ -8,6 +8,8 @@
 #include <frc2/command/CommandScheduler.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#include "util/EncOffsets.h"
+
     // Global variables of mech2d
 frc::Mechanism2d robot_mech{ 60/39.0, 100/39.0 };  // units are meters
 frc::MechanismLigament2d* elevator_lig;
@@ -29,9 +31,7 @@ Robot::Robot()
     climber_lig = climber_root->Append<frc::MechanismLigament2d>("climber", 11/39.0, 15_deg, 6, frc::Color8Bit{frc::Color::kRed});
 
     frc::SmartDashboard::PutData( "Robot/Mechanism2d", &robot_mech );
-    if( !frc::DriverStation::IsFMSAttached() ) {
-        frc::SmartDashboard::PutBoolean("Update Elbow Offset", false);
-    }
+    EncOffsets::GetInstance().SetupUI();
 }
 
 void Robot::RobotPeriodic() {
@@ -43,12 +43,7 @@ void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() 
 {
-    if( !frc::DriverStation::IsFMSAttached() ) {
-        if( frc::SmartDashboard::GetBoolean("Update Elbow Offset", false) ) {
-            m_container.UpdateElbowOffset();
-            frc::SmartDashboard::PutBoolean("Update Elbow Offset", false);
-        }
-    }
+    EncOffsets::GetInstance().UpdateUI();
 }
 
 void Robot::DisabledExit() {}

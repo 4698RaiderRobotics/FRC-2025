@@ -1,9 +1,9 @@
 
 #include "DeviceConstants.h"
 
-#include "arm/ArmTalon550.h"
+#include "util/EncOffsets.h"
 
-#include <frc/Preferences.h>
+#include "arm/ArmTalon550.h"
 
 #include <rev/config/SparkMaxConfig.h>
 
@@ -15,9 +15,11 @@ ArmTalon550::ArmTalon550()
     elbowEncoder{ deviceIDs::kElbowEncoderID, "" },
     wristMtr{ deviceIDs::kWristMotorID, rev::spark::SparkLowLevel::MotorType::kBrushless }
 {
+    EncOffsets::GetInstance().Listen( "Elbow", [this] { UpdateElbowOffset(); } );
+
     ctre::phoenix6::configs::CANcoderConfiguration elbowAbsoluteEncoderConfigs{};
     elbowAbsoluteEncoderConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive;
-    elbowAbsoluteEncoderConfigs.MagnetSensor.MagnetOffset = frc::Preferences::GetDouble("ElbowOffset") * 1_tr;
+    elbowAbsoluteEncoderConfigs.MagnetSensor.MagnetOffset = EncOffsets::GetInstance().Get("Elbow") * 1_tr;
     elbowEncoder.GetConfigurator().Apply(elbowAbsoluteEncoderConfigs, 50_ms);
 
     ctre::phoenix6::configs::TalonFXConfiguration talonConfigs{};
@@ -117,7 +119,7 @@ void ArmTalon550::UpdateElbowOffset()
 
     units::turn_t offset = elbowAbsoluteEncoderConfigs.MagnetSensor.MagnetOffset - elbowEncoder.GetAbsolutePosition().GetValue();
 
-    frc::Preferences::SetDouble("ElbowOffset", offset.value());
+    EncOffsets::GetInstance().Set( "Elbow", offset.value() );
 
     elbowAbsoluteEncoderConfigs.MagnetSensor.MagnetOffset = offset;
     elbowEncoder.GetConfigurator().Apply( elbowAbsoluteEncoderConfigs, 50_ms );

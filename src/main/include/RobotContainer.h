@@ -25,8 +25,7 @@ public:
     RobotContainer();
 
     frc2::Command* GetAutonomousCommand();
-    void UpdateElbowOffset();
-
+    
 private:
     void ConfigureBindings();
     void ConfigureAutos();

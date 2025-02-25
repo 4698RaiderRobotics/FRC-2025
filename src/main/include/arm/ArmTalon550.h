@@ -17,7 +17,7 @@ public:
     void SetWristPosition( WristPosition pos ) override;
     void ResetWristAngle( units::degree_t position ) override;
     void SetWristOpenLoop( double percentOutput ) override;
-    void UpdateElbowOffset() override;
+    void UpdateElbowOffset();
 private:
     ctre::phoenix6::hardware::TalonFX elbowMtr;
     ctre::phoenix6::hardware::CANcoder elbowEncoder;

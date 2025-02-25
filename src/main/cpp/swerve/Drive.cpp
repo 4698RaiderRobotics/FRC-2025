@@ -33,6 +33,8 @@ Drive::Drive( ) :
                     frc::Translation2d{-( swerve::physical::kDriveBaseLength / 2 ), -( swerve::physical::kDriveBaseWidth / 2 )} },
     m_odometry{ m_kinematics, rawGyroRotation, lastModulePositions, frc::Pose2d{} }
 {
+    SetName( "Swerve");
+    
     ModuleIO *flModuleIO;
     ModuleIO *frModuleIO;
     ModuleIO *blModuleIO;

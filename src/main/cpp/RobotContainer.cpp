@@ -175,8 +175,3 @@ frc2::Command* RobotContainer::GetAutonomousCommand()
 {
     return AutoCommands[ m_chooser.GetSelected() ].get();
 }
-
-void RobotContainer::UpdateElbowOffset()
-{ 
-    m_arm->UpdateElbowOffset(); 
-}

@@ -173,10 +173,13 @@ frc::Pose2d ReefPlacingPoses::GetClosest( frc::Pose2d currentPose, bool onRightS
 
 void ReefCommands::SetReefPlacement( ReefPlacement p )
 {
-    std::string logStr = "NONE";
+    std::string logStr;
     next_reef_place = p;
 
     switch( p ) {
+    case ReefPlacement::NONE:
+        logStr = "NONE";
+        break;
     case ReefPlacement::PLACING_L1:
         logStr = "PLACING_L1";
         break;

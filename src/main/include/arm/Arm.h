@@ -17,7 +17,6 @@ public:
     void NudgeElbow( units::degree_t nudge );
     void SetWristPosition( ArmIO::WristPosition pos );
     bool AtGoal();
-    void UpdateElbowOffset() { io->UpdateElbowOffset(); }
 
     frc2::CommandPtr ChangeElbowAngle( units::degree_t goal );
     frc2::CommandPtr ChangeWristPosition(ArmIO::WristPosition pos );

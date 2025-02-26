@@ -80,6 +80,7 @@ void ArmTalon550::Update( Metrics &m )
     m.wristAppliedVolts = wristMtr.GetAppliedOutput() * wristMtr.GetBusVoltage() * 1_V;
     m.wristCurrent = wristMtr.GetOutputCurrent() * 1_A;
 
+    EncOffsets::GetInstance().UpdateAngle( "Elbow", m.elbowPosition.value() );
 }
 
 void ArmTalon550::SetElbowGoal( units::degree_t goal ) 

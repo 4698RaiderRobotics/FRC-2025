@@ -15,7 +15,7 @@ public:
     void Listen( const std::string& name, std::function<void()> CB_func );
     double Get( const std::string& name );
     void Set( const std::string& name, double value );
-    void Update( const std::string& name );
+    void UpdateAngle( const std::string& name, double angle );
 
     void SetupUI();
     void UpdateUI();

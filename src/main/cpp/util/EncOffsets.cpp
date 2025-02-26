@@ -7,6 +7,9 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 EncOffsets *EncOffsets::singleton = nullptr;
+#define UpdateNT "{}_Pref/Update Offset"
+#define OffsetNT "{}_Pref/Offset"
+#define AngleNT "{}_Pref/Angle"
 
 void EncOffsets::Listen( const std::string& name, std::function<void()> CB_func )
 {
@@ -21,12 +24,15 @@ double EncOffsets::Get( const std::string& name )
 void EncOffsets::Set( const std::string& name, double value )
 {
     frc::Preferences::SetDouble( name + "Offset", value );
+    frc::SmartDashboard::PutNumber( fmt::format( OffsetNT, name), 0.0);
 }
 
-void EncOffsets::Update( const std::string& name )
+void EncOffsets::UpdateAngle( const std::string& name, double angle )
 {
-    if( cb_map.contains( name ) ) {
-        cb_map[name]();
+    if( !frc::DriverStation::IsFMSAttached() && frc::DriverStation::IsDisabled() ) {
+        if( cb_map.contains( name ) ) {
+            frc::SmartDashboard::PutNumber( fmt::format( AngleNT, name), angle);
+        }
     }
 }
 
@@ -34,7 +40,9 @@ void EncOffsets::SetupUI()
 {
     if( !frc::DriverStation::IsFMSAttached() ) {
         for( auto &m : cb_map ) {
-            frc::SmartDashboard::PutBoolean( fmt::format("Update {} Offset" , m.first), false);
+            frc::SmartDashboard::PutBoolean( fmt::format( UpdateNT, m.first), false);
+            frc::SmartDashboard::PutNumber( fmt::format( OffsetNT, m.first), 0.0);
+            frc::SmartDashboard::PutNumber( fmt::format( AngleNT, m.first), 0.0);
         }
     }
 }
@@ -43,9 +51,9 @@ void EncOffsets::UpdateUI()
 {
     if( !frc::DriverStation::IsFMSAttached() ) {
         for( auto &m : cb_map ) {
-            std::string label = fmt::format( "Update {} Offset", m.first );
+            std::string label = fmt::format( UpdateNT, m.first );
             if( frc::SmartDashboard::GetBoolean(label, false) ) {
-                Update( m.first );
+                m.second();
                 frc::SmartDashboard::PutBoolean(label, false);
             }
         }

@@ -35,7 +35,7 @@ Vision::Vision( frc::SwerveDrivePoseEstimator<4> *odom ) : odometry{odom}
     }
 
     if( frc::RobotBase::IsSimulation() ) {
-        // sim = std::unique_ptr<VisionSim> (new VisionSim( cameras ));
+        sim = std::unique_ptr<VisionSim> (new VisionSim( cameras ));
     }
 }
 

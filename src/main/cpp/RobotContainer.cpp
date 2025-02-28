@@ -41,7 +41,7 @@ RobotContainer::RobotContainer()
     m_intake = new Intake( );
     m_climber = new Climber( );
     m_elevator = new Elevator( );
-    m_vision = new Vision( &m_drive->m_odometry );
+//    m_vision = new Vision( &m_drive->m_odometry );
 
     // Extra deadband for the climber and elevator nudge
     climber_nudge_axis.SetDeadband( 0.25 );
@@ -97,17 +97,23 @@ void RobotContainer::ConfigureBindings()
     ).WithName("Elevator Nudge"));
 
 
-    operatorCtrlr.Button( ctrl::pick_L1_level ).OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L1 ); }) );
-    operatorCtrlr.Button( ctrl::pick_L2_level ).OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L2 ); }) );
-    operatorCtrlr.Button( ctrl::pick_L3_level ).OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L3 ); }) );
-    operatorCtrlr.Button( ctrl::pick_L4_level ).OnTrue( frc2::cmd::RunOnce( [] { ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L4 ); }) );
-    operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_left, 0.75 ).OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false ) );
-    operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_right, 0.75 ).OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true ) );
+    operatorCtrlr.Button( ctrl::pick_L1_level ).OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L1 ) );
+    operatorCtrlr.Button( ctrl::pick_L2_level ).OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L2 ) );
+    operatorCtrlr.Button( ctrl::pick_L3_level ).OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L3 ) );
+    operatorCtrlr.Button( ctrl::pick_L4_level ).OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L4 ) );
+
+    operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_left, 0.75 )
+        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false ) );
+    operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_right, 0.75 )
+        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true ) );
 
     operatorCtrlr.POV( ctrl::intake_ground )
         .WhileTrue( IntakeCommands::GroundPickup( m_arm, m_intake, m_elevator ) )
-        .OnFalse( frc2::cmd::RunOnce( [] { /* Do Nothing. Just interrupt */ }, {m_arm, m_intake, m_elevator} ) );
-    operatorCtrlr.POV( ctrl::intake_coral_station ).OnTrue( IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator ) );
+        .OnFalse( IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ) );
+
+    operatorCtrlr.POV( ctrl::intake_coral_station )
+        .WhileTrue( IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator ) )
+        .OnFalse( IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ) );
 
     m_intake->HasCoralTrigger().OnTrue( 
         frc2::cmd::Parallel(

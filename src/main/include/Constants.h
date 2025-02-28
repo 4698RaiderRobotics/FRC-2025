@@ -41,14 +41,17 @@ namespace arm {
     // Minimum angle for the elbow position
     constexpr units::degree_t kElbowMinAngle = -15_deg;
 
+    // Elevator Rest Position
+    constexpr units::degree_t kElbowRestAngle = 80_deg;
+
     // Elevator Raise / Lower Position
     constexpr units::degree_t kElbowRaiseAngle = 60_deg;
 
     // Elbow Positions for Each Reef Height
-     constexpr units::degree_t kElbowCoralL1 = 0_deg;
-     constexpr units::degree_t kElbowCoralL2 = 25_deg;
-     constexpr units::degree_t kElbowCoralL3 = 25_deg;
-     constexpr units::degree_t kElbowCoralL4 = 5_deg;
+     constexpr units::degree_t kElbowCoralL1 = 18_deg;
+     constexpr units::degree_t kElbowCoralL2 = 50_deg;
+     constexpr units::degree_t kElbowCoralL3 = 50_deg;
+     constexpr units::degree_t kElbowCoralL4 = 0_deg;
 
     // Elbow Positions for Coral Station and Ground Pickup
      constexpr units::degree_t kElbowCoralStation = 135_deg;
@@ -74,10 +77,10 @@ namespace elevator {
     constexpr units::inch_t kElevatorMinHeight = 0_in;
 
     // Heights for the elevator to place on Reef
-    constexpr units::inch_t kHeightCoralL1 = 15_in;
-    constexpr units::inch_t kHeightCoralL2 = 25_in;
-    constexpr units::inch_t kHeightCoralL3 = 40_in;
-    constexpr units::inch_t kHeightCoralL4 = 65_in;
+    constexpr units::inch_t kHeightCoralL1 = 0_in;
+    constexpr units::inch_t kHeightCoralL2 = 2_in;
+    constexpr units::inch_t kHeightCoralL3 = 18_in;
+    constexpr units::inch_t kHeightCoralL4 = 58_in;
 
     // Heights for the elevator for Coral Station and Ground Pickup
      constexpr units::inch_t kHeightCoralStation = 20_in;

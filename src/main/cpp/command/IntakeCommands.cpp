@@ -39,3 +39,15 @@ frc2::CommandPtr IntakeCommands::GroundPickup( Arm *arm, Intake *intake, Elevato
     ).WithName( "Ground Pickup" );
 }
 
+frc2::CommandPtr IntakeCommands::RestPosition( Arm *arm, Intake *intake, Elevator *elevator )
+{
+    return frc2::cmd::Sequence(
+        arm->ChangeWristPosition( ArmIO::WristHorizontal ),
+        frc2::cmd::Parallel(
+            frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} ),
+            elevator->ChangeHeight( 0.0_in ),
+            arm->ChangeElbowAngle( arm::kElbowRestAngle )
+        )
+    ).WithName( "Rest Position" );
+
+}

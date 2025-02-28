@@ -35,17 +35,18 @@ public:
 
     static frc2::CommandPtr PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide );
     static frc2::CommandPtr DriveToReefPose( Drive *d, bool onRightSide );
-    static frc2::CommandPtr PlaceCoralL1( Arm *, Intake *, Elevator * );
-    static frc2::CommandPtr PlaceCoralL2( Arm *, Intake *, Elevator * );
-    static frc2::CommandPtr PlaceCoralL3( Arm *, Intake *, Elevator * );
-    static frc2::CommandPtr PlaceCoralL4( Arm *, Intake *, Elevator * );
+    static frc2::CommandPtr PlaceCoralL1( Drive *, Arm *, Intake *, Elevator * );
+    static frc2::CommandPtr PlaceCoralL2( Drive *, Arm *, Intake *, Elevator * );
+    static frc2::CommandPtr PlaceCoralL3( Drive *, Arm *, Intake *, Elevator * );
+    static frc2::CommandPtr PlaceCoralL4( Drive *, Arm *, Intake *, Elevator * );
 
     static frc2::CommandPtr RemoveAlgae( Arm *, Intake *, Elevator * );
 
-    static void SetReefPlacement( ReefPlacement );
+    static frc2::CommandPtr SetReefPlacement( ReefPlacement );
 
 private:
     ReefCommands() = default;
+    static void LogReefPlacement( ReefPlacement );
 
     static ReefPlacingPoses reefPoses;
     static ReefPlacement next_reef_place;

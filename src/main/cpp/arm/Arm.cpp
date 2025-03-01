@@ -28,11 +28,11 @@ Arm::Arm()
 
     elbowHomer = util::MotorHomer(
         // Start routine
-        [this] { io->SetWristOpenLoop(-0.1); },
+        [this] { io->SetWristOpenLoop(-0.05); },
         // Stop and Reset Routine
-        [this] { io->SetWristOpenLoop(0.0); io->ResetWristAngle( 0_deg ); },
+        [this] { io->SetWristOpenLoop(0.0); io->ResetWristAngle( 0_deg ); SetWristPosition(ArmIO::WristHorizontal); },
         // Home Condition
-        [this] { return units::math::abs( metrics.wristVelocity ) < 1_rpm; }
+        [this] { return units::math::abs( metrics.wristVelocity ) < 0.5_rpm; }
     );
 
 }
@@ -48,7 +48,7 @@ void Arm::Periodic()
     wrist_lig2->SetLength( (2 + 6 * units::math::sin(metrics.wristPosition))/39.0 );
 
     if( frc::DriverStation::IsDisabled() ) {
-        metrics.elbowGoal = metrics.elbowPosition;
+        SetElbowGoal( metrics.elbowPosition );
         return;
     }
 
@@ -69,10 +69,10 @@ void Arm::SetWristPosition( ArmIO::WristPosition pos )
 {
     switch( pos ) {
     case ArmIO::WristHorizontal:
-        metrics.wristGoal = 0_deg;
+        metrics.wristGoal = -5_deg;
         break;
     case ArmIO::WristVertical:
-        metrics.wristGoal = 90_deg;
+        metrics.wristGoal = 95_deg;
         break;
     }
 

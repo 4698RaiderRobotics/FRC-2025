@@ -10,7 +10,7 @@
 
 #include "climber/Climber.h"
 #include "climber/ClimberSim.h"
-#include "climber/ClimberTalon.h"
+#include "climber/ClimberVortex.h"
 
 using namespace physical::climber;
 
@@ -19,7 +19,7 @@ Climber::Climber()
     SetName( "Climber" );
 
     if( frc::RobotBase::IsReal() ) {
-        io = std::unique_ptr<ClimberIO> (new ClimberTalon());
+        io = std::unique_ptr<ClimberIO> (new ClimberVortex());
     } else {
         io = std::unique_ptr<ClimberIO> (new ClimberSim());
     }

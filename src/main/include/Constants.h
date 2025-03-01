@@ -39,7 +39,7 @@ namespace arm {
     // Maximum angle for the elbow position
     constexpr units::degree_t kElbowMaxAngle = 120_deg;
     // Minimum angle for the elbow position
-    constexpr units::degree_t kElbowMinAngle = -15_deg;
+    constexpr units::degree_t kElbowMinAngle = -36_deg;
 
     // Elevator Rest Position
     constexpr units::degree_t kElbowRestAngle = 80_deg;

@@ -23,19 +23,19 @@ namespace device {
 namespace arm {
 
         // Elbow Gear Ratio
-    constexpr double kElbowGearRatio = 15;
+    constexpr double kElbowGearRatio = 36;
 
         // Wrist Gear Ratio
     constexpr double kWristGearRatio = 45;
 
         // PIDSGVA and Motion Profile settings
     constexpr MotionConfig<units::turns> kElbowMotionConfig = {
-        { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 },
-        { 2_tps, 4_tr_per_s_sq, 0_tr_per_s_cu }
+        { 20.0, 0.0, 5.0, 0.05, 0.47, 4.5, 0.0 },
+        { 2_tps, 5_tr_per_s_sq, 30_tr_per_s_cu }
     };
     constexpr MotionConfig<units::turns> kWristMotionConfig = {
-        { 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 },
-        { 2_tps, 4_tr_per_s_sq, 0_tr_per_s_cu }
+        { 0.01, 0.0, 0.0, 0.0, 0.0, 0.0094, 0.0 },
+        { 0.75_tps, 2_tr_per_s_sq, 0_tr_per_s_cu }
     };
 }
 
@@ -43,20 +43,20 @@ namespace arm {
     // *****************     ELEVATOR SUBSYSTEM      **********************
 namespace elevator {
 
-        // Pulley diameter
-    constexpr units::inch_t kGearDiameter = 1.5_in;
+        // Pulley diameter HTD 24T
+    constexpr units::inch_t kGearDiameter = 1.504_in;
 
         // Gear Ratio
-    constexpr double kGearRatio = 15;
+    constexpr double kGearRatio = 10;
 
         // The number of inches traveled per rotation of the motor
         // wheel circumference / gear ratio
-    constexpr inches_per_rev_t kDistancePerMotorRev = std::numbers::pi * kGearDiameter / ( kGearRatio *  1_tr );
+    constexpr inches_per_rev_t kDistancePerMotorRev = std::numbers::pi * kGearDiameter * 2.0 / ( kGearRatio *  1_tr );
 
         // PIDSGVA and Motion Profile settings
     constexpr MotionConfig<units::inches> kMotionConfig = {
-        { 5.5, 0.0, 0.5, 0.1, 0.45, 9.0, 0.0 },
-        { 2_fps, 4_fps_sq, 0_fps_cu }
+        { 8.0, 0.0, 0.0, 0.175, 0.375, 0.122, 0.0 },
+        { 1.0_mps, 3_mps_sq, 30_mps_cu }
     };
 }
 
@@ -75,31 +75,31 @@ namespace climber {
     constexpr units::inch_t kSpoolDiameter = 0.75_in;
 
         // Gear Ratio
-    constexpr double kGearRatio = 15;
+    constexpr double kGearRatio = 25 * 42.0 / 38.0;
 
         // The number of inches traveled per rotation of the motor
         // wheel circumference / gear ratio
     constexpr inches_per_rev_t kDistancePerMotorRev = std::numbers::pi * kSpoolDiameter / ( kGearRatio *  1_tr );
 
         // PIDSGVA and Motion Profile settings
-    constexpr MotionConfig<units::inches> kMotionConfig = {
-        { 1.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 },
-        { 0.5_fps, 2_fps_sq, 0_fps_cu }
+    constexpr MotionConfig<units::meters> kMotionConfig = {
+        { 8.0, 0.0, 1.0, 0.0, 0.0, 40.0, 0.0 },
+        { 0.22_mps, 3_mps_sq, 0_mps_cu }
     };
 }
 }
 
 namespace deviceIDs {
     constexpr int kElbowMotorID = 21;
-    constexpr int kWristMotorID = 22;
-    constexpr int kElbowEncoderID = 23;
+    constexpr int kWristMotorID = 25;
+    constexpr int kElbowEncoderID = 26;
 
-    constexpr int kElevatorID = 18;
+    constexpr int kElevatorID = 20;
 
-    constexpr int kClimberID = 19;
+    constexpr int kClimberID = 24;
 
-    constexpr int kIntakeUpperMotorID = 28;
-    constexpr int kIntakeLowerMotorID = 29;
+    constexpr int kIntakeUpperMotorID = 23;
+    constexpr int kIntakeLowerMotorID = 22;
 
     constexpr int kIntakeCenterSensorPort = 0;
     constexpr int kIntakeEndSensorPort = 1;

@@ -53,6 +53,8 @@ ModuleIOTalonFX::ModuleIOTalonFX( const ModuleConfigs& configs ) :
         turnConfigs.MotionMagic.MotionMagicAcceleration = configs.turnTune.mp.MaxAcceleration;
         turnConfigs.MotionMagic.MotionMagicJerk = configs.turnTune.mp.MaxJerk;
 
+        turnConfigs.ClosedLoopGeneral.ContinuousWrap = true;
+
         turnConfigs.Feedback.FeedbackRemoteSensorID = m_encoder.GetDeviceID();
         turnConfigs.Feedback.FeedbackSensorSource = ctre::phoenix6::signals::FeedbackSensorSourceValue::RemoteCANcoder;
         turnConfigs.Feedback.RotorToSensorRatio = swerve::physical::kTurnGearRatio;
@@ -112,8 +114,8 @@ void ModuleIOTalonFX::UpdateInputs(Inputs& inputs) {
     inputs.driveCurrent = driveCurrent.GetValue();
 
     inputs.turnAbsolutePosition = turnAbsolutePosition.GetValue();
-    inputs.turnPosition = turnPosition.GetValue() / swerve::physical::kTurnGearRatio;
-    inputs.turnVelocity = turnVelocity.GetValue() / swerve::physical::kTurnGearRatio;
+    inputs.turnPosition = turnPosition.GetValue();
+    inputs.turnVelocity = turnVelocity.GetValue();
     inputs.turnAppliedVolts = turnAppliedVolts.GetValue();
     inputs.turnCurrent = turnCurrent.GetValue();
 

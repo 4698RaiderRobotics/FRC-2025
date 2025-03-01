@@ -57,19 +57,15 @@ namespace swerve {
 
     namespace pidf {
 
-        const char swerveCanBus[] = "";
+        const char swerveCanBus[] = "Drive";
 
         const int pigeon2Id = 13;
 
-        const TuningParams turnTune = { 100, 0.0, 0.5, 0.0, 0.1, 2.66, 0.0 };      // turn PIDSGVA
-        const TuningParams driveTune = { 0.1, 0.0, 0.0, 0.0, 0.0, 0.124, 0.0 };   // drive PIDSGVA
+        const TuningParams turnTune = { 60, 0.0, 0.5, 0.0, 0.1, 2.1, 0.0 };      // turn PIDSGVA
+        const TuningParams driveTune = { 0.1, 0.0, 0.0, 0.0, 0.0, 0.115, 0.0 };   // drive PIDSGVA
 
-        const MotionParams<units::radian> turnMP = { 540_deg_per_s, 720_deg_per_s_sq, 0_deg_per_s_cu };
-        const MotionParams<units::radian> driveMP = { 
-            4.5_mps / physical::kDriveMetersPerWheelRotation, 
-            8_mps_sq / physical::kDriveMetersPerWheelRotation, 
-            0_mps_cu / physical::kDriveMetersPerWheelRotation 
-        };
+        const MotionParams<units::radian> turnMP = { 20_tps, 200_tr_per_s_sq, 2000_tr_per_s_cu };
+        const MotionParams<units::radian> driveMP = { 0_tps, 2000_tr_per_s_sq, 10000_tr_per_s_cu }; 
 
         const ModuleConfigs flconfig = {
             0,          // index
@@ -88,7 +84,7 @@ namespace swerve {
             3,          // driveCanId
             4,          // turnCanId
             10,         // encoderCanId
-            -0.1743_tr, // absoluteEncoderOffset
+            0.3257_tr, // absoluteEncoderOffset
             {turnTune, turnMP},   // turn control
             {driveTune, driveMP}  // drive control
         };
@@ -110,7 +106,7 @@ namespace swerve {
             7,          // driveCanId
             8,          // turnCanId
             12,         // encoderCanId
-            0.13696_tr, // absoluteEncoderOffset
+            -0.36304_tr, // absoluteEncoderOffset
             {turnTune, turnMP},   // turn control
             {driveTune, driveMP}  // drive control
         };

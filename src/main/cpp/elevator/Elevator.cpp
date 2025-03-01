@@ -27,9 +27,9 @@ Elevator::Elevator()
 
     homer = util::MotorHomer(
         // Start routine
-        [this] { io->SetOpenLoop(-0.1); },
+        [this] { io->SetOpenLoop(-0.01); },
         // Stop and Reset Routine
-        [this] { io->SetOpenLoop(0.0); io->ResetPosition( 0_in ); metrics.goal = 0_in; },
+        [this] { io->SetOpenLoop(0.0); io->ResetPosition( 0_in ); SetGoal( 0_in ); },
         // Home Condition
         [this] { return units::math::abs( metrics.velocity ) < 0.01_fps; }
     );
@@ -45,7 +45,7 @@ void Elevator::Periodic()
     elevator_lig->SetLength( units::meter_t(metrics.height + 12_in).value() );
 
     if( frc::DriverStation::IsDisabled() ) {
-        metrics.goal = metrics.height;
+        SetGoal( metrics.height );
         return;
     }
 

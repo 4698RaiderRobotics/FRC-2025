@@ -13,7 +13,10 @@ using namespace device::arm;
 ArmTalon550::ArmTalon550()
     : elbowMtr{ deviceIDs::kElbowMotorID, "" },
     elbowEncoder{ deviceIDs::kElbowEncoderID, "" },
-    wristMtr{ deviceIDs::kWristMotorID, rev::spark::SparkLowLevel::MotorType::kBrushless }
+    wristMtr{ deviceIDs::kWristMotorID, rev::spark::SparkLowLevel::MotorType::kBrushless },
+    m_wristPID{ kWristMotionConfig.tuner.kP, kWristMotionConfig.tuner.kI, kWristMotionConfig.tuner.kD },
+    m_simpleFF{ kWristMotionConfig.tuner.kS * 1_V, kWristMotionConfig.tuner.kV * 1_V / 1_deg_per_s, kWristMotionConfig.tuner.kA * 1_V / 1_deg_per_s_sq },
+    m_Profile{ {kWristMotionConfig.mp.MaxVelocity, kWristMotionConfig.mp.MaxAcceleration} }
 {
     EncOffsets::GetInstance().Listen( "Elbow", [this] { UpdateElbowOffset(); } );
 
@@ -23,10 +26,12 @@ ArmTalon550::ArmTalon550()
     elbowEncoder.GetConfigurator().Apply(elbowAbsoluteEncoderConfigs, 50_ms);
 
     ctre::phoenix6::configs::TalonFXConfiguration talonConfigs{};
-    talonConfigs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
+    talonConfigs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
     talonConfigs.CurrentLimits.SupplyCurrentLimit = 40_A;
     talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
+    talonConfigs.Feedback.FeedbackRemoteSensorID = deviceIDs::kElbowEncoderID;
+    talonConfigs.Feedback.FeedbackSensorSource = ctre::phoenix6::signals::FeedbackSensorSourceValue::RemoteCANcoder;
     talonConfigs.Feedback.RotorToSensorRatio = kElbowGearRatio;
 
     talonConfigs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
@@ -51,32 +56,39 @@ ArmTalon550::ArmTalon550()
 
     SparkMaxConfig config{};
     config
-        .Inverted(false)
+        .Inverted(true)
         .SetIdleMode( SparkMaxConfig::IdleMode::kBrake )
         .SmartCurrentLimit( 30 );
-    config.encoder
-        .PositionConversionFactor( kWristGearRatio * 360.0 )        // Convert to degrees at intake
-        .VelocityConversionFactor( kWristGearRatio );               // Convert to RPM of intake
-    config.closedLoop
-        .SetFeedbackSensor( ClosedLoopConfig::FeedbackSensor::kPrimaryEncoder )
-        .Pid( kWristMotionConfig.tuner.kP, kWristMotionConfig.tuner.kI, kWristMotionConfig.tuner.kD);
-    config.closedLoop.maxMotion
-        .MaxVelocity( units::revolutions_per_minute_t{kWristMotionConfig.mp.MaxVelocity}.value() )
-        .MaxAcceleration( units::revolutions_per_minute_per_second_t{kWristMotionConfig.mp.MaxAcceleration}.value() );
+    // config.encoder
+    //     .PositionConversionFactor( kWristGearRatio * 360.0 )        // Convert to degrees at intake
+    //     .VelocityConversionFactor( kWristGearRatio );               // Convert to RPM of intake
+    // config.closedLoop
+    //     .SetFeedbackSensor( ClosedLoopConfig::FeedbackSensor::kPrimaryEncoder )
+    //     .Pid( kWristMotionConfig.tuner.kP, kWristMotionConfig.tuner.kI, kWristMotionConfig.tuner.kD);
+    // config.closedLoop.maxMotion
+    //     .MaxVelocity( units::revolutions_per_minute_t{kWristMotionConfig.mp.MaxVelocity}.value() )
+    //     .MaxAcceleration( units::revolutions_per_minute_per_second_t{kWristMotionConfig.mp.MaxAcceleration}.value() );
         
     wristMtr.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 }
 
 void ArmTalon550::Update( Metrics &m )
 {
+    m_Setpoint = m_Profile.Calculate( 20_ms, m_Setpoint, m_Goal );
+
+    double PIDOut = m_wristPID.Calculate( m.wristPosition.value(), m_Setpoint.position.value() );
+    double ffOut = m_simpleFF.Calculate( m_Setpoint.velocity ).value();
+
+    wristMtr.Set( PIDOut + ffOut / 12.0 );
+
     ctre::phoenix6::BaseStatusSignal::RefreshAll( elbowPosition, elbowVelocity, elbowAppliedVolts, elbowCurrent );
     m.elbowPosition = elbowPosition.GetValue();
     m.elbowVelocity = elbowVelocity.GetValue();
     m.elbowAppliedVolts = elbowAppliedVolts.GetValue();
     m.elbowCurrent = elbowCurrent.GetValue();
 
-    m.wristPosition = wristMtr.GetEncoder().GetPosition() * 1_deg;      // PositionConversionFactor() set so this returns degrees
-    m.wristVelocity = wristMtr.GetEncoder().GetVelocity() * 1_rpm;      // VelocityConversionFactor() set so this returns RPM
+    m.wristPosition = wristMtr.GetEncoder().GetPosition()  / kWristGearRatio * 360_deg;
+    m.wristVelocity = wristMtr.GetEncoder().GetVelocity() / kWristGearRatio * 1_rpm; 
     m.wristAppliedVolts = wristMtr.GetAppliedOutput() * wristMtr.GetBusVoltage() * 1_V;
     m.wristCurrent = wristMtr.GetOutputCurrent() * 1_A;
 
@@ -85,17 +97,19 @@ void ArmTalon550::Update( Metrics &m )
 
 void ArmTalon550::SetElbowGoal( units::degree_t goal ) 
 {
-    elbowMtr.SetControl( ctre::phoenix6::controls::MotionMagicDutyCycle{ goal } );
+    elbowMtr.SetControl( ctre::phoenix6::controls::MotionMagicVoltage{ goal } );
 }
 
 void ArmTalon550::SetWristPosition( WristPosition pos ) 
 {
     switch( pos ) {
     case WristHorizontal:
-        wristCtrlr.SetReference( 0.0, SparkBase::ControlType::kMAXMotionPositionControl );
+        // wristCtrlr.SetReference( 0.0, SparkBase::ControlType::kMAXMotionPositionControl );
+        m_Goal = { -5_deg, 0_rpm };
         break;
     case WristVertical:
-        wristCtrlr.SetReference( 90.0, SparkBase::ControlType::kMAXMotionPositionControl );
+        // wristCtrlr.SetReference( 90.0, SparkBase::ControlType::kMAXMotionPositionControl );
+        m_Goal = { 95_deg, 0_rpm };
         break;
     }
 }

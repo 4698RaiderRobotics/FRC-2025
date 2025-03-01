@@ -16,12 +16,10 @@ using namespace physical;
 frc2::CommandPtr IntakeCommands::CoralStationPickup( Arm *arm, Intake *intake, Elevator *elevator )
 {
     return frc2::cmd::Sequence(
-        arm->ChangeElbowAngle( arm::kElbowRaiseAngle ),
         arm->ChangeWristPosition( ArmIO::WristHorizontal ),  
-        frc2::cmd::Parallel(
-            elevator->ChangeHeight( elevator::kHeightCoralStation ),
-            arm->ChangeElbowAngle( arm::kElbowCoralStation )
-        ),
+        elevator->ChangeHeight( elevator::kElevatorMinHeight ),
+        arm->ChangeElbowAngle( arm::kElbowCoralStation ),
+        elevator->ChangeHeight( elevator::kHeightCoralStation ),
         intake->IntakeCoral()
     ).WithName( "Coral Station Pickup" );
 }
@@ -29,7 +27,6 @@ frc2::CommandPtr IntakeCommands::CoralStationPickup( Arm *arm, Intake *intake, E
 frc2::CommandPtr IntakeCommands::GroundPickup( Arm *arm, Intake *intake, Elevator *elevator )
 {
     return frc2::cmd::Sequence(
-        arm->ChangeElbowAngle( arm::kElbowRaiseAngle ),
         arm->ChangeWristPosition( ArmIO::WristHorizontal ),  
         frc2::cmd::Parallel(
             elevator->ChangeHeight( elevator::kHeightGroundPickup ),

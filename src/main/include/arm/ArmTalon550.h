@@ -2,6 +2,10 @@
 
 #include "ArmIO.h"
 
+#include <frc/controller/PIDController.h>
+#include <frc/controller/SimpleMotorFeedforward.h>
+#include <frc/trajectory/TrapezoidProfile.h>
+
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/CANcoder.hpp>
 
@@ -28,5 +32,11 @@ private:
     ctre::phoenix6::StatusSignal<units::ampere_t> elbowCurrent = elbowMtr.GetSupplyCurrent();
 
     rev::spark::SparkMax wristMtr;
-    rev::spark::SparkClosedLoopController wristCtrlr = wristMtr.GetClosedLoopController();
+    // rev::spark::SparkClosedLoopController wristCtrlr = wristMtr.GetClosedLoopController();
+    frc::PIDController m_wristPID;
+    frc::SimpleMotorFeedforward<units::degrees> m_simpleFF;
+
+    frc::TrapezoidProfile<units::degrees> m_Profile;
+    frc::TrapezoidProfile<units::degrees>::State m_Goal;
+    frc::TrapezoidProfile<units::degrees>::State m_Setpoint;
 };

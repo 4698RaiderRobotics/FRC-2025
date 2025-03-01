@@ -7,7 +7,7 @@
 #include <frc/simulation/DCMotorSim.h>
 #include <frc/system/plant/LinearSystemId.h>
 
-const MotionConfig<units::inch> simMotion = { {0.05, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0 }, {8_fps, 35_fps_sq, 0_fps_cu}};
+const MotionConfig<units::inch> simMotion = { {0.02, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0 }, {8_fps, 35_fps_sq, 0_fps_cu}};
 
 ElevatorSim::ElevatorSim()
 : motorSim{ device::elevator::kDistancePerMotorRev, 1.0, simMotion }
@@ -23,13 +23,14 @@ void ElevatorSim::Update( Metrics &m )
     m.height = motorSim.GetPosition();
     // Don't let the sim go below zero.
     // Set open loop to zero so velocity is zero and homing works.
-    if( m.height < 0_in ) {
+    if( m.height < -0.001_in ) {
         m.height = 0_in;
         motorSim.SetPosition( 0_in );
-        motorSim.SetOpenLoop( 0 );
+        m.velocity = 0.0_fps;
+    } else {
+        m.velocity = motorSim.GetVelocity();
     }
 
-    m.velocity = motorSim.GetVelocity();
     m.appliedVolts = motorSim.GetVoltage();
     m.current = motorSim.GetCurrent();
 }

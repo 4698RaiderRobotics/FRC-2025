@@ -61,5 +61,5 @@ void ElevatorTalon::SetOpenLoop( double percentOutput )
 void ElevatorTalon::SetGoal( units::inch_t goal ) 
 {
     units::turn_t turn_goal = goal / kDistancePerMotorRev;
-    talon.SetControl( ctre::phoenix6::controls::MotionMagicDutyCycle{ turn_goal } );
+    talon.SetControl( ctre::phoenix6::controls::MotionMagicVoltage{ turn_goal } );
 }

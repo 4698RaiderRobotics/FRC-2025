@@ -10,6 +10,7 @@ class GyroIOPigeon2 : public GyroIO {
 public:
     GyroIOPigeon2( int canId, std::string canBus );
     virtual void UpdateInputs(Inputs &inputs);
+    virtual void Reset();
 
 private:
     ctre::phoenix6::hardware::Pigeon2 pigeon;

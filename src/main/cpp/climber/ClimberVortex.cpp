@@ -19,7 +19,7 @@ ClimberVortex::ClimberVortex( )
     config
         .Inverted(true)
         .SetIdleMode( rev::spark::SparkFlexConfig::IdleMode::kBrake )
-        .SmartCurrentLimit( 30 );
+        .SmartCurrentLimit( 60 );
         
     flex.Configure(config, rev::spark::SparkFlex::ResetMode::kResetSafeParameters, rev::spark::SparkFlex::PersistMode::kPersistParameters);
 

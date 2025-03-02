@@ -52,13 +52,30 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
     ).WithName( "Joystick Drive" );
 }
 
-frc2::CommandPtr DriveCommands::DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotCoords )
+frc2::CommandPtr DriveCommands::DriveOpenLoop( Drive *d, frc::ChassisSpeeds speed, bool robotRelative )
 {
-    return DriveToPose( d, [d, move, robotCoords] {
+    return frc2::cmd::Run( [d, speed, robotRelative] {
+        bool isFlipped = frc::DriverStation::GetAlliance() == frc::DriverStation::kRed;
+        d->RunVelocity( 
+            robotRelative ?
+            speed
+            :
+            frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                speed,
+                isFlipped ? d->GetRotation() + frc::Rotation2d(180_deg) : d->GetRotation()
+            )
+        ); },
+        {d}
+    ); 
+}
+
+frc2::CommandPtr DriveCommands::DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotRelative )
+{
+    return DriveToPose( d, [d, move, robotRelative] {
         frc::Pose2d newPose;
         frc::Pose2d currentPose = d->GetPose();
 
-        if( robotCoords ) {
+        if( robotRelative ) {
             // Move the current pose in the Robot Pose coordinate system.
             // The robot coordinate system is X-forward and Y-left.
             newPose = currentPose.TransformBy( move );

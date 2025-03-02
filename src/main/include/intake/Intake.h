@@ -21,7 +21,7 @@ public:
 
     frc2::CommandPtr IntakeCoral();
     frc2::CommandPtr EjectCoralL1();
-    frc2::CommandPtr EjectCoralL2_4();
+    frc2::CommandPtr EjectCoralL2_4( bool waitForPipeSwitch );
 
     frc2::Trigger HasCoralTrigger() {return frc2::Trigger( [this] { return metrics.centerBeamBroken; } ); }
 

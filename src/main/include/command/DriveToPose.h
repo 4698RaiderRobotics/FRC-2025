@@ -26,7 +26,7 @@ class Drive;
  */
 class DriveToPose : public frc2::CommandHelper<LoggedCommand, DriveToPose> {
 public:
-    DriveToPose( Drive *drive, std::function<frc::Pose2d()> poseFunc );
+    DriveToPose( Drive *drive, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed=1.0 );
 
     void Init() override;
 
@@ -46,9 +46,9 @@ private:
 
     frc::ChassisSpeeds m_speeds;
 
-    frc::TrapezoidProfile<units::meters> m_XProfile{{12_fps, 100_fps_sq}};
-    frc::TrapezoidProfile<units::meters> m_YProfile{{12_fps, 100_fps_sq}};
-    frc::TrapezoidProfile<units::degrees> m_RProfile{{360_deg_per_s, 900_deg_per_s_sq}};
+    frc::TrapezoidProfile<units::meters> *m_XProfile;
+    frc::TrapezoidProfile<units::meters> *m_YProfile;
+    frc::TrapezoidProfile<units::degrees> *m_RProfile;
 
     frc::TrapezoidProfile<units::meters>::State m_XSetpoint;
     frc::TrapezoidProfile<units::meters>::State m_YSetpoint;
@@ -61,4 +61,7 @@ private:
     frc::PIDController m_Xpid{ 4.0, 0.0, 0.0 };
     frc::PIDController m_Ypid{ 4.0, 0.0, 0.0 };
     frc::PIDController m_Rpid{ 4.0, 0.0, 0.0 };
+
+    const frc::TrapezoidProfile<units::meters>::Constraints XY_constraints = {12_fps, 100_fps_sq};
+    const frc::TrapezoidProfile<units::degrees>::Constraints R_constraints = {360_deg_per_s, 900_deg_per_s_sq};
 };

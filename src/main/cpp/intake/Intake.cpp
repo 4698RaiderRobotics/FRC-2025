@@ -12,10 +12,10 @@
 
 using namespace physical::intake;
 
-const IntakeIO::SpinSpeed IntakeIO::spin_in{ kIntakeInOutSpeed, kIntakeInOutSpeed };
-const IntakeIO::SpinSpeed IntakeIO::spin_out{ -kIntakeInOutSpeed, -kIntakeInOutSpeed };
-const IntakeIO::SpinSpeed IntakeIO::shift_up{ kIntakeInOutSpeed, -kIntakeShiftSpeed };
-const IntakeIO::SpinSpeed IntakeIO::shift_down{ -kIntakeShiftSpeed, kIntakeInOutSpeed };
+const IntakeIO::SpinSpeed IntakeIO::spin_in{ -kIntakeInSpeed, -kIntakeInSpeed };
+const IntakeIO::SpinSpeed IntakeIO::spin_out{ kIntakeOutSpeed, kIntakeOutSpeed };
+const IntakeIO::SpinSpeed IntakeIO::shift_up{ kIntakeShiftSlowSpeed, -kIntakeShiftFastSpeed };
+const IntakeIO::SpinSpeed IntakeIO::shift_down{ -kIntakeShiftFastSpeed, kIntakeShiftSlowSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_stop{ 0.0, 0.0 };
 
 Intake::Intake() 
@@ -76,8 +76,6 @@ bool Intake::isPipeTripped()
     // This is just for simulation and does nothing
     // on the real robot.
     io->PollingPipeSwitch();
-
-    fmt::print( "Pipe switch = {}\n", metrics.pipeSwitchTripped );
     
     return metrics.pipeSwitchTripped;
 }
@@ -112,22 +110,20 @@ frc2::CommandPtr Intake::EjectCoralL1()
     ).WithName( "Eject Coral L1");
 }
 
-frc2::CommandPtr Intake::EjectCoralL2_4()
+frc2::CommandPtr Intake::EjectCoralL2_4( bool waitForPipeSwitch )
 {
     return frc2::cmd::Sequence( 
-        frc2::cmd::WaitUntil( [this] {return isPipeTripped();} ).WithTimeout( 5_s ),
+        frc2::cmd::WaitUntil( [this, waitForPipeSwitch] {return isPipeTripped() || !waitForPipeSwitch;} ).WithTimeout( 1.5_s ),
         frc2::cmd::Either( 
             // If Pipe Switch tripped (instead of timed out) then Eject coral.
             frc2::cmd::Sequence( 
-                frc2::cmd::StartEnd( [this] { ShiftDown(); }, [this] {SpinOut(); })
-                    .Until( [this] { return !metrics.centerBeamBroken; } )
-                    .WithTimeout( 1_s ),
+                frc2::cmd::RunOnce( [this] { ShiftDown(); }),
                 frc2::cmd::Wait( 0.5_s ),
                 frc2::cmd::RunOnce( [this] { Stop(); })
             ), 
-            // If No Coral in the intake
+            // If Pipe Switch not tripped tripped
             frc2::cmd::None(),
-            [this] {return isPipeTripped(); }
+            [this, waitForPipeSwitch] {return isPipeTripped() || !waitForPipeSwitch; }
         )
     ).WithName( "Eject Coral L2-4");
 

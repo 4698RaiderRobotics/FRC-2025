@@ -250,9 +250,9 @@ frc::ChassisSpeeds Drive::GetChassisSpeeds()
 
 
 // Resets the gyro to an angle
-void Drive::ResetDriverOrientation( units::degree_t angle ) {
-    DataLogger::Log( "Swerve/Status", fmt::format("Reseting Driver Orientation to {}..", angle ) );
-    driver_offset = angle;
+void Drive::ResetGyro() {
+    DataLogger::Log( "Swerve/Status", "Reseting Gyro.." );
+    m_gyro->Reset();
 }
 
 // Resets the pose to a position

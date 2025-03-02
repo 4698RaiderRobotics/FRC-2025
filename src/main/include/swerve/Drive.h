@@ -32,7 +32,7 @@ public:
     void SetPose( frc::Pose2d pose );
     frc::Rotation2d GetRotation();
 
-    void ResetDriverOrientation( units::degree_t angle );
+    void ResetGyro( );
 
     wpi::array<frc::SwerveModuleState,4U>& GetModuleStates();
     frc::ChassisSpeeds GetChassisSpeeds();
@@ -59,9 +59,9 @@ public:
 private:
     std::unique_ptr<frc2::sysid::SysIdRoutine> sysId;
 
-    units::degree_t field_offset;
-    units::degree_t driver_offset;
-    bool m_have_driver_offset{false};
+    // units::degree_t field_offset;
+    // units::degree_t driver_offset;
+    // bool m_have_driver_offset{false};
     bool m_missing_PP_config{false};
 
     frc::Alert PPalert{"PathPlanner Robot Config NOT FOUND", frc::Alert::AlertType::kWarning};

@@ -28,7 +28,7 @@ Arm::Arm()
 
     elbowHomer = util::MotorHomer(
         // Start routine
-        [this] { io->SetWristOpenLoop(-0.05); },
+        [this] { io->SetWristOpenLoop(-0.1); },
         // Stop and Reset Routine
         [this] { io->SetWristOpenLoop(0.0); io->ResetWristAngle( 0_deg ); SetWristPosition(ArmIO::WristHorizontal); },
         // Home Condition
@@ -69,27 +69,41 @@ void Arm::SetWristPosition( ArmIO::WristPosition pos )
 {
     switch( pos ) {
     case ArmIO::WristHorizontal:
-        metrics.wristGoal = -5_deg;
+        metrics.wristGoal = kWristHorizontal;
         break;
     case ArmIO::WristVertical:
-        metrics.wristGoal = 95_deg;
+        metrics.wristGoal = kWristVertical;
         break;
     }
 
     io->SetWristPosition( pos );
 }
 
-bool Arm::AtGoal() 
+bool Arm::AllAtGoal() 
 {
-    return units::math::abs( metrics.elbowPosition - metrics.elbowGoal ) < AT_GOAL_TOLERANCE &&
-           units::math::abs( metrics.wristPosition - metrics.wristGoal ) < AT_GOAL_TOLERANCE;
+    return WristAtGoal() && ElbowAtGoal();
+}
+
+bool Arm::ElbowAtGoal() 
+{
+    return units::math::abs( metrics.elbowPosition - metrics.elbowGoal ) < ELBOW_GOAL_TOLERANCE;
+}
+
+bool Arm::WristAtGoal() 
+{
+    return units::math::abs( metrics.wristPosition - metrics.wristGoal ) < WRIST_GOAL_TOLERANCE;
+}
+
+bool Arm::isArmBackward()
+{
+    return metrics.elbowPosition > 90_deg;
 }
 
 frc2::CommandPtr Arm::ChangeElbowAngle( units::degree_t goal ) 
 {
     return frc2::cmd::Sequence(
         RunOnce( [this, goal] { SetElbowGoal( goal ); }),
-        frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
+        frc2::cmd::WaitUntil( [this] { return ElbowAtGoal(); } ).WithTimeout( 2_s )
     ).WithName( fmt::format( "Change Arm Angle to {}", goal ) );
 }
 
@@ -97,7 +111,7 @@ frc2::CommandPtr Arm::ChangeWristPosition( ArmIO::WristPosition pos )
 {
     return frc2::cmd::Sequence(
         RunOnce( [this, pos] { SetWristPosition( pos ); }),
-        frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
+        frc2::cmd::WaitUntil( [this] { return WristAtGoal(); } ).WithTimeout( 2_s )
     ).WithName( "Change Wrist Position" );
 }
 

@@ -16,6 +16,7 @@ public:
     void SetGoal( units::inch_t goal );
     void Nudge( units::inch_t nudge );
     bool AtGoal();
+    units::inch_t GetHeight() {return metrics.height;}
 
     frc2::CommandPtr ChangeHeight( units::inch_t goal );
 

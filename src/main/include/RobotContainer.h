@@ -27,6 +27,7 @@ public:
     frc2::Command* GetAutonomousCommand();
     
 private:
+    void ConfigureDefaults();
     void ConfigureBindings();
     void ConfigureAutos();
 

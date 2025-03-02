@@ -47,28 +47,15 @@ RobotContainer::RobotContainer()
     climber_nudge_axis.SetDeadband( 0.25 );
     elevator_nudge_axis.SetDeadband( 0.25 );
 
+    ConfigureDefaults();
     ConfigureBindings();
     ConfigureAutos();
     frc::SmartDashboard::PutData("Auto Mode", &m_chooser);
     ReefCommands::SetReefPlacement( ReefPlacement::NONE );
 }
 
-void RobotContainer::ConfigureBindings() 
+void RobotContainer::ConfigureDefaults() 
 {
-    m_arm->SetDefaultCommand(
-        frc2::cmd::Run( [this] {
-            if( nudge_hold_button.Get() ) {
-                m_arm->NudgeElbow(elbow_nudge_axis.GetAxis() * 0.5_deg);
-                if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) > 0.75 ) {
-                    m_arm->SetWristPosition( ArmIO::WristHorizontal);
-                } else if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) < -0.75 ) {
-                    m_arm->SetWristPosition( ArmIO::WristVertical);
-                }
-            }
-        },
-        { m_arm }
-    ).WithName("Elbow-Wrist Nudge"));
-
     m_drive->SetDefaultCommand( 
         DriveCommands::JoystickDrive( 
             m_drive,
@@ -78,29 +65,79 @@ void RobotContainer::ConfigureBindings()
         )
     );
 
-    m_climber->SetDefaultCommand(
-        frc2::cmd::Run( [this] {
-            if( nudge_hold_button.Get() ) {
-                m_climber->Nudge(climber_nudge_axis.GetAxis() * -0.25_in);
-            }
-        },
-        { m_climber }
-    ).WithName("Climber Nudge"));
+    if( !frc::DriverStation::IsFMSAttached() ) {
+        m_arm->SetDefaultCommand(
+            frc2::cmd::Run( [this] {
+                if( nudge_hold_button.Get() ) {
+                    m_arm->NudgeElbow(elbow_nudge_axis.GetAxis() * 0.5_deg);
+                    if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) > 0.75 ) {
+                        m_arm->SetWristPosition( ArmIO::WristHorizontal);
+                    } else if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) < -0.75 ) {
+                        m_arm->SetWristPosition( ArmIO::WristVertical);
+                    }
+                }
+            },
+            { m_arm }
+        ).WithName("Elbow-Wrist Nudge"));
 
-    m_elevator->SetDefaultCommand(
-        frc2::cmd::Run( [this] {
-            if( nudge_hold_button.Get() ) {
-                m_elevator->Nudge(elevator_nudge_axis.GetAxis() * 0.25_in);
-            }
-        },
-        { m_elevator }
-    ).WithName("Elevator Nudge"));
+        m_climber->SetDefaultCommand(
+            frc2::cmd::Run( [this] {
+                if( nudge_hold_button.Get() ) {
+                    m_climber->Nudge(climber_nudge_axis.GetAxis() * -0.1_in);
+                }
+            },
+            { m_climber }
+        ).WithName("Climber Nudge"));
+
+        m_elevator->SetDefaultCommand(
+            frc2::cmd::Run( [this] {
+                if( nudge_hold_button.Get() ) {
+                    m_elevator->Nudge(elevator_nudge_axis.GetAxis() * 0.25_in);
+                }
+            },
+            { m_elevator }
+        ).WithName("Elevator Nudge"));
+    }
+}
+
+void RobotContainer::ConfigureBindings() 
+{
+    /**************************          DRIVER           ********************* */
+    (driverCtrlr.LeftBumper() && driverCtrlr.RightBumper()).Debounce( 100_ms )
+        .OnTrue( frc2::cmd::RunOnce( [this] { m_drive->ResetGyro(); }, {m_drive} ));
+
+    driverCtrlr.Button( ctrl::cancel_button ).OnTrue( 
+        frc2::cmd::Parallel(
+            IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ),
+            frc2::cmd::RunOnce( [this] { m_drive->Stop(); }, {m_drive} )
+        )
+    );
+
+    driverCtrlr.Button( ctrl::manual_spin_down ).OnTrue( m_intake->EjectCoralL2_4( false ) );
+
+    driverCtrlr.Button( ctrl::manual_eject ).OnTrue( m_intake->EjectCoralL1() );
+
+    driverCtrlr.POV( ctrl::raise_climber ).OnTrue( m_climber->RaiseClimber() );
+    driverCtrlr.POV( ctrl::start_climb ).OnTrue( m_climber->DoClimb() );
 
 
-    operatorCtrlr.Button( ctrl::pick_L1_level ).OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L1 ) );
-    operatorCtrlr.Button( ctrl::pick_L2_level ).OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L2 ) );
-    operatorCtrlr.Button( ctrl::pick_L3_level ).OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L3 ) );
-    operatorCtrlr.Button( ctrl::pick_L4_level ).OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L4 ) );
+
+    /**************************          OPERATOR           ********************* */
+    operatorCtrlr.Button( ctrl::cancel_button ).OnTrue( 
+        // frc2::cmd::Parallel(
+            IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
+            // frc2::cmd::RunOnce( [this] { m_drive->Stop(); }, {m_drive} )
+        // )
+    );
+
+    (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L1_level ))
+        .OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L1 ) );
+    (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L2_level ))
+        .OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L2 ) );
+    (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L3_level ))
+        .OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L3 ) );
+    (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L4_level ))
+        .OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L4 ) );
 
     operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_left, 0.75 )
         .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false ) );
@@ -108,11 +145,11 @@ void RobotContainer::ConfigureBindings()
         .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true ) );
 
     operatorCtrlr.POV( ctrl::intake_ground )
-        .WhileTrue( IntakeCommands::GroundPickup( m_arm, m_intake, m_elevator ) )
+        .OnTrue( IntakeCommands::GroundPickup( m_arm, m_intake, m_elevator ) )
         .OnFalse( IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ) );
 
     operatorCtrlr.POV( ctrl::intake_coral_station )
-        .WhileTrue( IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator ) )
+        .OnTrue( IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator ) )
         .OnFalse( IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ) );
 
     m_intake->HasCoralTrigger().OnTrue( 
@@ -128,15 +165,25 @@ void RobotContainer::ConfigureBindings()
         )
     );
 
-
+    /**************************          DEBUG MODE          ********************* */
     if( !frc::DriverStation::IsFMSAttached() ) {
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        (driverCtrlr.Back() && driverCtrlr.Y()).WhileTrue(m_drive->SysIdDynamic(frc2::sysid::Direction::kForward));
-        (driverCtrlr.Back() && driverCtrlr.X()).WhileTrue(m_drive->SysIdDynamic(frc2::sysid::Direction::kReverse));
-        (driverCtrlr.Start() && driverCtrlr.Y()).WhileTrue(m_drive->SysIdQuasistatic(frc2::sysid::Direction::kForward));
-        (driverCtrlr.Start() && driverCtrlr.X()).WhileTrue(m_drive->SysIdQuasistatic(frc2::sysid::Direction::kReverse));
+        (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_intake ))
+            .OnTrue( m_intake->IntakeCoral() );
+        (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_eject ))
+            .OnTrue( m_intake->EjectCoralL1() );
+        (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_spin_down ))
+            .OnTrue( m_intake->EjectCoralL2_4( false ) );
     }
+
+    /**************************          SYSID          ********************* */
+    // if( !frc::DriverStation::IsFMSAttached() ) {
+    //     // Run SysId routines when holding back/start and X/Y.
+    //     // Note that each routine should be run exactly once in a single log.
+    //     (driverCtrlr.Back() && driverCtrlr.Y()).WhileTrue(m_drive->SysIdDynamic(frc2::sysid::Direction::kForward));
+    //     (driverCtrlr.Back() && driverCtrlr.X()).WhileTrue(m_drive->SysIdDynamic(frc2::sysid::Direction::kReverse));
+    //     (driverCtrlr.Start() && driverCtrlr.Y()).WhileTrue(m_drive->SysIdQuasistatic(frc2::sysid::Direction::kForward));
+    //     (driverCtrlr.Start() && driverCtrlr.X()).WhileTrue(m_drive->SysIdQuasistatic(frc2::sysid::Direction::kReverse));
+    // }
 
 }
 

@@ -16,7 +16,10 @@ public:
     void SetElbowGoal( units::degree_t goal );
     void NudgeElbow( units::degree_t nudge );
     void SetWristPosition( ArmIO::WristPosition pos );
-    bool AtGoal();
+    bool AllAtGoal();
+    bool WristAtGoal();
+    bool ElbowAtGoal();
+    bool isArmBackward();
 
     frc2::CommandPtr ChangeElbowAngle( units::degree_t goal );
     frc2::CommandPtr ChangeWristPosition(ArmIO::WristPosition pos );
@@ -27,5 +30,6 @@ private:
 
     util::MotorHomer elbowHomer;
 
-    const units::degree_t AT_GOAL_TOLERANCE = 4_deg;
+    const units::degree_t ELBOW_GOAL_TOLERANCE = 4_deg;
+    const units::degree_t WRIST_GOAL_TOLERANCE = 10_deg;
 };

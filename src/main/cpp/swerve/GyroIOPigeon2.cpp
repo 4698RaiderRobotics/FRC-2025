@@ -39,3 +39,8 @@ void GyroIOPigeon2::UpdateInputs(Inputs &inputs)
         inputs.odometryYawPositions.push_back(yawPositionQueue->front() * 1_deg);
     }
 }
+
+void GyroIOPigeon2::Reset()
+{
+    pigeon.Reset();
+}

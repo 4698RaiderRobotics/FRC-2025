@@ -30,7 +30,7 @@ ModuleIOTalonFX::ModuleIOTalonFX( const ModuleConfigs& configs ) :
         driveConfigs.MotionMagic.MotionMagicAcceleration = configs.driveTune.mp.MaxAcceleration;
         driveConfigs.MotionMagic.MotionMagicJerk = configs.driveTune.mp.MaxJerk;
 
-        driveConfigs.Feedback.SensorToMechanismRatio = swerve::physical::kDriveGearRatio;
+        driveConfigs.Feedback.SensorToMechanismRatio = 1;
         m_driveMotor.GetConfigurator().Apply(driveConfigs);
         SetDriveBrakeMode( true );
     }
@@ -108,8 +108,8 @@ void ModuleIOTalonFX::UpdateInputs(Inputs& inputs) {
         turnCurrent
     );
 
-    inputs.drivePosition = drivePosition.GetValue();
-    inputs.driveVelocity = driveVelocity.GetValue();
+    inputs.drivePosition = drivePosition.GetValue() / swerve::physical::kDriveGearRatio;
+    inputs.driveVelocity = driveVelocity.GetValue() / swerve::physical::kDriveGearRatio;
     inputs.driveAppliedVolts = driveAppliedVolts.GetValue();
     inputs.driveCurrent = driveCurrent.GetValue();
 
@@ -126,12 +126,12 @@ void ModuleIOTalonFX::UpdateInputs(Inputs& inputs) {
 
     inputs.odometryDrivePositions.clear();
     for (; !drivePositionQueue->empty(); drivePositionQueue->pop()) {
-        inputs.odometryDrivePositions.push_back(drivePositionQueue->front() * 1_rad);
+        inputs.odometryDrivePositions.push_back(drivePositionQueue->front() * 1_tr / swerve::physical::kDriveGearRatio );
     }
 
     inputs.odometryTurnPositions.clear();
     for (; !turnPositionQueue->empty(); turnPositionQueue->pop()) {
-        inputs.odometryTurnPositions.push_back(turnPositionQueue->front() * 1_rad);
+        inputs.odometryTurnPositions.push_back(turnPositionQueue->front() * 1_tr);
     }
 }
 
@@ -145,7 +145,7 @@ void ModuleIOTalonFX::SetTurnOpenLoop( double percent ) {
 
 void ModuleIOTalonFX::SetDriveWheelVelocity( units::radians_per_second_t velocity )
 {
-    m_driveMotor.SetControl( ctre::phoenix6::controls::MotionMagicVelocityVoltage( velocity ) );
+    m_driveMotor.SetControl( ctre::phoenix6::controls::MotionMagicVelocityVoltage( velocity * swerve::physical::kDriveGearRatio ) );
 }
 
 void ModuleIOTalonFX::SetTurnPosition( units::radian_t position )

@@ -89,7 +89,7 @@ void IntakeSim::CheckIntakeEjectState()
         // We have been spinning the intake in for 1.5 seconds... Trip the beam break
         centerBeamBlocked = true;
     } else if( spinning_out && frc::Timer::GetFPGATimestamp() - start_time > 0.5_s ) {
-        // We have been spinning the intake out for 1.5 seconds... unTrip the beam break
+        // We have been spinning the intake out for 0.5 seconds... unTrip the beam break
         centerBeamBlocked = false;
         endBeamBlocked = false;
         pipeSwitchTripped = false;
@@ -98,8 +98,10 @@ void IntakeSim::CheckIntakeEjectState()
         // We have been shifting the coral up for 0.5 seconds... Trip the end beam break
         endBeamBlocked = true;
     } else if( shifting_down && frc::Timer::GetFPGATimestamp() - start_time > 0.2_s ) {
-        // We have been shifting the coral up for 0.5 seconds... Trip the end beam break
+        // We have been shifting the coral up for 0.2 seconds... Trip the end beam break
         endBeamBlocked = false;
+        pipeSwitchTripped = false;
+        polling_pipe = false;
         if( frc::Timer::GetFPGATimestamp() - start_time > 0.4_s ) {
             centerBeamBlocked = false;
         }

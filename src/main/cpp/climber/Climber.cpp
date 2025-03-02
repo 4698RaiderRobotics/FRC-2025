@@ -2,6 +2,7 @@
 #include <units/math.h>
 
 #include <frc/RobotBase.h>
+#include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
 
 #include "Robot.h"
@@ -29,6 +30,10 @@ void Climber::Periodic() {
     io->Update( metrics );
     metrics.Log( "Climber" );
 
+    if( frc::DriverStation::IsDisabled() ) {
+        SetGoal( metrics.height );
+    }
+
     // Update the mechanism2d
     // Angle is related to height approximately by height=bar_length*theta
     climber_lig->SetAngle( 10_deg + ( metrics.height / 11_in )*1_rad );
@@ -36,13 +41,13 @@ void Climber::Periodic() {
 
 void Climber::SetGoal( units::inch_t goal ) 
 {
-    if( goal < kClimberMinHeight ) {
-         metrics.goal = kClimberMinHeight;
-    } else if( goal > kClimberMaxHeight ) {
-         metrics.goal = kClimberMaxHeight;
-    } else {
+    // if( goal < kClimberMinHeight ) {
+    //      metrics.goal = kClimberMinHeight;
+    // } else if( goal > kClimberMaxHeight ) {
+    //      metrics.goal = kClimberMaxHeight;
+    // } else {
         metrics.goal = goal;
-    }
+    // }
     io->SetGoal( metrics.goal );
 }
 
@@ -56,12 +61,28 @@ bool Climber::AtGoal()
     return units::math::abs( metrics.height - metrics.goal ) < AT_GOAL_TOLERANCE;
 }
 
-frc2::CommandPtr Climber::ChangeHeight( units::inch_t goal ) 
+// frc2::CommandPtr Climber::ChangeHeight( units::inch_t goal ) 
+// {
+//     return frc2::cmd::Sequence(
+//         RunOnce( [this, goal] { SetGoal( goal ); }),
+//         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
+//     ).WithName( "Climber Change Height" );
+// }
+
+frc2::CommandPtr Climber::RaiseClimber( )
 {
     return frc2::cmd::Sequence(
-        RunOnce( [this, goal] { SetGoal( goal ); }),
+        RunOnce( [this] { SetGoal( kClimberRaiseHeight ); }),
         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
-    ).WithName( "Climber Change Height" );
+    );
+}
+
+frc2::CommandPtr Climber::DoClimb( )
+{
+    return frc2::cmd::Sequence(
+        RunOnce( [this] { SetGoal( kClimberClimbHeight ); }),
+        frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
+    );
 }
 
 void ClimberIO::Metrics::Log( const std::string &key )

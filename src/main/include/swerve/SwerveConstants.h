@@ -61,8 +61,8 @@ namespace swerve {
 
         const int pigeon2Id = 13;
 
-        const TuningParams turnTune = { 60, 0.0, 0.5, 0.0, 0.1, 2.1, 0.0 };      // turn PIDSGVA
-        const TuningParams driveTune = { 0.1, 0.0, 0.0, 0.0, 0.0, 0.115, 0.0 };   // drive PIDSGVA
+        const TuningParams turnTune = { 50, 0.0, 0.5, 0.0, 0.1, 2.1, 0.0 };      // turn PIDSGVA
+        const TuningParams driveTune = { 0.1, 0.0, 0.0, 0.0, 0.0, 0.118, 0.0 };   // drive PIDSGVA
 
         const MotionParams<units::radian> turnMP = { 20_tps, 200_tr_per_s_sq, 2000_tr_per_s_cu };
         const MotionParams<units::radian> driveMP = { 0_tps, 2000_tr_per_s_sq, 10000_tr_per_s_cu }; 

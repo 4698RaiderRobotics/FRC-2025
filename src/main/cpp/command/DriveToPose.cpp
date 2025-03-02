@@ -5,17 +5,22 @@
 
 #include "util/DataLogger.h"
 
-DriveToPose::DriveToPose( Drive *drive, std::function<frc::Pose2d()> poseFunc ) 
+DriveToPose::DriveToPose( Drive *drive, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed ) 
     : m_drive{drive}, m_poseFunc{poseFunc} 
 {
     SetName( "DriveToPose" );
+
+    m_XProfile = new frc::TrapezoidProfile<units::meters>{ {XY_constraints.maxVelocity * fractionFullSpeed, XY_constraints.maxAcceleration * fractionFullSpeed}};
+    m_YProfile = new frc::TrapezoidProfile<units::meters>{ {XY_constraints.maxVelocity * fractionFullSpeed, XY_constraints.maxAcceleration * fractionFullSpeed}};
+    m_RProfile = new frc::TrapezoidProfile<units::degrees>{ {R_constraints.maxVelocity * fractionFullSpeed, R_constraints.maxAcceleration * fractionFullSpeed}};
 
     m_Rpid.EnableContinuousInput( -180, 180 );
 
     AddRequirements({m_drive});
 }
 
-void DriveToPose::Init() {
+void DriveToPose::Init() 
+{
     m_targetPose = m_poseFunc();
 
     frc::Pose2d currentPose = m_drive->GetPose();
@@ -57,13 +62,13 @@ void DriveToPose::Init() {
 }
 
 // Called repeatedly when this Command is scheduled to run
-void DriveToPose::Execute() {
-
+void DriveToPose::Execute() 
+{
     frc::Pose2d currentPose = m_drive->GetPose();
 
-    m_XSetpoint = m_XProfile.Calculate(20_ms, m_XSetpoint, m_XGoal);
-    m_YSetpoint = m_YProfile.Calculate(20_ms, m_YSetpoint, m_YGoal);
-    m_RSetpoint = m_RProfile.Calculate(20_ms, m_RSetpoint, m_RGoal);
+    m_XSetpoint = m_XProfile->Calculate(20_ms, m_XSetpoint, m_XGoal);
+    m_YSetpoint = m_YProfile->Calculate(20_ms, m_YSetpoint, m_YGoal);
+    m_RSetpoint = m_RProfile->Calculate(20_ms, m_RSetpoint, m_RGoal);
 
     units::meter_t setptXField = m_XSetpoint.position + m_profileStartPose.Translation().X();
     units::meter_t setptYField = m_YSetpoint.position + m_profileStartPose.Translation().Y();
@@ -94,15 +99,14 @@ void DriveToPose::Execute() {
 }
 
 // Called once the command ends or is interrupted.
-void DriveToPose::Ending(bool interrupted) {
-    fmt::print( "   ProfiledDriveToPose::End() interrupted {}\n", interrupted );
-
+void DriveToPose::Ending(bool interrupted) 
+{
     m_drive->Stop();
 }
 
 // Returns true when the command should end.
-bool DriveToPose::IsFinished() {
-
+bool DriveToPose::IsFinished() 
+{
     // NOTE::
     //
     //   IsFinished() returned true at the halfway point of the trajectory.
@@ -110,11 +114,11 @@ bool DriveToPose::IsFinished() {
     //
     units::meters_per_second_t velocity = units::math::hypot( m_speeds.vx, m_speeds.vy );
         
-    bool atTargetLocation = m_XProfile.TotalTime() < 0.001_s && 
-                            m_YProfile.TotalTime() < 0.001_s && 
-                            m_RProfile.TotalTime() < 0.001_s &&
-                            velocity < 0.1_mps &&
-                            m_speeds.omega < 5_deg_per_s;
+    bool atTargetLocation = m_XProfile->TotalTime() < 0.001_s && 
+                            m_YProfile->TotalTime() < 0.001_s && 
+                            m_RProfile->TotalTime() < 0.001_s;
+                            // velocity < 0.1_mps &&
+                            // m_speeds.omega < 5_deg_per_s;
    
     return atTargetLocation;
 }

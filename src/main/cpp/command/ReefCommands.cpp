@@ -67,7 +67,7 @@ ReefPlacingPoses::ReefPlacingPoses() {
 frc2::CommandPtr ElevatorRaisePosition( Arm *arm )
 {
     return frc2::cmd::Sequence(
-        arm->ChangeElbowAngle( arm::kElbowRaiseAngle ),
+        arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
         arm->ChangeWristPosition( ArmIO::WristHorizontal )
     );
 }
@@ -86,9 +86,17 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
                     std::pair{ ReefPlacement::PLACING_L3, PlaceCoralL3( d, arm, intake, elevator ) },
                     std::pair{ ReefPlacement::PLACING_L4, PlaceCoralL4( d, arm, intake, elevator ) }
                 ),
-                ReefCommands::SetReefPlacement(ReefPlacement::NONE),
-                DriveCommands::DriveDeltaPose( d, {-6_in, 0_in, 0_deg}, true ),
-                IntakeCommands::RestPosition( arm, intake, elevator )
+                frc2::cmd::Either( 
+                    // Still have the coral
+                    frc2::cmd::None(),
+                    // Ejected the coral
+                    frc2::cmd::Sequence(
+                        ReefCommands::SetReefPlacement(ReefPlacement::NONE),
+                        DriveCommands::DriveDeltaPose( d, {-6_in, 0_in, 0_deg}, true ),
+                        IntakeCommands::RestPosition( arm, intake, elevator )
+                    ),
+                    [intake] { return intake->isCenterBroken(); }
+                )
             ),
             frc2::cmd::Print( "No Reef Level Selected!!"),
             [] { return next_reef_place != ReefPlacement::NONE; }
@@ -102,23 +110,22 @@ frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide )
         frc::Pose2d currentPose = d->GetPose();
 
         return ReefCommands::reefPoses.GetClosest( currentPose, onRightSide );
-    }
+    },
+    0.5 // Go at half speed
     ).WithName("DriveToReefPose");
 }
 
 frc2::CommandPtr ReefCommands::PlaceCoralL1( Drive *d, Arm *arm, Intake *intake, Elevator *elevator )
 {
     return frc2::cmd::Sequence(
-        ElevatorRaisePosition( arm ),
+        arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
         frc2::cmd::Parallel(
             elevator->ChangeHeight( elevator::kHeightCoralL1 ),
             arm->ChangeElbowAngle( arm::kElbowCoralL1 )
         ),
         arm->ChangeWristPosition( ArmIO::WristHorizontal ),
-        frc2::cmd::Parallel(
-            intake->EjectCoralL1(),
-            DriveCommands::DriveDeltaPose( d, {3_in, 0_in, 0_deg}, true )
-        )
+        DriveCommands::DriveDeltaPose( d, {3_in, 0_in, 0_deg}, true ),
+        intake->EjectCoralL1()
     ).WithName( "Place Coral in L1" );
 }
 
@@ -126,13 +133,11 @@ frc2::CommandPtr ReefCommands::PlaceCoralL2( Drive *d, Arm *arm, Intake *intake,
 {
     return frc2::cmd::Sequence(
         ElevatorRaisePosition( arm ),
-        frc2::cmd::Parallel(
-            elevator->ChangeHeight( elevator::kHeightCoralL2 ),
-            arm->ChangeElbowAngle( arm::kElbowCoralL2 )
-        ),
+        elevator->ChangeHeight( elevator::kHeightCoralL2 ),
         arm->ChangeWristPosition( ArmIO::WristVertical ),
+        arm->ChangeElbowAngle( arm::kElbowCoralL2 ),
         frc2::cmd::Parallel(
-            intake->EjectCoralL2_4(),
+            intake->EjectCoralL2_4( true ),
             DriveCommands::DriveDeltaPose( d, {3_in, 0_in, 0_deg}, true )
         )
     ).WithName( "Place Coral in L2" );
@@ -142,14 +147,12 @@ frc2::CommandPtr ReefCommands::PlaceCoralL3( Drive *d, Arm *arm, Intake *intake,
 {
     return frc2::cmd::Sequence(
         ElevatorRaisePosition( arm ),
-        frc2::cmd::Parallel(
-            elevator->ChangeHeight( elevator::kHeightCoralL3 ),
-            arm->ChangeElbowAngle( arm::kElbowCoralL3 )
-        ),
+        elevator->ChangeHeight( elevator::kHeightCoralL3 ),
         arm->ChangeWristPosition( ArmIO::WristVertical ),
+        arm->ChangeElbowAngle( arm::kElbowCoralL3 ),
         frc2::cmd::Parallel(
-            intake->EjectCoralL2_4(),
-            DriveCommands::DriveDeltaPose( d, {3_in, 0_in, 0_deg}, true )
+            intake->EjectCoralL2_4( true ),
+            DriveCommands::DriveOpenLoop( d, {1_fps, 0_fps, 0_rpm}, true ).WithTimeout( 1_s)
         )
     ).WithName( "Place Coral in L3" );
 }
@@ -158,14 +161,12 @@ frc2::CommandPtr ReefCommands::PlaceCoralL4( Drive *d, Arm *arm, Intake *intake,
 {
     return frc2::cmd::Sequence(
         ElevatorRaisePosition( arm ),
-        frc2::cmd::Parallel(
-            elevator->ChangeHeight( elevator::kHeightCoralL4 ),
-            arm->ChangeElbowAngle( arm::kElbowCoralL4 )
-        ),
+        elevator->ChangeHeight( elevator::kHeightCoralL4 ),
         arm->ChangeWristPosition( ArmIO::WristVertical ),
+        arm->ChangeElbowAngle( arm::kElbowCoralL4 ),
         frc2::cmd::Parallel(
-            intake->EjectCoralL2_4(),
-            DriveCommands::DriveDeltaPose( d, {3_in, 0_in, 0_deg}, true )
+            intake->EjectCoralL2_4( true ),
+            DriveCommands::DriveOpenLoop( d, {1_fps, 0_fps, 0_rpm}, true ).WithTimeout( 1_s)
         )
     ).WithName( "Place Coral in L4" );
 }

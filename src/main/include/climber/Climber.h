@@ -15,7 +15,9 @@ public:
     void Nudge( units::inch_t nudge );
     bool AtGoal();
 
-    frc2::CommandPtr ChangeHeight( units::inch_t goal );
+    // frc2::CommandPtr ChangeHeight( units::inch_t goal );
+    frc2::CommandPtr RaiseClimber( );
+    frc2::CommandPtr DoClimb( );
 
 private:
     std::unique_ptr<ClimberIO> io;

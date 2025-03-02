@@ -19,4 +19,5 @@ public:
     };
 
     virtual void UpdateInputs(Inputs &inputs) {}
+    virtual void Reset() {}
 };

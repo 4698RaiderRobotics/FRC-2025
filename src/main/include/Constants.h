@@ -18,17 +18,17 @@ namespace vision {
         const frc::Transform3d robotToCamera;
     };
 
-    constexpr int kNumberOfCameras = 3;
+    constexpr int kNumberOfCameras = 2;
     static const CameraLayoutInfo cameraInfo[kNumberOfCameras] = {
         // Front Right Camera
-        "CameraA_1MP",
-        {frc::Translation3d{-1.9015_in, -10.8912_in, 30.2843_in}, frc::Rotation3d{-8.2028_deg, -23.9351_deg, 36.3362_deg}},
+        "Front_Left",
+        {frc::Translation3d{10.8079_in, 7.48097_in, 7.89409_in}, frc::Rotation3d{3.10403_deg, -14.84949_deg, -46.8458_deg}},
         // Back Left Camera
-        "CameraC_2MP",
-        {frc::Translation3d(-6.7061_in, 9.7004_in, 24.6382_in), frc::Rotation3d(-8.760_deg, -13.443_deg, -149.618_deg)},
+        "Front_Right",
+        {frc::Translation3d(10.33464_in, -6.32108_in, 8.60338_in), frc::Rotation3d(0.274182_deg, -14.47084_deg, 44.39811_deg)},
         // Back Right Camera
-        "CameraB_2MP",
-        {frc::Translation3d{-3.3483_in, -10.3919_in, 26.2791_in}, frc::Rotation3d{9.487_deg, -14.549_deg, 148.395_deg}}
+        // "CameraB_2MP",
+        // {frc::Translation3d{-3.3483_in, -10.3919_in, 26.2791_in}, frc::Rotation3d{9.487_deg, -14.549_deg, 148.395_deg}}
     };
 
 }

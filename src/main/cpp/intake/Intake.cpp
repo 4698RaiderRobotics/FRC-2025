@@ -79,23 +79,32 @@ bool Intake::isPipeTripped()
     
     return metrics.pipeSwitchTripped;
 }
+frc2::CommandPtr Intake::IntakeAlgae()
+{
+    return frc2::cmd::Sequence( 
+        RunOnce( [this] { SpinIn(); }),
+        frc2::cmd::WaitUntil( [this] { return units::math::abs(metrics.lowerVelocity) < 1_rpm;} )
+            .WithTimeout( 10_s ),
+        RunOnce( [this] { Stop(); })
+    );
+}
 
 frc2::CommandPtr Intake::IntakeCoral()
 {
     return frc2::cmd::Sequence( 
-        frc2::cmd::RunOnce( [this] { SpinIn(); }),
+        RunOnce( [this] { SpinIn(); }),
         frc2::cmd::WaitUntil( [this] { return isCenterBroken();} ).WithTimeout( 10_s ),
         frc2::cmd::Either( 
             // If Coral is in intake.  Need to shift it up to the end.
             frc2::cmd::Sequence( 
-                frc2::cmd::RunOnce( [this] { ShiftUp(); }),
+                RunOnce( [this] { ShiftUp(); }),
                 frc2::cmd::WaitUntil( [this] { return isEndBroken();} ).WithTimeout( 1_s )
             ), 
             // If No Coral in the intake
             frc2::cmd::None(),
             [this] {return isCenterBroken(); }
         ),
-        frc2::cmd::RunOnce( [this] { Stop(); })
+        RunOnce( [this] { Stop(); })
     );
 }
 

@@ -21,7 +21,8 @@ namespace ctrl {
 
     constexpr int manual_spin_down = frc::XboxController::Button::kA;
     constexpr int manual_eject = frc::XboxController::Button::kY;
-    constexpr int manual_intake = frc::XboxController::Button::kX;
+    constexpr int manual_intake_coral = frc::XboxController::Button::kX;
+    constexpr int manual_intake_algae = frc::XboxController::Button::kB;
 
     constexpr int raise_climber = 0;     // POV direction (up)
     constexpr int start_climb = 180;     // POV direction (down)

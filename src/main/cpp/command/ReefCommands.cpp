@@ -77,7 +77,7 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
     return frc2::cmd::Sequence(
         frc2::cmd::Either( 
             frc2::cmd::Sequence(
-                DriveToReefPose( d, onRightSide ),
+                // DriveToReefPose( d, onRightSide ),
                 frc2::cmd::Select<ReefPlacement>( 
                     [] { return next_reef_place; }, 
                     std::pair{ ReefPlacement::NONE, frc2::cmd::Print( "No Reef Level Selected!!") },
@@ -107,9 +107,7 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
 frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide )
 {
     return DriveToPose( d, [d, onRightSide] {
-        frc::Pose2d currentPose = d->GetPose();
-
-        return ReefCommands::reefPoses.GetClosest( currentPose, onRightSide );
+        return ReefCommands::reefPoses.GetClosest( d->GetPose(), onRightSide );
     },
     0.5 // Go at half speed
     ).WithName("DriveToReefPose");
@@ -125,6 +123,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL1( Drive *d, Arm *arm, Intake *intake,
         ),
         arm->ChangeWristPosition( ArmIO::WristHorizontal ),
         DriveCommands::DriveDeltaPose( d, {3_in, 0_in, 0_deg}, true ),
+        // DriveCommands::DriveOpenLoop( d, {1_fps, 0_fps, 0_rpm}, true ).WithTimeout( 0.2_s),
         intake->EjectCoralL1()
     ).WithName( "Place Coral in L1" );
 }
@@ -138,7 +137,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL2( Drive *d, Arm *arm, Intake *intake,
         arm->ChangeElbowAngle( arm::kElbowCoralL2 ),
         frc2::cmd::Parallel(
             intake->EjectCoralL2_4( true ),
-            DriveCommands::DriveDeltaPose( d, {3_in, 0_in, 0_deg}, true )
+            DriveCommands::DriveOpenLoop( d, {1_fps, 0_fps, 0_rpm}, true ).WithTimeout( 0.5_s)
         )
     ).WithName( "Place Coral in L2" );
 }

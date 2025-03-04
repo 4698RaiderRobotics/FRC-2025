@@ -14,6 +14,7 @@
 #include "util/Utility.h"
 
 struct VisionResultData {
+    std::string camera_name;
     std::optional<frc::Pose2d> visionPose;
     std::vector<frc::Pose3d> trackedTags;
     units::meter_t tagDistance{0_m};

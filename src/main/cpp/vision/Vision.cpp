@@ -18,8 +18,6 @@ Vision::Vision( frc::SwerveDrivePoseEstimator<4> *odom ) : odometry{odom}
     cameras = new photon::PhotonCamera *[ kNumberOfCameras ];
     for( int i=0; i<kNumberOfCameras; ++ i ) {
         cameras[i] = new photon::PhotonCamera{ cameraInfo[i].name };
-        VisionResultData vizResult;
-        metrics.visionResult.push_back( vizResult );
     }
 
     aprilTags = frc::AprilTagFieldLayout::LoadField( frc::AprilTagField::k2025ReefscapeWelded );
@@ -45,6 +43,9 @@ void Vision::Periodic()
         sim->Update( odometry->GetEstimatedPosition() );
     }
 
+    // Clear out last iterations vision results
+    metrics.visionResult.clear();
+
     for( int i=0; i<kNumberOfCameras; ++i ) {
         ProcessCamera( i );
     }
@@ -57,59 +58,62 @@ void Vision::ProcessCamera( int camNumber )
     photon::PhotonCamera *cam = cameras[camNumber];
     photon::PhotonPoseEstimator *estimator = estimators[camNumber];
 
-    VisionResultData resultData;
+    auto results = cam->GetAllUnreadResults();
+    for( auto result : results ) {
 
-    auto result = cam->GetLatestResult();
+        VisionResultData resultData;
+        resultData.camera_name = cam->GetCameraName();
 
-    if( result.HasTargets() && result.GetBestTarget().GetPoseAmbiguity() < 0.2 ) {
+        if( result.HasTargets() && result.GetBestTarget().GetPoseAmbiguity() < 0.2 ) {
 
-        auto pose = estimator->Update( result );
-        if( pose.has_value() ) {
+            auto pose = estimator->Update( result );
+            if( pose.has_value() ) {
 
-            resultData.visionPose = pose->estimatedPose.ToPose2d();
-            resultData.timestamp = pose->timestamp;
+                resultData.visionPose = pose->estimatedPose.ToPose2d();
+                resultData.timestamp = pose->timestamp;
 
-            resultData.tagDistance = result.GetBestTarget().GetBestCameraToTarget().Translation().Norm();
-            double dist_to_tag = resultData.tagDistance.value();
-            resultData.std_dev = (0.792*dist_to_tag - 2.125)*dist_to_tag + 1.833;
-            if(dist_to_tag < 1.3) {
-                 resultData.std_dev = 0.4;
-            }
+                resultData.tagDistance = result.GetBestTarget().GetBestCameraToTarget().Translation().Norm();
+                double dist_to_tag = resultData.tagDistance.value();
+                resultData.std_dev = (0.792*dist_to_tag - 2.125)*dist_to_tag + 1.833;
+                if(dist_to_tag < 1.3) {
+                    resultData.std_dev = 0.4;
+                }
 
-                // Linear distance between the current robot pose and the vision pose
-            resultData.deltaDistance = odometry->GetEstimatedPosition().RelativeTo(resultData.visionPose.value()).Translation().Norm();
+                    // Linear distance between the current robot pose and the vision pose
+                resultData.deltaDistance = odometry->GetEstimatedPosition().RelativeTo(resultData.visionPose.value()).Translation().Norm();
 
-                // Get all the Apriltags that are used by this result
-            for( size_t i=0; i<pose->targetsUsed.size(); ++i ) {
-                int id = pose->targetsUsed[i].GetFiducialId();
-                if( id > 0 && aprilTags.GetTagPose(id) ) {
-                    resultData.trackedTags.push_back( aprilTags.GetTagPose(id).value() );
+                    // Get all the Apriltags that are used by this result
+                for( size_t i=0; i<pose->targetsUsed.size(); ++i ) {
+                    int id = pose->targetsUsed[i].GetFiducialId();
+                    if( id > 0 && aprilTags.GetTagPose(id) ) {
+                        resultData.trackedTags.push_back( aprilTags.GetTagPose(id).value() );
+                    }
+                }
+
+                if( frc::DriverStation::IsDisabled() ) {
+                        // Always use poses when disabled
+                    resultData.addToOdometry = true;
+                } else if( resultData.deltaDistance < 1_m ) {
+                    // Use poses that are close to the robot while Enabled
+                    resultData.addToOdometry = true;
                 }
             }
-
-            if( frc::DriverStation::IsDisabled() ) {
-                    // Always use poses when disabled
-                resultData.addToOdometry = true;
-            } else if( resultData.deltaDistance < 1_m ) {
-                // Use poses that are close to the robot while Enabled
-                resultData.addToOdometry = true;
-            }
         }
-    }
 
-    if( resultData.addToOdometry ) {
-        odometry->AddVisionMeasurement( resultData.visionPose.value(), 
-                                        resultData.timestamp, 
-                                        {resultData.std_dev, resultData.std_dev, resultData.std_dev} );
-    }
+        if( resultData.addToOdometry ) {
+            odometry->AddVisionMeasurement( resultData.visionPose.value(), 
+                                            resultData.timestamp, 
+                                            {resultData.std_dev, resultData.std_dev, resultData.std_dev} );
+        }
 
-    metrics.visionResult[camNumber] = resultData;
+        metrics.visionResult.push_back( resultData );
+    }
 }
 
 void Vision::Metrics::Log( const std::string &key ) 
 {
     for( size_t i=0; i<visionResult.size(); ++i ) {
-        std::string subkey = fmt::format( "{}/Camera{}/", key, i );
+        std::string subkey = fmt::format( "{}/{}/", key, cameraInfo[i].name );
         VisionResultData &vizData = visionResult[i];
 
         DataLogger::Log( subkey + "visionPose", vizData.visionPose );

@@ -18,6 +18,7 @@ VisionSim::VisionSim( photon::PhotonCamera **camera )
     cameraProp.SetCalibError( 0.2, 0.08 );
     cameraProp.SetAvgLatency( 30_ms );
     cameraProp.SetLatencyStdDev( 5_ms );
+    cameraProp.SetCalibration( 1280, 720, 85_deg );
 
     // Create each camera sim
     for( int i=0; i<kNumberOfCameras; ++i ) {

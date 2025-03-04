@@ -85,7 +85,8 @@ frc2::CommandPtr DriveCommands::DriveDeltaPose( Drive *d, frc::Transform2d move,
         }
 
         return newPose;
-    }
+    },
+    0.25
     ).WithName("DriveDeltaPose");
 }
 

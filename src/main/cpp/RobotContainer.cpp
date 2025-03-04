@@ -41,7 +41,7 @@ RobotContainer::RobotContainer()
     m_intake = new Intake( );
     m_climber = new Climber( );
     m_elevator = new Elevator( );
-//    m_vision = new Vision( &m_drive->m_odometry );
+    m_vision = new Vision( &m_drive->m_odometry );
 
     // Extra deadband for the climber and elevator nudge
     climber_nudge_axis.SetDeadband( 0.25 );
@@ -107,10 +107,7 @@ void RobotContainer::ConfigureBindings()
         .OnTrue( frc2::cmd::RunOnce( [this] { m_drive->ResetGyro(); }, {m_drive} ));
 
     driverCtrlr.Button( ctrl::cancel_button ).OnTrue( 
-        frc2::cmd::Parallel(
-            IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ),
-            frc2::cmd::RunOnce( [this] { m_drive->Stop(); }, {m_drive} )
-        )
+        IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
     );
 
     driverCtrlr.Button( ctrl::manual_spin_down ).OnTrue( m_intake->EjectCoralL2_4( false ) );
@@ -124,10 +121,7 @@ void RobotContainer::ConfigureBindings()
 
     /**************************          OPERATOR           ********************* */
     operatorCtrlr.Button( ctrl::cancel_button ).OnTrue( 
-        // frc2::cmd::Parallel(
-            IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
-            // frc2::cmd::RunOnce( [this] { m_drive->Stop(); }, {m_drive} )
-        // )
+        IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
     );
 
     (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L1_level ))
@@ -167,7 +161,9 @@ void RobotContainer::ConfigureBindings()
 
     /**************************          DEBUG MODE          ********************* */
     if( !frc::DriverStation::IsFMSAttached() ) {
-        (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_intake ))
+        (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_intake_algae ))
+            .OnTrue( m_intake->IntakeAlgae() );
+        (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_intake_coral ))
             .OnTrue( m_intake->IntakeCoral() );
         (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_eject ))
             .OnTrue( m_intake->EjectCoralL1() );

@@ -19,6 +19,7 @@ public:
     bool isEndBroken();
     bool isPipeTripped();
 
+    frc2::CommandPtr IntakeAlgae();
     frc2::CommandPtr IntakeCoral();
     frc2::CommandPtr EjectCoralL1();
     frc2::CommandPtr EjectCoralL2_4( bool waitForPipeSwitch );

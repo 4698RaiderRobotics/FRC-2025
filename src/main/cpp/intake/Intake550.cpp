@@ -20,7 +20,7 @@ Intake550::Intake550()
     config
         .Inverted(false)
         // .SetIdleMode( SparkMaxConfig::IdleMode::kBrake )
-        .SmartCurrentLimit( 40 );
+        .SmartCurrentLimit( 30 );
     // config.closedLoop
     //     .SetFeedbackSensor( ClosedLoopConfig::FeedbackSensor::kPrimaryEncoder )
     //     .Pid(1.0, 0.0, 0.0);

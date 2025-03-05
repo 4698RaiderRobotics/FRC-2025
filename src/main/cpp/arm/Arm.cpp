@@ -28,11 +28,12 @@ Arm::Arm()
 
     elbowHomer = util::MotorHomer(
         // Start routine
-        [this] { io->SetWristOpenLoop(-0.1); },
+        [this] { io->SetWristOpenLoop(-0.05); },
         // Stop and Reset Routine
         [this] { io->SetWristOpenLoop(0.0); io->ResetWristAngle( 0_deg ); SetWristPosition(ArmIO::WristHorizontal); },
         // Home Condition
-        [this] { return units::math::abs( metrics.wristVelocity ) < 0.5_rpm; }
+        [this] { return units::math::abs( metrics.wristVelocity ) < 0.5_rpm; },
+        300_ms
     );
 
 }

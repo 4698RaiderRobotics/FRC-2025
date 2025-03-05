@@ -20,12 +20,18 @@ class ReefPlacingPoses {
 public:
     ReefPlacingPoses();
 
-    frc::Pose2d GetClosest( frc::Pose2d currentPose, bool onRightSide );
+    frc::Pose2d GetClosestReefPose( frc::Pose2d currentPose, bool onRightSide );
+    frc::Pose2d GetClosestAlgaePose( frc::Pose2d currentPose );
+    bool isAlgaeLow( frc::Pose2d currentPose );
 
 private:
     frc::AprilTagFieldLayout aprilTags;
+
+    std::vector<frc::Pose2d> redAlgaeRemovingPoses;
     std::vector<frc::Pose2d> redLeftReefPlacingPoses;
     std::vector<frc::Pose2d> redRightReefPlacingPoses;
+
+    std::vector<frc::Pose2d> blueAlgaeRemovingPoses;
     std::vector<frc::Pose2d> blueLeftReefPlacingPoses;
     std::vector<frc::Pose2d> blueRightReefPlacingPoses;
 };
@@ -35,12 +41,13 @@ public:
 
     static frc2::CommandPtr PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide );
     static frc2::CommandPtr DriveToReefPose( Drive *d, bool onRightSide );
+    static frc2::CommandPtr DriveToAlgaePose( Drive *d );
     static frc2::CommandPtr PlaceCoralL1( Drive *, Arm *, Intake *, Elevator * );
     static frc2::CommandPtr PlaceCoralL2( Drive *, Arm *, Intake *, Elevator * );
     static frc2::CommandPtr PlaceCoralL3( Drive *, Arm *, Intake *, Elevator * );
     static frc2::CommandPtr PlaceCoralL4( Drive *, Arm *, Intake *, Elevator * );
 
-    static frc2::CommandPtr RemoveAlgae( Arm *, Intake *, Elevator * );
+    static frc2::CommandPtr RemoveAlgae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator );
 
     static frc2::CommandPtr SetReefPlacement( ReefPlacement );
 

@@ -42,14 +42,14 @@ namespace arm {
     constexpr units::degree_t kElbowMinAngle = -38_deg;
 
     // Elevator Rest Position
-    constexpr units::degree_t kElbowRestAngle = 70_deg;
+    constexpr units::degree_t kElbowRestAngle = 130_deg;
 
     // Elevator Raise / Lower Position
     constexpr units::degree_t kElbowForwardRaiseAngle = 60_deg;
     constexpr units::degree_t kElbowBackwardRaiseAngle = 130_deg;
 
     // Elbow Positions for Each Reef Height
-     constexpr units::degree_t kElbowCoralL1 = 23_deg;
+     constexpr units::degree_t kElbowCoralL1 = 28_deg;
      constexpr units::degree_t kElbowCoralL2 = 48_deg;
      constexpr units::degree_t kElbowCoralL3 = 48_deg;
      constexpr units::degree_t kElbowCoralL4 = 20_deg;
@@ -57,6 +57,10 @@ namespace arm {
     // Elbow Positions for Coral Station and Ground Pickup
      constexpr units::degree_t kElbowCoralStation = 145_deg;
      constexpr units::degree_t kElbowGroundPickup = -35_deg;
+
+    // Elbow Position for Removing Algae
+     constexpr units::degree_t kElbowRemoveAlgae = 0_deg;
+     constexpr units::degree_t kElbowRemoveAlgaeEnd = 25_deg;
 
     // Wrist setpoint Positions 
      constexpr units::degree_t kWristHorizontal = -8_deg;
@@ -69,7 +73,7 @@ namespace intake {
 
     // Intaking and Ejecting Motor Speed
     constexpr double kIntakeInSpeed = 0.25;
-    constexpr double kIntakeOutSpeed = 0.1;
+    constexpr double kIntakeOutSpeed = 0.15;
 
     // Shift speed of the motors
     constexpr double kIntakeShiftFastSpeed = 0.5;
@@ -94,6 +98,10 @@ namespace elevator {
     // Heights for the elevator for Coral Station and Ground Pickup
      constexpr units::inch_t kHeightCoralStation = 15.5_in;
      constexpr units::inch_t kHeightGroundPickup = 0_in;
+
+    // Heights for removing Algae
+    constexpr units::inch_t kHeightLowAlgae = 10_in;
+    constexpr units::inch_t kHeightHighAlgae = 26_in;
 }
 
     // *****************     CLIMBER SUBSYSTEM      **********************

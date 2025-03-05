@@ -59,20 +59,33 @@ void Vision::ProcessCamera( int camNumber )
     photon::PhotonPoseEstimator *estimator = estimators[camNumber];
 
     auto results = cam->GetAllUnreadResults();
-    for( auto result : results ) {
-
+    if( results.size() == 0 ) {
+        // No results
         VisionResultData resultData;
         resultData.camera_name = cam->GetCameraName();
-
-        if( result.HasTargets() && result.GetBestTarget().GetPoseAmbiguity() < 0.2 ) {
-
+        metrics.visionResult.push_back( resultData );
+    }
+    for( auto result : results ) {
+    
+        if( result.HasTargets() ) {
             auto pose = estimator->Update( result );
-            if( pose.has_value() ) {
+            double min_ambiguity = 100.0;
+            photon::PhotonTrackedTarget best_target;
+            for( auto target : result.GetTargets() ) {
+                if( target.GetPoseAmbiguity() < min_ambiguity ) {
+                    min_ambiguity = target.GetPoseAmbiguity();
+                    best_target = target;
+                }
+            }
 
+            VisionResultData resultData;
+            resultData.camera_name = cam->GetCameraName();
+
+            if( min_ambiguity < 0.2 && pose.has_value() ) {
                 resultData.visionPose = pose->estimatedPose.ToPose2d();
                 resultData.timestamp = pose->timestamp;
 
-                resultData.tagDistance = result.GetBestTarget().GetBestCameraToTarget().Translation().Norm();
+                resultData.tagDistance = best_target.GetBestCameraToTarget().Translation().Norm();
                 double dist_to_tag = resultData.tagDistance.value();
                 resultData.std_dev = (0.792*dist_to_tag - 2.125)*dist_to_tag + 1.833;
                 if(dist_to_tag < 1.3) {
@@ -98,24 +111,25 @@ void Vision::ProcessCamera( int camNumber )
                     resultData.addToOdometry = true;
                 }
             }
-        }
+        
 
-        if( resultData.addToOdometry ) {
-            odometry->AddVisionMeasurement( resultData.visionPose.value(), 
-                                            resultData.timestamp, 
-                                            {resultData.std_dev, resultData.std_dev, resultData.std_dev} );
-        }
+            if( resultData.addToOdometry ) {
+                odometry->AddVisionMeasurement( resultData.visionPose.value(), 
+                                                resultData.timestamp, 
+                                                {resultData.std_dev, resultData.std_dev, resultData.std_dev} );
+            }
 
-        metrics.visionResult.push_back( resultData );
+            metrics.visionResult.push_back( resultData );
+        }
     }
 }
 
 void Vision::Metrics::Log( const std::string &key ) 
 {
     for( size_t i=0; i<visionResult.size(); ++i ) {
-        std::string subkey = fmt::format( "{}/{}/", key, cameraInfo[i].name );
         VisionResultData &vizData = visionResult[i];
 
+        std::string subkey = fmt::format( "{}/{}/", key, vizData.camera_name );
         DataLogger::Log( subkey + "visionPose", vizData.visionPose );
         DataLogger::Log( subkey + "trackedTags", vizData.trackedTags );
         DataLogger::Log( subkey + "tagDistance", vizData.tagDistance );

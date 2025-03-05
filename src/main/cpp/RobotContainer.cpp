@@ -61,7 +61,7 @@ void RobotContainer::ConfigureDefaults()
             m_drive,
             [this] { return -driverCtrlr.GetHID().GetRawAxis( ctrl::drive_X_axis ); },
             [this] { return -driverCtrlr.GetHID().GetRawAxis( ctrl::drive_Y_axis ); },
-            [this] { return driverCtrlr.GetHID().GetRawAxis( ctrl::drive_theta_axis ); }
+            [this] { return -driverCtrlr.GetHID().GetRawAxis( ctrl::drive_theta_axis ); }
         )
     );
 
@@ -114,10 +114,10 @@ void RobotContainer::ConfigureBindings()
 
     driverCtrlr.Button( ctrl::manual_eject ).OnTrue( m_intake->EjectCoralL1() );
 
-    driverCtrlr.POV( ctrl::raise_climber ).OnTrue( m_climber->RaiseClimber() );
-    driverCtrlr.POV( ctrl::start_climb ).OnTrue( m_climber->DoClimb() );
+    // driverCtrlr.POV( ctrl::raise_climber ).OnTrue( m_climber->RaiseClimber() );
+    // driverCtrlr.POV( ctrl::start_climb ).OnTrue( m_climber->DoClimb() );
 
-
+    // driverCtrlr.POV( 0 ).OnTrue( DriveToPose( m_drive, [] { return frc::Pose2d{ 610_in, 158.50_in, 180_deg}; } ).ToPtr() );
 
     /**************************          OPERATOR           ********************* */
     operatorCtrlr.Button( ctrl::cancel_button ).OnTrue( 
@@ -146,6 +146,8 @@ void RobotContainer::ConfigureBindings()
         .OnTrue( IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator ) )
         .OnFalse( IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ) );
 
+    operatorCtrlr.RightStick().OnTrue( ReefCommands::RemoveAlgae( m_drive, m_arm, m_intake, m_elevator ));
+
     m_intake->HasCoralTrigger().OnTrue( 
         frc2::cmd::Parallel(
             CoralViz( [this] { return m_drive->GetPose(); }, [this] {return m_intake->isCenterBroken();} ).ToPtr(),
@@ -161,14 +163,19 @@ void RobotContainer::ConfigureBindings()
 
     /**************************          DEBUG MODE          ********************* */
     if( !frc::DriverStation::IsFMSAttached() ) {
-        (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_intake_algae ))
-            .OnTrue( m_intake->IntakeAlgae() );
-        (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_intake_coral ))
-            .OnTrue( m_intake->IntakeCoral() );
-        (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_eject ))
-            .OnTrue( m_intake->EjectCoralL1() );
-        (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_spin_down ))
-            .OnTrue( m_intake->EjectCoralL2_4( false ) );
+        // (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_intake_algae ))
+        //     .OnTrue( m_intake->IntakeAlgae() );
+        // (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_intake_coral ))
+        //     .OnTrue( m_intake->IntakeCoral() );
+        // (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_eject ))
+        //     .OnTrue( m_intake->EjectCoralL1() );
+        // (nudge_hold_button && operatorCtrlr.Button( ctrl::manual_spin_down ))
+        //     .OnTrue( m_intake->EjectCoralL2_4( false ) );
+    (nudge_hold_button && operatorCtrlr.A()).WhileTrue( frc2::cmd::Run( [this] {m_intake->SpinIn();}, {m_intake} ))
+        .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
+    (nudge_hold_button && operatorCtrlr.Y()).WhileTrue( frc2::cmd::Run( [this] {m_intake->SpinOut();}, {m_intake} ))
+        .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
+
     }
 
     /**************************          SYSID          ********************* */

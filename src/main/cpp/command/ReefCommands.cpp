@@ -26,12 +26,13 @@ ReefPlacingPoses ReefCommands::reefPoses = ReefPlacingPoses();
 ReefPlacingPoses::ReefPlacingPoses() {
     const int Red_Reef_Tag_IDs[] = { 6, 7, 8, 9, 10, 11 };
     const int Blue_Reef_Tag_IDs[] = { 17, 18, 19, 20, 21, 22 };
-    const units::inch_t pose_shift_out = 21_in;
-    const units::inch_t pose_shift_lateral = 7_in;
+    const units::inch_t pose_shift_out = 30_in;
+    const units::inch_t pose_shift_lateral = 7.5_in;
 
     aprilTags = frc::AprilTagFieldLayout::LoadField( frc::AprilTagField::k2025ReefscapeWelded );
 
     // Placing pose is out from the april tag and to the left or right (looking at the AprilTag)
+    frc::Transform2d algaeShift{ pose_shift_out, 0_in, 180_deg };
     frc::Transform2d leftShift{ pose_shift_out, -pose_shift_lateral, 180_deg };
     frc::Transform2d rightShift{ pose_shift_out, pose_shift_lateral, 180_deg };
 
@@ -39,11 +40,13 @@ ReefPlacingPoses::ReefPlacingPoses() {
     for( int i=0; i<3; ++i ) {
         // Red Side Poses
         frc::Pose2d redTag2dPose = aprilTags.GetTagPose( Red_Reef_Tag_IDs[i] ).value().ToPose2d();
+        redAlgaeRemovingPoses.push_back( redTag2dPose.TransformBy ( algaeShift ) );
         redLeftReefPlacingPoses.push_back( redTag2dPose.TransformBy( leftShift ) );
         redRightReefPlacingPoses.push_back( redTag2dPose.TransformBy( rightShift ) );
 
         // Blue Side Poses
         frc::Pose2d blueTag2dPose = aprilTags.GetTagPose( Blue_Reef_Tag_IDs[i] ).value().ToPose2d();
+        blueAlgaeRemovingPoses.push_back( blueTag2dPose.TransformBy ( algaeShift ) );
         blueLeftReefPlacingPoses.push_back( blueTag2dPose.TransformBy( leftShift ) );
         blueRightReefPlacingPoses.push_back( blueTag2dPose.TransformBy( rightShift ) );
     }
@@ -53,11 +56,13 @@ ReefPlacingPoses::ReefPlacingPoses() {
     for( int i=3; i<6; ++i ) {
         // Red Side Poses
         frc::Pose2d redTag2dPose = aprilTags.GetTagPose( Red_Reef_Tag_IDs[i] ).value().ToPose2d();
+        redAlgaeRemovingPoses.push_back( redTag2dPose.TransformBy ( algaeShift ) );
         redLeftReefPlacingPoses.push_back( redTag2dPose.TransformBy( rightShift ) );
         redRightReefPlacingPoses.push_back( redTag2dPose.TransformBy( leftShift ) );
 
         // Blue Side Poses
         frc::Pose2d blueTag2dPose = aprilTags.GetTagPose( Blue_Reef_Tag_IDs[i] ).value().ToPose2d();
+        blueAlgaeRemovingPoses.push_back( blueTag2dPose.TransformBy ( algaeShift ) );
         blueLeftReefPlacingPoses.push_back( blueTag2dPose.TransformBy( rightShift ) );
         blueRightReefPlacingPoses.push_back( blueTag2dPose.TransformBy( leftShift ) );
     }
@@ -77,7 +82,7 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
     return frc2::cmd::Sequence(
         frc2::cmd::Either( 
             frc2::cmd::Sequence(
-                // DriveToReefPose( d, onRightSide ),
+                DriveToReefPose( d, onRightSide ),
                 frc2::cmd::Select<ReefPlacement>( 
                     [] { return next_reef_place; }, 
                     std::pair{ ReefPlacement::NONE, frc2::cmd::Print( "No Reef Level Selected!!") },
@@ -91,11 +96,15 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
                     frc2::cmd::None(),
                     // Ejected the coral
                     frc2::cmd::Sequence(
+    intake->EjectCoralL2_4( false ),      // Force Eject
+    frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
                         ReefCommands::SetReefPlacement(ReefPlacement::NONE),
-                        DriveCommands::DriveDeltaPose( d, {-6_in, 0_in, 0_deg}, true ),
+                        DriveCommands::DriveDeltaPose( d, {-12_in, 0_in, 0_deg}, true ),
+    frc2::cmd::RunOnce( [intake] { intake->Stop(); }),
                         IntakeCommands::RestPosition( arm, intake, elevator )
                     ),
-                    [intake] { return intake->isCenterBroken(); }
+                    // [intake] { return intake->isCenterBroken(); }
+    [] {return false; }  // Always Eject
                 )
             ),
             frc2::cmd::Print( "No Reef Level Selected!!"),
@@ -107,10 +116,19 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
 frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide )
 {
     return DriveToPose( d, [d, onRightSide] {
-        return ReefCommands::reefPoses.GetClosest( d->GetPose(), onRightSide );
+        return ReefCommands::reefPoses.GetClosestReefPose( d->GetPose(), onRightSide );
     },
-    0.5 // Go at half speed
+    0.75 // Go at 3/4 speed
     ).WithName("DriveToReefPose");
+}
+
+frc2::CommandPtr ReefCommands::DriveToAlgaePose( Drive *d )
+{
+    return DriveToPose( d, [d] {
+        return ReefCommands::reefPoses.GetClosestAlgaePose( d->GetPose() );
+    },
+    0.75 // Go at 3/4 speed
+    ).WithName("DriveToAlgaePose");
 }
 
 frc2::CommandPtr ReefCommands::PlaceCoralL1( Drive *d, Arm *arm, Intake *intake, Elevator *elevator )
@@ -122,7 +140,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL1( Drive *d, Arm *arm, Intake *intake,
             arm->ChangeElbowAngle( arm::kElbowCoralL1 )
         ),
         arm->ChangeWristPosition( ArmIO::WristHorizontal ),
-        DriveCommands::DriveDeltaPose( d, {3_in, 0_in, 0_deg}, true ),
+        DriveCommands::DriveDeltaPose( d, {6_in, 0_in, 0_deg}, true ),
         // DriveCommands::DriveOpenLoop( d, {1_fps, 0_fps, 0_rpm}, true ).WithTimeout( 0.2_s),
         intake->EjectCoralL1()
     ).WithName( "Place Coral in L1" );
@@ -170,7 +188,30 @@ frc2::CommandPtr ReefCommands::PlaceCoralL4( Drive *d, Arm *arm, Intake *intake,
     ).WithName( "Place Coral in L4" );
 }
 
-frc::Pose2d ReefPlacingPoses::GetClosest( frc::Pose2d currentPose, bool onRightSide ) 
+frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator )
+{
+    return frc2::cmd::Sequence( 
+        DriveToAlgaePose( d ),
+        ElevatorRaisePosition( arm ),
+        frc2::cmd::Either( 
+            elevator->ChangeHeight( elevator::kHeightLowAlgae ),
+            elevator->ChangeHeight( elevator::kHeightHighAlgae ),
+            [d] { return ReefCommands::reefPoses.isAlgaeLow( d->GetPose() ); }
+        ),
+        arm->ChangeElbowAngle( arm::kElbowRemoveAlgae ),
+        frc2::cmd::RunOnce( [intake] {intake->SpinOut();}, {intake} ),
+        DriveCommands::DriveDeltaPose( d, {6_in, 0_in, 0_deg}, true ),
+        frc2::cmd::Either( 
+            elevator->ChangeHeight( elevator::kHeightLowAlgae + 4_in ),
+            elevator->ChangeHeight( elevator::kHeightHighAlgae + 4_in ),
+            [d] { return ReefCommands::reefPoses.isAlgaeLow( d->GetPose() ); }
+        ),
+        arm->ChangeElbowAngle( arm::kElbowRemoveAlgaeEnd ),
+        DriveCommands::DriveDeltaPose( d, {-6_in, 0_in, 0_deg}, true )
+    );
+}
+
+frc::Pose2d ReefPlacingPoses::GetClosestReefPose( frc::Pose2d currentPose, bool onRightSide ) 
 {
     if( frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed ) {
         if( onRightSide ) {
@@ -185,6 +226,41 @@ frc::Pose2d ReefPlacingPoses::GetClosest( frc::Pose2d currentPose, bool onRightS
             return currentPose.Nearest( blueLeftReefPlacingPoses );
         }
     }
+}
+
+frc::Pose2d ReefPlacingPoses::GetClosestAlgaePose( frc::Pose2d currentPose ) 
+{
+    if( frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed ) {
+        return currentPose.Nearest( redAlgaeRemovingPoses );
+    } else {
+        return currentPose.Nearest( blueAlgaeRemovingPoses );
+    }
+}
+
+bool ReefPlacingPoses::isAlgaeLow( frc::Pose2d currentPose ) 
+{
+    frc::Pose2d closest_Pose;
+    int matched_pose_idx = 0;
+
+    if( frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed ) {
+        closest_Pose = currentPose.Nearest( redAlgaeRemovingPoses );
+        for( size_t i=0; i<6; ++i ) {
+            if( redAlgaeRemovingPoses[i] == closest_Pose ) {
+                matched_pose_idx = i;
+                break;
+            }
+        }
+    } else {
+        closest_Pose = currentPose.Nearest( blueAlgaeRemovingPoses );
+        for( size_t i=0; i<6; ++i ) {
+            if( blueAlgaeRemovingPoses[i] == closest_Pose ) {
+                matched_pose_idx = i;
+                break;
+            }
+        }
+    }
+
+    return ( matched_pose_idx % 2 == 0 );  // 0, 2, 4 are low
 }
 
 frc2::CommandPtr ReefCommands::SetReefPlacement( ReefPlacement p )

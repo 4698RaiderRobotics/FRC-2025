@@ -1,4 +1,6 @@
 
+#include <numbers>
+
 #include "swerve/Drive.h"
 
 #include "command/DriveToPose.h"
@@ -6,8 +8,8 @@
 #include "util/DataLogger.h"
 
 
-const frc::TrapezoidProfile<units::meters>::Constraints DriveToPose::XY_constraints = {12_fps, 100_fps_sq};
-const frc::TrapezoidProfile<units::radians>::Constraints DriveToPose::R_constraints = {360_deg_per_s, 900_deg_per_s_sq};
+const frc::TrapezoidProfile<units::meters>::Constraints DriveToPose::XY_constraints = {6_fps, 5_fps_sq};
+const frc::TrapezoidProfile<units::radians>::Constraints DriveToPose::R_constraints = {120_deg_per_s, 100_deg_per_s_sq};
 
 
 DriveToPose::DriveToPose( Drive *drive, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed ) 
@@ -18,7 +20,7 @@ DriveToPose::DriveToPose( Drive *drive, std::function<frc::Pose2d()> poseFunc, d
 {
     SetName( "DriveToPose" );
 
-    m_Rpid.EnableContinuousInput( -180, 180 );
+    m_Rpid.EnableContinuousInput( -std::numbers::pi, std::numbers::pi );
 
     AddRequirements({m_drive});
 }
@@ -61,19 +63,16 @@ void DriveToPose::Init()
         m_RGoal.position -= 360_deg;
     }
 
-    m_ProfileTime = 0_s;
-    m_XProfile.Calculate(20_ms, m_XSetpoint, m_XGoal);
-    m_YProfile.Calculate(20_ms, m_YSetpoint, m_YGoal);
-    m_RProfile.Calculate(20_ms, m_RSetpoint, m_RGoal);
-    fmt::print( "XProfile Total Time = {}\n", m_XProfile.TimeLeftUntil( m_XGoal.position ) );
-    fmt::print( "YProfile Total Time = {}\n", m_YProfile.TimeLeftUntil( m_YGoal.position ) );
-    fmt::print( "RProfile Total Time = {}\n", m_RProfile.TimeLeftUntil( m_RGoal.position ) );
+    // m_ProfileTime = 0_s;
+    // m_XProfile.Calculate(20_ms, m_XSetpoint, m_XGoal);
+    // m_YProfile.Calculate(20_ms, m_YSetpoint, m_YGoal);
+    // m_RProfile.Calculate(20_ms, m_RSetpoint, m_RGoal);
+    // fmt::print( "XProfile Total Time = {}\n", m_XProfile.TimeLeftUntil( m_XGoal.position ) );
+    // fmt::print( "YProfile Total Time = {}\n", m_YProfile.TimeLeftUntil( m_YGoal.position ) );
+    // fmt::print( "RProfile Total Time = {}\n", m_RProfile.TimeLeftUntil( m_RGoal.position ) );
 
     DataLogger::Log( "DriveToPose/StartPose", m_profileStartPose );
     DataLogger::Log( "DriveToPose/TargetPose", m_targetPose );
-
-    DataLogger::Log( "DriveToPose/moveTranslation", moveTranslation );
-
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -106,26 +105,27 @@ void DriveToPose::Execute()
 
     DataLogger::Log( "DriveToPose/TrajectoryPose", trajectoryPose );
 
-    // DataLogger::Log( "DriveToPose/setptXField", setptXField );
-    // DataLogger::Log( "DriveToPose/setptYField", setptYField );
-    // DataLogger::Log( "DriveToPose/setptRot", m_RSetpoint.position );
-    // DataLogger::Log( "DriveToPose/xFF", m_XSetpoint.velocity );
-    // DataLogger::Log( "DriveToPose/yFF", m_YSetpoint.velocity );
-    // DataLogger::Log( "DriveToPose/rFF", m_RSetpoint.velocity );
-    // DataLogger::Log( "DriveToPose/xFeedback", xFeedback );
-    // DataLogger::Log( "DriveToPose/yFeedback", yFeedback );
-    // DataLogger::Log( "DriveToPose/rFeedback", rotFeedback );
-    // DataLogger::Log( "DriveToPose/xTotalTime", m_XProfile.TotalTime() );
-    // DataLogger::Log( "DriveToPose/yTotalTime", m_YProfile.TotalTime() );
-    // DataLogger::Log( "DriveToPose/rTotalTime", m_RProfile.TotalTime() );
-    // DataLogger::Log( "DriveToPose/velocity", units::math::hypot( m_speeds.vx, m_speeds.vy ) );
-    // DataLogger::Log( "DriveToPose/omega", m_speeds.omega );
+    DataLogger::Log( "DriveToPose/setptXField", setptXField );
+    DataLogger::Log( "DriveToPose/setptYField", setptYField );
+    DataLogger::Log( "DriveToPose/setptRot", m_RSetpoint.position );
+    DataLogger::Log( "DriveToPose/xFF", m_XSetpoint.velocity );
+    DataLogger::Log( "DriveToPose/yFF", m_YSetpoint.velocity );
+    DataLogger::Log( "DriveToPose/rFF", m_RSetpoint.velocity );
+    DataLogger::Log( "DriveToPose/xFeedback", xFeedback );
+    DataLogger::Log( "DriveToPose/yFeedback", yFeedback );
+    DataLogger::Log( "DriveToPose/rFeedback", rotFeedback );
+    DataLogger::Log( "DriveToPose/xTotalTime", m_XProfile.TotalTime() );
+    DataLogger::Log( "DriveToPose/yTotalTime", m_YProfile.TotalTime() );
+    DataLogger::Log( "DriveToPose/rTotalTime", m_RProfile.TotalTime() );
+    DataLogger::Log( "DriveToPose/velocity", units::math::hypot( m_speeds.vx, m_speeds.vy ) );
+    DataLogger::Log( "DriveToPose/omega", m_speeds.omega );
 }
 
 // Called once the command ends or is interrupted.
 void DriveToPose::Ending(bool interrupted) 
 {
     m_drive->Stop();
+    DataLogger::Log( "DriveToPose/finalError", m_targetPose - m_drive->GetPose() );
 }
 
 // Returns true when the command should end.

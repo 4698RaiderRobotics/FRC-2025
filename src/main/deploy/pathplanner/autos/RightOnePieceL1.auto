@@ -7,25 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterTo1"
+            "pathName": "RightTo2"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "1ToLeftSource"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "LeftSideSource5"
+            "name": "PlaceOnReefRightL1"
           }
         }
       ]
     }
   },
   "resetOdom": false,
-  "folder": "CenterStart",
+  "folder": "RightSideStart",
   "choreoAuto": false
 }

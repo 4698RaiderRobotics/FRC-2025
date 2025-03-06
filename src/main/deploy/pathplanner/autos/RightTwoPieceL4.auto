@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "DriveToReefPoseLeft"
+            "name": "PlaceOnReefRightL4"
           }
         },
         {
@@ -23,15 +23,39 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeFromSource"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "RightSideSource3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefLeftL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3ToRightSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeFromSource"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "RightSideStart",
   "choreoAuto": false
 }

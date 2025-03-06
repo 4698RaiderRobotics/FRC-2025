@@ -198,8 +198,20 @@ void RobotContainer::ConfigureAutos()
         ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, ReefPlacement::PLACING_L1 )
     );
     pathplanner::NamedCommands::registerCommand(
+        "PlaceOnReefLeftL1", 
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, ReefPlacement::PLACING_L1 )
+    );
+    pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefRightL4", 
         ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, ReefPlacement::PLACING_L4 )
+    );
+    pathplanner::NamedCommands::registerCommand(
+        "PlaceOnReefLeftL4", 
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, ReefPlacement::PLACING_L4 )
+    );
+    pathplanner::NamedCommands::registerCommand(
+        "IntakeFromSource",
+        IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator )
     );
   
     std::vector<AutoNameMap> autos = { 
@@ -210,8 +222,9 @@ void RobotContainer::ConfigureAutos()
         {"Left One Piece L4", "LeftOnePieceL4"},
         {"Left Two Piece", "LeftTwoPiece"},
     
-        {"Right One Piece", "RightOnePiece"},
-        {"Right Two Piece", "RightTwoPiece"}
+        {"Right One Piece L1", "RightOnePieceL1"},
+        {"Right One Piece L4", "RightOnePieceL4"},
+        {"Right Two Piece L4", "RightTwoPieceL4"}
     };
 
     // std::vector<AutoNameMap> choreoAutos = { 

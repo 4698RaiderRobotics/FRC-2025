@@ -9,11 +9,17 @@
           "data": {
             "pathName": "RightTo2"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL4"
+          }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "RightSideStart",
   "choreoAuto": false
 }

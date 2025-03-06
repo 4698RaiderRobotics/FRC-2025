@@ -11,9 +11,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL1"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "5ToLeftSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeFromSource"
           }
         },
         {
@@ -21,11 +33,17 @@
           "data": {
             "pathName": "LeftSideSource5"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL4"
+          }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "LeftSideStart",
   "choreoAuto": false
 }

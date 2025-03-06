@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TestPath"
+            "pathName": "LeftTo6"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "DriveToReefPose"
+            "name": "PlaceOnReefRightL4"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
-  "folder": null,
+  "resetOdom": false,
+  "folder": "LeftSideStart",
   "choreoAuto": false
 }

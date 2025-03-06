@@ -3,7 +3,6 @@
 #include <frc/geometry/Rotation2d.h>
 #include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
-#include <frc/apriltag/AprilTagFieldLayout.h>
 
 #include "command/ReefCommands.h"
 #include "command/IntakeCommands.h"
@@ -18,8 +17,6 @@
 #include "Constants.h"
 
 using namespace physical;
-
-ReefPlacement ReefCommands::next_reef_place = ReefPlacement::NONE;
 
 ReefPlacingPoses ReefCommands::reefPoses = ReefPlacingPoses();
 
@@ -77,14 +74,14 @@ frc2::CommandPtr ElevatorRaisePosition( Arm *arm )
     );
 }
 
-frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide )
+frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide, ReefPlacement p )
 {
     return frc2::cmd::Sequence(
         frc2::cmd::Either( 
             frc2::cmd::Sequence(
                 DriveToReefPose( d, onRightSide ),
                 frc2::cmd::Select<ReefPlacement>( 
-                    [] { return next_reef_place; }, 
+                    [p] { return p; }, 
                     std::pair{ ReefPlacement::NONE, frc2::cmd::Print( "No Reef Level Selected!!") },
                     std::pair{ ReefPlacement::PLACING_L1, PlaceCoralL1( d, arm, intake, elevator ) },
                     std::pair{ ReefPlacement::PLACING_L2, PlaceCoralL2( d, arm, intake, elevator ) },
@@ -98,7 +95,6 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
                     frc2::cmd::Sequence(
     intake->EjectCoralL2_4( false ),      // Force Eject
     frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
-                        ReefCommands::SetReefPlacement(ReefPlacement::NONE),
                         DriveCommands::DriveDeltaPose( d, {-12_in, 0_in, 0_deg}, true ),
     frc2::cmd::RunOnce( [intake] { intake->Stop(); }),
                         IntakeCommands::RestPosition( arm, intake, elevator )
@@ -108,7 +104,7 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
                 )
             ),
             frc2::cmd::Print( "No Reef Level Selected!!"),
-            [] { return next_reef_place != ReefPlacement::NONE; }
+            [p] { return p != ReefPlacement::NONE; }
         )
     ).WithName("PlaceOnReef");
 }
@@ -183,7 +179,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL4( Drive *d, Arm *arm, Intake *intake,
         arm->ChangeElbowAngle( arm::kElbowCoralL4 ),
         frc2::cmd::Parallel(
             intake->EjectCoralL2_4( true ),
-            DriveCommands::DriveOpenLoop( d, {1_fps, 0_fps, 0_rpm}, true ).WithTimeout( 1_s)
+            DriveCommands::DriveOpenLoop( d, {1.1_fps, 0_fps, 0_rpm}, true ).WithTimeout( 1_s)
         )
     ).WithName( "Place Coral in L4" );
 }
@@ -263,32 +259,3 @@ bool ReefPlacingPoses::isAlgaeLow( frc::Pose2d currentPose )
     return ( matched_pose_idx % 2 == 0 );  // 0, 2, 4 are low
 }
 
-frc2::CommandPtr ReefCommands::SetReefPlacement( ReefPlacement p )
-{
-    return frc2::cmd::RunOnce( [p] { next_reef_place = p; LogReefPlacement( p ); } );
-}
-
-void ReefCommands::LogReefPlacement( ReefPlacement p )
-{
-    std::string logStr;
-    
-    switch( p ) {
-    case ReefPlacement::NONE:
-        logStr = "NONE";
-        break;
-    case ReefPlacement::PLACING_L1:
-        logStr = "PLACING_L1";
-        break;
-    case ReefPlacement::PLACING_L2:
-        logStr = "PLACING_L2";
-        break;
-    case ReefPlacement::PLACING_L3:
-        logStr = "PLACING_L3";
-        break;
-    case ReefPlacement::PLACING_L4:
-        logStr = "PLACING_L4";
-        break;
-    }
-
-    DataLogger::Log( "ReefCommands/Reef Place", logStr );
-}

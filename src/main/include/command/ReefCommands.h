@@ -1,6 +1,10 @@
 #pragma once
 
+#include <vector> 
+
+#include <frc/geometry/Pose2d.h>
 #include <frc2/command/CommandPtr.h>
+#include <frc/apriltag/AprilTagFieldLayout.h>
 
 enum class ReefPlacement {
     NONE,
@@ -9,7 +13,6 @@ enum class ReefPlacement {
     PLACING_L3,
     PLACING_L4,
 };
-
 
 class Arm;
 class Drive;
@@ -39,7 +42,7 @@ private:
 class ReefCommands {
 public:
 
-    static frc2::CommandPtr PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide );
+    static frc2::CommandPtr PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide, ReefPlacement p );
     static frc2::CommandPtr DriveToReefPose( Drive *d, bool onRightSide );
     static frc2::CommandPtr DriveToAlgaePose( Drive *d );
     static frc2::CommandPtr PlaceCoralL1( Drive *, Arm *, Intake *, Elevator * );
@@ -49,12 +52,8 @@ public:
 
     static frc2::CommandPtr RemoveAlgae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator );
 
-    static frc2::CommandPtr SetReefPlacement( ReefPlacement );
-
 private:
     ReefCommands() = default;
-    static void LogReefPlacement( ReefPlacement );
 
     static ReefPlacingPoses reefPoses;
-    static ReefPlacement next_reef_place;
 };

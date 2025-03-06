@@ -48,10 +48,10 @@ namespace swerve {
         constexpr double kTurnGearRatio = 150.0 / 7.0;
 
         // The Maximum turning speed for the robot under Joystick control
-        const units::revolutions_per_minute_t kTurnSpeedLimit = kMaxTurnSpeed * 0.25;
+        const units::revolutions_per_minute_t kTurnSpeedLimit = kMaxTurnSpeed * 0.5;
 
         // The Maximum translation speed for the robot under Joystick control
-        constexpr units::meters_per_second_t kDriveSpeedLimit = kMaxDriveSpeed * 0.5;
+        constexpr units::meters_per_second_t kDriveSpeedLimit = kMaxDriveSpeed * 0.75;
 
     }
 
@@ -61,7 +61,7 @@ namespace swerve {
 
         const int pigeon2Id = 13;
 
-        const TuningParams turnTune = { 40, 0.0, 0.3, 0.0, 0.05, 2.1, 0.0 };      // turn PIDSGVA
+        const TuningParams turnTune = { 30, 0.0, 0.2, 0.0, 0.05, 2.1, 0.0 };      // turn PIDSGVA
         const TuningParams driveTune = { 0.1, 0.0, 0.0, 0.0, 0.0, 0.110, 0.0 };   // drive PIDSGVA
 
         const MotionParams<units::radian> turnMP = { 20_tps, 150_tr_per_s_sq, 1500_tr_per_s_cu };

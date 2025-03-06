@@ -11,6 +11,8 @@
 
 #include "util/ControllerAxis.h"
 
+#include "command/ReefCommands.h"
+
 #include <frc/smartdashboard/SendableChooser.h>
 
 class Arm;
@@ -54,4 +56,9 @@ private:
     ControllerAxis climber_nudge_axis;
  
     frc2::Trigger nudge_hold_button;
+
+    static ReefPlacement next_reef_place;
+    static frc2::CommandPtr SetReefPlacement( ReefPlacement );
+    static void LogReefPlacement( ReefPlacement );
+
 };

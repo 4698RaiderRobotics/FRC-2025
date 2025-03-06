@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.349671052631578,
-        "y": 5.449013157894736
+        "x": 5.503618421052631,
+        "y": 5.6606907894736835
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.078947368421052,
-        "y": 7.844819078947368
+        "x": 3.2328947368421055,
+        "y": 8.056496710526314
       },
       "isLocked": false,
       "linkedName": "Side6"
@@ -25,7 +25,7 @@
       },
       "nextControl": {
         "x": 2.9346217105263155,
-        "y": 1.7254111842105262
+        "y": 1.7254111842105264
       },
       "isLocked": false,
       "linkedName": null
@@ -58,7 +58,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.39292518739253
+    "rotation": 53.392925187392535
   },
   "reversed": false,
   "folder": "ReefToRightSource",

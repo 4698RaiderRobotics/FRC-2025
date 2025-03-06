@@ -9,11 +9,17 @@
           "data": {
             "pathName": "LeftTo6"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL1"
+          }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "LeftSideStart",
   "choreoAuto": false
 }

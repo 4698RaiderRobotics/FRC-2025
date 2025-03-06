@@ -28,6 +28,7 @@
 #include "command/DriveToPose.h"
 #include "command/CoralViz.h"
 
+ReefPlacement RobotContainer::next_reef_place = ReefPlacement::NONE;
 
 RobotContainer::RobotContainer()
     : elevator_nudge_axis{ operatorCtrlr.GetHID(), ctrl::nudge_elevator_axis, true },
@@ -51,7 +52,7 @@ RobotContainer::RobotContainer()
     ConfigureBindings();
     ConfigureAutos();
     frc::SmartDashboard::PutData("Auto Mode", &m_chooser);
-    ReefCommands::SetReefPlacement( ReefPlacement::NONE );
+    LogReefPlacement( next_reef_place );
 }
 
 void RobotContainer::ConfigureDefaults() 
@@ -125,18 +126,18 @@ void RobotContainer::ConfigureBindings()
     );
 
     (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L1_level ))
-        .OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L1 ) );
+        .OnTrue( SetReefPlacement( ReefPlacement::PLACING_L1 ) );
     (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L2_level ))
-        .OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L2 ) );
+        .OnTrue( SetReefPlacement( ReefPlacement::PLACING_L2 ) );
     (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L3_level ))
-        .OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L3 ) );
+        .OnTrue( SetReefPlacement( ReefPlacement::PLACING_L3 ) );
     (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L4_level ))
-        .OnTrue( ReefCommands::SetReefPlacement( ReefPlacement::PLACING_L4 ) );
+        .OnTrue( SetReefPlacement( ReefPlacement::PLACING_L4 ) );
 
     operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_left, 0.75 )
-        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false ) );
+        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, next_reef_place ) );
     operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_right, 0.75 )
-        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true ) );
+        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, next_reef_place ) );
 
     operatorCtrlr.POV( ctrl::intake_ground )
         .OnTrue( IntakeCommands::GroundPickup( m_arm, m_intake, m_elevator ) )
@@ -192,14 +193,21 @@ void RobotContainer::ConfigureBindings()
 
 void RobotContainer::ConfigureAutos()
 {
-    pathplanner::NamedCommands::registerCommand("DriveToReefPoseLeft", ReefCommands::DriveToReefPose( m_drive, true ));
-    pathplanner::NamedCommands::registerCommand("DriveToReefPoseRight", ReefCommands::DriveToReefPose( m_drive, false ));
+    pathplanner::NamedCommands::registerCommand(
+        "PlaceOnReefRightL1", 
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, ReefPlacement::PLACING_L1 )
+    );
+    pathplanner::NamedCommands::registerCommand(
+        "PlaceOnReefRightL4", 
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, ReefPlacement::PLACING_L4 )
+    );
   
     std::vector<AutoNameMap> autos = { 
         {"Center to left source two piece", "CenterToLeftSideSourceTwoPiece"},
         {"Center to right source two piece", "CenterToRightSideSourceTwoPiece"},
     
-        {"Left One Piece", "LeftOnePiece"},
+        {"Left One Piece L1", "LeftOnePieceL1"},
+        {"Left One Piece L4", "LeftOnePieceL4"},
         {"Left Two Piece", "LeftTwoPiece"},
     
         {"Right One Piece", "RightOnePiece"},
@@ -230,4 +238,34 @@ void RobotContainer::ConfigureAutos()
 frc2::Command* RobotContainer::GetAutonomousCommand() 
 {
     return AutoCommands[ m_chooser.GetSelected() ].get();
+}
+
+frc2::CommandPtr RobotContainer::SetReefPlacement( ReefPlacement p )
+{
+    return frc2::cmd::RunOnce( [p] { next_reef_place = p; LogReefPlacement( p ); } );
+}
+
+void RobotContainer::LogReefPlacement( ReefPlacement p )
+{
+    std::string logStr;
+    
+    switch( p ) {
+    case ReefPlacement::NONE:
+        logStr = "NONE";
+        break;
+    case ReefPlacement::PLACING_L1:
+        logStr = "PLACING_L1";
+        break;
+    case ReefPlacement::PLACING_L2:
+        logStr = "PLACING_L2";
+        break;
+    case ReefPlacement::PLACING_L3:
+        logStr = "PLACING_L3";
+        break;
+    case ReefPlacement::PLACING_L4:
+        logStr = "PLACING_L4";
+        break;
+    }
+
+    DataLogger::Log( "ReefCommands/Reef Place", logStr );
 }

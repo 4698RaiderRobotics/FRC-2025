@@ -24,9 +24,9 @@ class Drive;
  * 
  * Use trapezoidal profiles for each of the x-axis, y-axis, and rotation.
  */
-class DriveToPose : public frc2::CommandHelper<LoggedCommand, DriveToPose> {
+class DriveToPoseTrap : public frc2::CommandHelper<LoggedCommand, DriveToPoseTrap> {
 public:
-    DriveToPose( Drive *drive, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed=1.0 );
+    DriveToPoseTrap( Drive *drive, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed=1.0 );
     
     void Init() override;
 

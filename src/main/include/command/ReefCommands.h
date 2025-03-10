@@ -42,7 +42,8 @@ private:
 class ReefCommands {
 public:
 
-    static frc2::CommandPtr PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide, ReefPlacement p );
+    static frc2::CommandPtr PlaceOnReef( 
+        Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide, std::function<ReefPlacement ()> place_func );
     static frc2::CommandPtr DriveToReefPose( Drive *d, bool onRightSide );
     static frc2::CommandPtr DriveToAlgaePose( Drive *d );
     static frc2::CommandPtr PlaceCoralNone( );

@@ -111,11 +111,11 @@ frc2::CommandPtr Intake::IntakeCoral()
 frc2::CommandPtr Intake::EjectCoralL1()
 {
     return frc2::cmd::Sequence( 
-        frc2::cmd::Run( [this] { SpinOut(); })
-            .Until( [this] { return !isCenterBroken(); } )
-            .WithTimeout( 1_s ),
+        RunOnce( [this] { SpinOut(); }),
+//            .Until( [this] { return !isCenterBroken(); } )
+//            .WithTimeout( 1_s ),
         frc2::cmd::Wait( 0.5_s ),
-        frc2::cmd::RunOnce( [this] { Stop(); })
+        RunOnce( [this] { Stop(); })
     ).WithName( "Eject Coral L1");
 }
 

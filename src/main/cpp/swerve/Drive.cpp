@@ -86,7 +86,7 @@ Drive::Drive( ) :
         [this](){return m_kinematics.ToChassisSpeeds(GetModuleStates());},
         [this](frc::ChassisSpeeds speeds){ RunVelocity(speeds); },
         std::make_shared<pathplanner::PPHolonomicDriveController>( // PPHolonomicDriveController, this should likely live in your Constants class
-            pathplanner::PIDConstants(4.0, 0.0, 0.0), // Translation PID constants
+            pathplanner::PIDConstants(6.0, 0.0, 0.0), // Translation PID constants
             pathplanner::PIDConstants(4.0, 0.0, 0.0)  // Rotation PID constants
         ),
         config, // The robot configuration

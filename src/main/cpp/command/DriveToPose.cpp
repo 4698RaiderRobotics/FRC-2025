@@ -8,24 +8,24 @@
 #include "util/DataLogger.h"
 
 
-const frc::TrapezoidProfile<units::meters>::Constraints DriveToPose::XY_constraints = {6_fps, 5_fps_sq};
-const frc::TrapezoidProfile<units::radians>::Constraints DriveToPose::R_constraints = {120_deg_per_s, 100_deg_per_s_sq};
+const frc::TrapezoidProfile<units::meters>::Constraints DriveToPoseTrap::XY_constraints = {6_fps, 5_fps_sq};
+const frc::TrapezoidProfile<units::radians>::Constraints DriveToPoseTrap::R_constraints = {120_deg_per_s, 100_deg_per_s_sq};
 
 
-DriveToPose::DriveToPose( Drive *drive, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed ) 
+DriveToPoseTrap::DriveToPoseTrap( Drive *drive, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed ) 
     : m_drive{drive}, m_poseFunc{poseFunc},
     m_XProfile{ {XY_constraints.maxVelocity * fractionFullSpeed, XY_constraints.maxAcceleration * fractionFullSpeed} },
     m_YProfile{ {XY_constraints.maxVelocity * fractionFullSpeed, XY_constraints.maxAcceleration * fractionFullSpeed} },
     m_RProfile{ {R_constraints.maxVelocity * fractionFullSpeed, R_constraints.maxAcceleration * fractionFullSpeed} }
 {
-    SetName( "DriveToPose" );
+    SetName( "DriveToPoseTrap" );
 
     m_Rpid.EnableContinuousInput( -std::numbers::pi, std::numbers::pi );
 
     AddRequirements({m_drive});
 }
 
-void DriveToPose::Init() 
+void DriveToPoseTrap::Init() 
 {
     m_targetPose = m_poseFunc();
 
@@ -76,7 +76,7 @@ void DriveToPose::Init()
 }
 
 // Called repeatedly when this Command is scheduled to run
-void DriveToPose::Execute() 
+void DriveToPoseTrap::Execute() 
 {
     frc::Pose2d currentPose = m_drive->GetPose();
 
@@ -122,14 +122,14 @@ void DriveToPose::Execute()
 }
 
 // Called once the command ends or is interrupted.
-void DriveToPose::Ending(bool interrupted) 
+void DriveToPoseTrap::Ending(bool interrupted) 
 {
     m_drive->Stop();
     DataLogger::Log( "DriveToPose/finalError", m_targetPose - m_drive->GetPose() );
 }
 
 // Returns true when the command should end.
-bool DriveToPose::IsFinished() 
+bool DriveToPoseTrap::IsFinished() 
 {
     // NOTE::
     //

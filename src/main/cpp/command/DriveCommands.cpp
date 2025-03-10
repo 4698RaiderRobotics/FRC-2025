@@ -4,7 +4,8 @@
 #include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
 
-#include "util/Utility.h"
+#include <pathplanner/lib/path/PathPlannerPath.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
 
 #include "command/DriveCommands.h"
 #include "command/DriveToPose.h"
@@ -56,6 +57,36 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
     ).WithName( "Joystick Drive" );
 }
 
+frc2::CommandPtr DriveCommands::DriveToPosePP_NOTGOOD( Drive *d, std::function<frc::Pose2d()> poseFunc )
+{
+    return frc2::cmd::Defer( [d, poseFunc] {
+        frc::Pose2d targetPose = poseFunc();
+
+        frc::Pose2d currentPose = d->GetPose();
+
+        if( (currentPose - targetPose).Translation().Norm() < 0.04_m ) {
+            return frc2::cmd::None();
+        }
+
+        std::vector<frc::Pose2d> poses{ currentPose, targetPose };
+
+        std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
+
+        pathplanner::PathConstraints constraints(3.0_mps, 3.0_mps_sq, 360_deg_per_s, 720_deg_per_s_sq);
+
+        auto path = std::make_shared<pathplanner::PathPlannerPath>(
+            waypoints,
+            constraints,
+            std::nullopt, // The ideal starting state, this is only relevant for pre-planned paths, so can be nullopt for on-the-fly paths.
+            pathplanner::GoalEndState(0.0_mps, targetPose.Rotation()) // Goal end state. You can set a holonomic rotation here.
+        );
+
+        path->preventFlipping = true;
+
+        return pathplanner::AutoBuilder::followPath(path).WithName( "AutoBuilder-pathfindToPose");
+    }, {d} );
+}
+
 frc2::CommandPtr DriveCommands::DriveOpenLoop( Drive *d, frc::ChassisSpeeds speed, bool robotRelative )
 {
     return frc2::cmd::Run( [d, speed, robotRelative] {
@@ -68,7 +99,7 @@ frc2::CommandPtr DriveCommands::DriveOpenLoop( Drive *d, frc::ChassisSpeeds spee
 
 frc2::CommandPtr DriveCommands::DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotRelative )
 {
-    return DriveToPose( d, [d, move, robotRelative] {
+    return DriveToPoseTrap( d, [d, move, robotRelative] {
         frc::Pose2d newPose;
         frc::Pose2d currentPose = d->GetPose();
 
@@ -82,8 +113,7 @@ frc2::CommandPtr DriveCommands::DriveDeltaPose( Drive *d, frc::Transform2d move,
         }
 
         return newPose;
-    },
-    0.75
+    }
     ).WithName("DriveDeltaPose");
 }
 

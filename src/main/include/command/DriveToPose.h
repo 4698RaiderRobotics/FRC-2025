@@ -24,9 +24,9 @@ class Drive;
  * 
  * Use trapezoidal profiles for each of the x-axis, y-axis, and rotation.
  */
-class DriveToPose : public frc2::CommandHelper<LoggedCommand, DriveToPose> {
+class DriveToPoseTrap : public frc2::CommandHelper<LoggedCommand, DriveToPoseTrap> {
 public:
-    DriveToPose( Drive *drive, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed=1.0 );
+    DriveToPoseTrap( Drive *drive, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed=1.0 );
     
     void Init() override;
 
@@ -46,6 +46,9 @@ private:
 
     frc::ChassisSpeeds m_speeds;
 
+    bool m_profilesDone;
+    units::second_t m_profilesDoneTime;
+
     // units::second_t m_ProfileTime{0_s};
 
     frc::TrapezoidProfile<units::meters> m_XProfile;
@@ -60,9 +63,9 @@ private:
     frc::TrapezoidProfile<units::meters>::State m_YGoal;
     frc::TrapezoidProfile<units::radians>::State m_RGoal;
 
-    frc::PIDController m_Xpid{ 2.0, 0.0, 0.0 };
-    frc::PIDController m_Ypid{ 2.0, 0.0, 0.0 };
-    frc::PIDController m_Rpid{ 3.0, 0.0, 0.0 };
+    frc::PIDController m_Xpid{ 5.0, 0.0, 0.0 };
+    frc::PIDController m_Ypid{ 5.0, 0.0, 0.0 };
+    frc::PIDController m_Rpid{ 4.0, 0.0, 0.0 };
 
     static const frc::TrapezoidProfile<units::meters>::Constraints XY_constraints;
     static const frc::TrapezoidProfile<units::radians>::Constraints R_constraints;

@@ -14,6 +14,7 @@ using namespace physical::intake;
 
 const IntakeIO::SpinSpeed IntakeIO::spin_in{ -kIntakeInSpeed, -kIntakeInSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_out{ kIntakeOutSpeed, kIntakeOutSpeed };
+const IntakeIO::SpinSpeed IntakeIO::spin_out_fast{ kIntakeShiftFastSpeed, kIntakeShiftFastSpeed };
 const IntakeIO::SpinSpeed IntakeIO::shift_up{ kIntakeShiftSlowSpeed, -kIntakeShiftFastSpeed };
 const IntakeIO::SpinSpeed IntakeIO::shift_down{ -kIntakeShiftFastSpeed, kIntakeShiftSlowSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_stop{ 0.0, 0.0 };
@@ -44,6 +45,11 @@ void Intake::SpinIn()
 void Intake::SpinOut()
 {
     io->SpinMotors( IntakeIO::spin_out );
+}
+
+void Intake::SpinOutFast()
+{
+    io->SpinMotors( IntakeIO::spin_out_fast );
 }
 
 void Intake::ShiftUp()
@@ -111,11 +117,11 @@ frc2::CommandPtr Intake::IntakeCoral()
 frc2::CommandPtr Intake::EjectCoralL1()
 {
     return frc2::cmd::Sequence( 
-        frc2::cmd::Run( [this] { SpinOut(); })
-            .Until( [this] { return !isCenterBroken(); } )
-            .WithTimeout( 1_s ),
+        RunOnce( [this] { SpinOut(); }),
+//            .Until( [this] { return !isCenterBroken(); } )
+//            .WithTimeout( 1_s ),
         frc2::cmd::Wait( 0.5_s ),
-        frc2::cmd::RunOnce( [this] { Stop(); })
+        RunOnce( [this] { Stop(); })
     ).WithName( "Eject Coral L1");
 }
 
@@ -126,9 +132,9 @@ frc2::CommandPtr Intake::EjectCoralL2_4( bool waitForPipeSwitch )
         frc2::cmd::Either( 
             // If Pipe Switch tripped (instead of timed out) then Eject coral.
             frc2::cmd::Sequence( 
-                frc2::cmd::RunOnce( [this] { ShiftDown(); }),
-                frc2::cmd::Wait( 0.5_s ),
-                frc2::cmd::RunOnce( [this] { Stop(); })
+                RunOnce( [this] { ShiftDown(); }),
+                frc2::cmd::Wait( 1_s ),
+                RunOnce( [this] { Stop(); })
             ), 
             // If Pipe Switch not tripped tripped
             frc2::cmd::None(),

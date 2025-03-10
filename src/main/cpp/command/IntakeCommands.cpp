@@ -26,7 +26,7 @@ frc2::CommandPtr IntakeCommands::RestPosition( Arm *arm, Intake *intake, Elevato
             ),
             arm->ChangeElbowAngle( arm::kElbowRestAngle )
         ),
-        // Arm is in forward position and / or elevator is down
+        // Arm is in forward position
         frc2::cmd::Sequence(
             arm->ChangeWristPosition( ArmIO::WristHorizontal ),
             arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
@@ -36,7 +36,7 @@ frc2::CommandPtr IntakeCommands::RestPosition( Arm *arm, Intake *intake, Elevato
             ),
             arm->ChangeElbowAngle( arm::kElbowRestAngle )
         ),
-        [arm, elevator] { return arm->isArmBackward() && elevator->GetHeight() > 1_in; }
+        [arm, elevator] { return arm->isArmBackward(); }
     ).WithName( "Rest Position" );
 
 }

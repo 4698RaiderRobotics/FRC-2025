@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL1"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "1ToLeftSource"

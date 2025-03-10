@@ -65,8 +65,8 @@ void Vision::ProcessCamera( int camNumber )
         resultData.camera_name = cam->GetCameraName();
         metrics.visionResult.push_back( resultData );
     }
+
     for( auto result : results ) {
-    
         if( result.HasTargets() ) {
             auto pose = estimator->Update( result );
             double min_ambiguity = 100.0;
@@ -105,6 +105,10 @@ void Vision::ProcessCamera( int camNumber )
 
                 if( frc::DriverStation::IsDisabled() ) {
                         // Always use poses when disabled
+                    if( tracked_tags < 6 ) {
+                        // Trust the initial vision poses a bit more so the position converges faster
+                        resultData.std_dev /= 3.0;
+                    }
                     resultData.addToOdometry = true;
                 } else if( resultData.deltaDistance < 1_m ) {
                     // Use poses that are close to the robot while Enabled
@@ -112,8 +116,8 @@ void Vision::ProcessCamera( int camNumber )
                 }
             }
         
-
             if( resultData.addToOdometry ) {
+                ++tracked_tags;
                 odometry->AddVisionMeasurement( resultData.visionPose.value(), 
                                                 resultData.timestamp, 
                                                 {resultData.std_dev, resultData.std_dev, resultData.std_dev} );

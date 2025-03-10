@@ -32,7 +32,7 @@ namespace arm {
     constexpr MotionConfig<units::turns> kElbowMotionConfig = {
         { 20.0, 0.0, 5.0, 0.05, 0.47, 4.5, 0.0 },
         // { 2_tps, 5_tr_per_s_sq, 30_tr_per_s_cu }
-        { 1_tps, 3_tr_per_s_sq, 10_tr_per_s_cu }
+        { 2_tps, 3_tr_per_s_sq, 10_tr_per_s_cu }
     };
     constexpr MotionConfig<units::turns> kWristMotionConfig = {
         { 0.01, 0.0, 0.0, 0.0, 0.0, 0.0094, 0.0 },
@@ -57,7 +57,7 @@ namespace elevator {
         // PIDSGVA and Motion Profile settings
     constexpr MotionConfig<units::inches> kMotionConfig = {
         { 8.0, 0.0, 0.0, 0.175, 0.375, 0.122, 0.0 },
-        { 1.0_mps, 3_mps_sq, 30_mps_cu }
+        { 2_mps, 3_mps_sq, 30_mps_cu }
     };
 }
 

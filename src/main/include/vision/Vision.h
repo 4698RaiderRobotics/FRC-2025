@@ -34,6 +34,8 @@ public:
 
     Vision( frc::SwerveDrivePoseEstimator<4> *odometry );
     void Periodic() override;
+
+    bool hasTrackedTags() { return tracked_tags >= 10;}
     
 private:
     void ProcessCamera( int cameraNumber );
@@ -45,4 +47,5 @@ private:
     frc::SwerveDrivePoseEstimator<4> *odometry;
     frc::AprilTagFieldLayout aprilTags;
     Metrics metrics;
+    size_t tracked_tags{0};
 };

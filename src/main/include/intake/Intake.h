@@ -12,6 +12,7 @@ public:
 
     void SpinIn();
     void SpinOut();
+    void SpinOutFast();
     void ShiftUp();
     void ShiftDown();
     void Stop();

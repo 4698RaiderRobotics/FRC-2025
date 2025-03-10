@@ -86,7 +86,7 @@ Drive::Drive( ) :
         [this](){return m_kinematics.ToChassisSpeeds(GetModuleStates());},
         [this](frc::ChassisSpeeds speeds){ RunVelocity(speeds); },
         std::make_shared<pathplanner::PPHolonomicDriveController>( // PPHolonomicDriveController, this should likely live in your Constants class
-            pathplanner::PIDConstants(4.0, 0.0, 0.0), // Translation PID constants
+            pathplanner::PIDConstants(6.0, 0.0, 0.0), // Translation PID constants
             pathplanner::PIDConstants(4.0, 0.0, 0.0)  // Rotation PID constants
         ),
         config, // The robot configuration
@@ -183,10 +183,12 @@ void Drive::Periodic( void ) {
     for( size_t i=0; i<sampleCount; ++i ) {
         for( int moduleIndex=0; moduleIndex<4; ++ moduleIndex ) {
             modulePositions[moduleIndex] = m_modules[moduleIndex]->getOdometryPositions()[i];
-            moduleDeltas[moduleIndex] = {
-                modulePositions[moduleIndex].distance - lastModulePositions[moduleIndex].distance,
-                modulePositions[moduleIndex].angle };
-            lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+            if( !gyroInputs.connected ) {
+                moduleDeltas[moduleIndex] = {
+                    modulePositions[moduleIndex].distance - lastModulePositions[moduleIndex].distance,
+                    modulePositions[moduleIndex].angle };
+                lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+            }
         }
 
         if( gyroInputs.connected ) {

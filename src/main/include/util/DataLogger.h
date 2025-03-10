@@ -4,7 +4,7 @@
 #pragma once
 
 #include <span>
-#include <map>
+#include <unordered_map>
 #include <units/base.h>
 #include <units/math.h>
 #include <wpi/array.h>
@@ -104,7 +104,7 @@ private:
 
     wpi::log::DataLog *log;
     std::shared_ptr<nt::NetworkTable> nt_table;
-    std::map<std::string, nt::Publisher*> nt_map;
+    std::unordered_map<std::string, nt::Publisher*> nt_map;
     bool isFMSAttached;
 
     void SendMetadata( std::string_view s, std::string_view val );
@@ -200,14 +200,15 @@ requires wpi::StructSerializable<T>
 void DataLogger::SendNT( const std::string& s, const T& val ) 
 {
     nt::StructPublisher<T>* publisher;
-    if( !nt_map.contains( s ) ) {
+    std::unordered_map<std::string, nt::Publisher*>::iterator i;
+
+    i = nt_map.find( s );
+    if( i == nt_map.end() ) {
         publisher = new nt::StructPublisher<T>();
         *publisher = nt_table->GetStructTopic<T>( s ).Publish();
-        nt_map[s] = publisher;
-    } else {
-        nt::Publisher *base = nt_map[ s ];
-        publisher = (nt::StructPublisher<T>*) base;
+        i = nt_map.insert(std::make_pair(s, publisher) ).first;
     }
+    publisher = (nt::StructPublisher<T>*) i->second;
     publisher->Set( val );
 }
 
@@ -216,13 +217,14 @@ template <class T>
 void DataLogger::SendNT( const std::string& s, std::span<T> a ) 
 {
     nt::StructArrayPublisher<T>* publisher;
-    if( !nt_map.contains( s ) ) {
+    std::unordered_map<std::string, nt::Publisher*>::iterator i;
+
+    i = nt_map.find( s );
+    if( i == nt_map.end() ) {
         publisher = new nt::StructArrayPublisher<T>();
         *publisher = nt_table->GetStructArrayTopic<T>( s ).Publish();
-        nt_map[s] = publisher;
-    } else {
-        nt::Publisher *base = nt_map[ s ];
-        publisher = (nt::StructArrayPublisher<T>*) base;
+        i = nt_map.insert(std::make_pair(s, publisher) ).first;
     }
+    publisher = (nt::StructArrayPublisher<T>*) i->second;
     publisher->Set( a );
 }

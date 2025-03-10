@@ -25,7 +25,7 @@
 #include "command/DriveCommands.h"
 #include "command/ReefCommands.h"
 #include "command/IntakeCommands.h"
-#include "command/DriveToPose.h"
+// #include "command/DriveToPose.h"
 #include "command/CoralViz.h"
 
 ReefPlacement RobotContainer::next_reef_place = ReefPlacement::NONE;
@@ -135,9 +135,9 @@ void RobotContainer::ConfigureBindings()
         .OnTrue( SetReefPlacement( ReefPlacement::PLACING_L4 ) );
 
     operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_left, 0.75 )
-        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, next_reef_place ) );
+        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return next_reef_place; } ) );
     operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_right, 0.75 )
-        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, next_reef_place ) );
+        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return next_reef_place; } ) );
 
     operatorCtrlr.POV( ctrl::intake_ground )
         .OnTrue( IntakeCommands::GroundPickup( m_arm, m_intake, m_elevator ) )
@@ -176,6 +176,8 @@ void RobotContainer::ConfigureBindings()
         .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
     (nudge_hold_button && operatorCtrlr.Y()).WhileTrue( frc2::cmd::Run( [this] {m_intake->SpinOut();}, {m_intake} ))
         .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
+    (nudge_hold_button && operatorCtrlr.X()).WhileTrue( frc2::cmd::Run( [this] {m_intake->ShiftDown();}, {m_intake} ))
+        .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
 
     }
 
@@ -195,7 +197,7 @@ void RobotContainer::ConfigureAutos()
 {
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefRightL1", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, ReefPlacement::PLACING_L1 )
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L1; } )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefLeftL1", 
@@ -203,7 +205,7 @@ void RobotContainer::ConfigureAutos()
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefRightL4", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, ReefPlacement::PLACING_L4 )
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L4; } )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefLeftL4", 

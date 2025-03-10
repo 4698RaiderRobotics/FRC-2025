@@ -7,7 +7,6 @@
 #include "command/ReefCommands.h"
 #include "command/IntakeCommands.h"
 #include "command/DriveCommands.h"
-#include "command/DriveToPose.h"
 
 #include "arm/Arm.h"
 #include "swerve/Drive.h"
@@ -74,14 +73,15 @@ frc2::CommandPtr ElevatorRaisePosition( Arm *arm )
     );
 }
 
-frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide, ReefPlacement p )
+frc2::CommandPtr ReefCommands::PlaceOnReef( 
+    Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide, std::function<ReefPlacement ()> place_func )
 {
     return frc2::cmd::Sequence(
         frc2::cmd::Either( 
             frc2::cmd::Sequence(
                 DriveToReefPose( d, onRightSide ),
                 frc2::cmd::Select<ReefPlacement>( 
-                    [p] { return p; }, 
+                    [place_func] { return place_func(); }, 
                     std::pair{ ReefPlacement::NONE, frc2::cmd::Print( "No Reef Level Selected!!") },
                     std::pair{ ReefPlacement::PLACING_L1, PlaceCoralL1( d, arm, intake, elevator ) },
                     std::pair{ ReefPlacement::PLACING_L2, PlaceCoralL2( d, arm, intake, elevator ) },
@@ -104,26 +104,24 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
                 )
             ),
             frc2::cmd::Print( "No Reef Level Selected!!"),
-            [p] { return p != ReefPlacement::NONE; }
+            [place_func] { return place_func() != ReefPlacement::NONE; }
         )
     ).WithName("PlaceOnReef");
 }
 
 frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide )
 {
-    return DriveToPose( d, [d, onRightSide] {
+    return DriveCommands::DriveToPosePP( d, [d, onRightSide] {
         return ReefCommands::reefPoses.GetClosestReefPose( d->GetPose(), onRightSide );
-    },
-    0.75 // Go at 3/4 speed
+    }
     ).WithName("DriveToReefPose");
 }
 
 frc2::CommandPtr ReefCommands::DriveToAlgaePose( Drive *d )
 {
-    return DriveToPose( d, [d] {
+    return DriveCommands::DriveToPosePP( d, [d] {
         return ReefCommands::reefPoses.GetClosestAlgaePose( d->GetPose() );
-    },
-    0.75 // Go at 3/4 speed
+    }
     ).WithName("DriveToAlgaePose");
 }
 

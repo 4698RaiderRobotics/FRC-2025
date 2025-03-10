@@ -89,55 +89,60 @@ void DataLogger::Send( const std::string& s, const std::string& val ) {
 void DataLogger::SendNT( const std::string& s, const double& val )
 {
     nt::DoublePublisher* publisher;
-    if( !nt_map.contains( s ) ) {
+    std::unordered_map<std::string, nt::Publisher*>::iterator i;
+
+    i = nt_map.find( s );
+    if( i == nt_map.end() ) {
         publisher = new nt::DoublePublisher();
         *publisher = nt_table->GetDoubleTopic( s ).Publish( );
-        nt_map[s] = publisher;
-    } else {
-        nt::Publisher *base = nt_map[ s ];
-        publisher = (nt::DoublePublisher*) base;
+        i = nt_map.insert(std::make_pair(s, publisher)).first;
     }
+    publisher = (nt::DoublePublisher*) i->second;
     publisher->Set( val );
 }
 
 void DataLogger::SendNT( const std::string& s, const int64_t& val )
 {
     nt::IntegerPublisher* publisher;
-    if( !nt_map.contains( s ) ) {
+    std::unordered_map<std::string, nt::Publisher*>::iterator i;
+
+    i = nt_map.find( s );
+    if( i == nt_map.end() ) {
         publisher = new nt::IntegerPublisher();
         *publisher = nt_table->GetIntegerTopic( s ).Publish( );
-        nt_map[s] = publisher;
-    } else {
-        nt::Publisher *base = nt_map[ s ];
-        publisher = (nt::IntegerPublisher*) base;
+        i = nt_map.insert(std::make_pair(s, publisher)).first;
     }
+    publisher = (nt::IntegerPublisher*) i->second;
     publisher->Set( val );
 }
 
 void DataLogger::SendNT( const std::string& s, const bool& val )
 {
     nt::BooleanPublisher* publisher;
-    if( !nt_map.contains( s ) ) {
+    std::unordered_map<std::string, nt::Publisher*>::iterator i;
+
+    i = nt_map.find( s );
+    if( i == nt_map.end() ) {
         publisher = new nt::BooleanPublisher();
         *publisher = nt_table->GetBooleanTopic( s ).Publish( );
-        nt_map[s] = publisher;
-    } else {
-        nt::Publisher *base = nt_map[ s ];
-        publisher = (nt::BooleanPublisher*) base;
+        i = nt_map.insert(std::make_pair(s, publisher)).first;
     }
+    publisher = (nt::BooleanPublisher*) i->second;
     publisher->Set( val );
 }
 
-void DataLogger::SendNT( const std::string &s, const std::string &val ) {
+void DataLogger::SendNT( const std::string &s, const std::string &val ) 
+{
     nt::StringPublisher* publisher;
-    if( !nt_map.contains( s ) ) {
+    std::unordered_map<std::string, nt::Publisher*>::iterator i;
+
+    i = nt_map.find( s );
+    if( i == nt_map.end() ) {
         publisher = new nt::StringPublisher();
         *publisher = nt_table->GetStringTopic( s ).Publish( );
-        nt_map[s] = publisher;
-    } else {
-        nt::Publisher *base = nt_map[ s ];
-        publisher = (nt::StringPublisher*) base;
+        i = nt_map.insert(std::make_pair(s, publisher)).first;
     }
+    publisher = (nt::StringPublisher*) i->second;
     publisher->Set( val );
 }
 

@@ -200,10 +200,6 @@ void RobotContainer::ConfigureAutos()
         ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L1; } )
     );
     pathplanner::NamedCommands::registerCommand(
-        "PlaceOnReefLeftL1", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, ReefPlacement::PLACING_L1 )
-    );
-    pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefRightL4", 
         ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L4; } )
     );

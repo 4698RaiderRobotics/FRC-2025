@@ -9,6 +9,12 @@
           "data": {
             "pathName": "CenterTo1"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL1"
+          }
         }
       ]
     }

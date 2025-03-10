@@ -76,10 +76,16 @@ void TalonOdometryThread::Run() {
         }
 
         for( size_t i=0; i<signals.size(); ++i ) {
+            if( queues[i]->size() > 10 ) {
+                queues[i]->pop();
+            }
             queues[i]->push( signals[i]->GetValueAsDouble() );
         }
 
         for( size_t i=0; i<timestampQueues.size(); ++i ) {
+            if( timestampQueues[i]->size() > 10 ) {
+                timestampQueues[i]->pop();
+            }
             timestampQueues[i]->push( timestamp );
         }
         odometryMutex.unlock();

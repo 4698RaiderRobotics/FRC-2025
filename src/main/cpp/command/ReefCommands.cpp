@@ -82,7 +82,7 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
                 DriveToReefPose( d, onRightSide ),
                 frc2::cmd::Select<ReefPlacement>( 
                     [p] { return p; }, 
-                    std::pair{ ReefPlacement::NONE, frc2::cmd::Print( "No Reef Level Selected!!") },
+                    std::pair{ ReefPlacement::NONE, PlaceCoralNone() },
                     std::pair{ ReefPlacement::PLACING_L1, PlaceCoralL1( d, arm, intake, elevator ) },
                     std::pair{ ReefPlacement::PLACING_L2, PlaceCoralL2( d, arm, intake, elevator ) },
                     std::pair{ ReefPlacement::PLACING_L3, PlaceCoralL3( d, arm, intake, elevator ) },
@@ -103,7 +103,7 @@ frc2::CommandPtr ReefCommands::PlaceOnReef( Drive *d, Arm *arm, Intake *intake, 
     [] {return false; }  // Always Eject
                 )
             ),
-            frc2::cmd::Print( "No Reef Level Selected!!"),
+            PlaceCoralNone(),
             [p] { return p != ReefPlacement::NONE; }
         )
     ).WithName("PlaceOnReef");
@@ -125,6 +125,13 @@ frc2::CommandPtr ReefCommands::DriveToAlgaePose( Drive *d )
     },
     0.75 // Go at 3/4 speed
     ).WithName("DriveToAlgaePose");
+}
+
+frc2::CommandPtr ReefCommands::PlaceCoralNone( )
+{
+    return frc2::cmd::Sequence(
+        frc2::cmd::Print( "No Reef Level Selected!!")
+    );
 }
 
 frc2::CommandPtr ReefCommands::PlaceCoralL1( Drive *d, Arm *arm, Intake *intake, Elevator *elevator )

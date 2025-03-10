@@ -150,7 +150,7 @@ void ModuleIOTalonFX::SetDriveWheelVelocity( units::radians_per_second_t velocit
 
 void ModuleIOTalonFX::SetTurnPosition( units::radian_t position )
 {
-    m_turnMotor.SetControl( ctre::phoenix6::controls::MotionMagicVoltage( position ) );
+    m_turnMotor.SetControl( ctre::phoenix6::controls::PositionVoltage( position ) );
 }
 
 void ModuleIOTalonFX::SetDriveBrakeMode( bool enable ) {

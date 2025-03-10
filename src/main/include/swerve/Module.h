@@ -37,8 +37,8 @@ private:
     ModuleIO::Inputs inputs;
 
     std::optional<units::radian_t> turnRelativeOffset;
-    std::optional<units::radian_t> angleSetpoint;
-    std::optional<units::meters_per_second_t> speedSetpoint;
+    // std::optional<units::radian_t> angleSetpoint;
+    // std::optional<units::meters_per_second_t> speedSetpoint;
 
     std::vector<frc::SwerveModulePosition> odometryPositions;
 };

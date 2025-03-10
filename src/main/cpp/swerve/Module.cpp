@@ -11,8 +11,6 @@
 #include "swerve/SwerveConstants.h"
 #include "swerve/Module.h"
 
-// #include "DataLogger.h"
-
 
 Module::Module( ModuleIO* io ) : io{std::move(io)}
 {
@@ -27,21 +25,6 @@ void Module::Periodic( ) {
     if( !turnRelativeOffset && units::math::fabs(inputs.turnAbsolutePosition) > 1E-6_rad ) {
         turnRelativeOffset = inputs.turnAbsolutePosition - inputs.turnPosition;
         DataLogger::Log( "Swerve" + m_name + "/turnRelativeOffset", turnRelativeOffset );
-    }
-
-    if( angleSetpoint ) {
-        // Run closed loop control on angle
-        io->SetTurnPosition( angleSetpoint.value() );
-
-        if( speedSetpoint ) {
-            units::radian_t angleError = angleSetpoint.value() - GetAngle();
-            units::meters_per_second_t adjustSpeed = 
-                speedSetpoint.value() * std::pow( units::math::cos( angleError ).value(), 3);
-
-            units::radians_per_second_t wheelVelocity = adjustSpeed / swerve::physical::kDriveMetersPerWheelRotation;
-            
-            io->SetDriveWheelVelocity( wheelVelocity );
-        }
     }
 
     // Calculate positions for odometry
@@ -61,19 +44,26 @@ frc::SwerveModuleState Module::RunSetpoint( const frc::SwerveModuleState& state 
     frc::SwerveModuleState optimizedState = state;
     optimizedState.Optimize( GetAngle() );
 
-    // Update the setpoints
-    angleSetpoint = optimizedState.angle.Radians();
-    speedSetpoint = optimizedState.speed;
+    // Run closed loop control on angle
+    io->SetTurnPosition( optimizedState.angle.Radians() );
 
-     return optimizedState;
+    // Run closed loop control on speed
+    units::radian_t angleError = optimizedState.angle.Radians() - GetAngle();
+    optimizedState.speed = optimizedState.speed * std::pow( units::math::cos( angleError ).value(), 3);
+
+    // speedSetpoint = optimizedState.speed;
+    units::radians_per_second_t wheelVelocity = optimizedState.speed / swerve::physical::kDriveMetersPerWheelRotation;
+    
+    io->SetDriveWheelVelocity( wheelVelocity );
+
+    return optimizedState;
 }
 
 void Module::RunCharacterization( const units::volt_t volts ) {
         // Keep wheels straight
-    angleSetpoint = 0_deg;
+    io->SetTurnPosition( 0_deg );
 
-        // Turn off closed loop velocity control
-    speedSetpoint.reset();
+        // Use open loop velocity control
     io->SetDriveOpenLoop( volts / 12_V );
 }
 
@@ -97,9 +87,6 @@ frc::SwerveModulePosition Module::GetPosition( void ) {
 void Module::Stop() {
     io->SetTurnOpenLoop( 0.0 );
     io->SetDriveOpenLoop( 0.0 );
-
-    angleSetpoint.reset();
-    speedSetpoint.reset();
 }
 
 void Module::UpdateInputs() {

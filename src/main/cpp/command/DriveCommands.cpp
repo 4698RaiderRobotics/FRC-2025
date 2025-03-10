@@ -4,6 +4,8 @@
 #include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
 
+#include "util/Utility.h"
+
 #include "command/DriveCommands.h"
 #include "command/DriveToPose.h"
 
@@ -22,9 +24,11 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
         // Apply deadband
         double x_val = xSupplier();
         double y_val = ySupplier();
-        double linearMagnitude = frc::ApplyDeadband<double>( std::hypot( x_val, y_val ), DEADBAND );
+        double rawlinearMagnitude = std::hypot( x_val, y_val );
+        // rawlinearMagnitude = util::clamp( rawlinearMagnitude, 0.0, 1.0 );
+        double linearMagnitude = frc::ApplyDeadband<double>( rawlinearMagnitude, DEADBAND );
         frc::Rotation2d linearDirection;
-        if( fabs( linearMagnitude ) > 0.0001 ) {
+        if( fabs( rawlinearMagnitude ) > 0.001 ) {
             linearDirection = frc::Rotation2d{ x_val, y_val };
         }
         double omega = frc::ApplyDeadband<double>( omegaSupplier(), DEADBAND );
@@ -33,8 +37,8 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
         linearMagnitude = linearMagnitude * linearMagnitude;
         omega = std::copysign( omega*omega, omega );
 
-        double Vx = linearMagnitude * units::math::cos( linearDirection.Radians() );
-        double Vy = linearMagnitude * units::math::sin( linearDirection.Radians() );
+        double Vx = linearMagnitude * linearDirection.Cos();
+        double Vy = linearMagnitude * linearDirection.Sin();
         
         // Convert to field relative speeds
         bool isFlipped = frc::DriverStation::GetAlliance() == frc::DriverStation::kRed;
@@ -55,15 +59,8 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
 frc2::CommandPtr DriveCommands::DriveOpenLoop( Drive *d, frc::ChassisSpeeds speed, bool robotRelative )
 {
     return frc2::cmd::Run( [d, speed, robotRelative] {
-        bool isFlipped = frc::DriverStation::GetAlliance() == frc::DriverStation::kRed;
         d->RunVelocity( 
-            robotRelative ?
-            speed
-            :
-            frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-                speed,
-                isFlipped ? d->GetRotation() + frc::Rotation2d(180_deg) : d->GetRotation()
-            )
+            robotRelative ? speed : frc::ChassisSpeeds::FromFieldRelativeSpeeds( speed, d->GetRotation() )
         ); },
         {d}
     ); 

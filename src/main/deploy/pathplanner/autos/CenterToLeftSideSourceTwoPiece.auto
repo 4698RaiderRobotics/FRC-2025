@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "DriveToReefPoseRight"
+            "name": "PlaceOnReefRightL1"
           }
         },
         {
@@ -31,7 +31,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "CenterStart",
   "choreoAuto": false
 }

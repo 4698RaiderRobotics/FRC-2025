@@ -8,8 +8,8 @@
 #include "util/DataLogger.h"
 
 
-const frc::TrapezoidProfile<units::meters>::Constraints DriveToPoseTrap::XY_constraints = {6_fps, 5_fps_sq};
-const frc::TrapezoidProfile<units::radians>::Constraints DriveToPoseTrap::R_constraints = {120_deg_per_s, 100_deg_per_s_sq};
+const frc::TrapezoidProfile<units::meters>::Constraints DriveToPoseTrap::XY_constraints = {3_mps, 3_mps_sq};
+const frc::TrapezoidProfile<units::radians>::Constraints DriveToPoseTrap::R_constraints = {300_deg_per_s, 300_deg_per_s_sq};
 
 
 DriveToPoseTrap::DriveToPoseTrap( Drive *drive, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed ) 
@@ -63,13 +63,8 @@ void DriveToPoseTrap::Init()
         m_RGoal.position -= 360_deg;
     }
 
-    // m_ProfileTime = 0_s;
-    // m_XProfile.Calculate(20_ms, m_XSetpoint, m_XGoal);
-    // m_YProfile.Calculate(20_ms, m_YSetpoint, m_YGoal);
-    // m_RProfile.Calculate(20_ms, m_RSetpoint, m_RGoal);
-    // fmt::print( "XProfile Total Time = {}\n", m_XProfile.TimeLeftUntil( m_XGoal.position ) );
-    // fmt::print( "YProfile Total Time = {}\n", m_YProfile.TimeLeftUntil( m_YGoal.position ) );
-    // fmt::print( "RProfile Total Time = {}\n", m_RProfile.TimeLeftUntil( m_RGoal.position ) );
+    m_profilesDone = false;
+    m_profilesDoneTime = 0_s;
 
     DataLogger::Log( "DriveToPose/StartPose", m_profileStartPose );
     DataLogger::Log( "DriveToPose/TargetPose", m_targetPose );
@@ -102,6 +97,15 @@ void DriveToPoseTrap::Execute()
     );
 
     m_drive->RunVelocity( m_speeds );
+
+    if( !m_profilesDone ) {
+        m_profilesDone =  m_XProfile.TotalTime() < 0.001_s && 
+                        m_YProfile.TotalTime() < 0.001_s && 
+                        m_RProfile.TotalTime() < 0.001_s;
+        if( m_profilesDone ) {
+            m_profilesDoneTime = frc::Timer::GetFPGATimestamp();
+        }
+    }
 
     DataLogger::Log( "DriveToPose/TrajectoryPose", trajectoryPose );
 
@@ -137,9 +141,7 @@ bool DriveToPoseTrap::IsFinished()
     //   Changed to use TotalTime() which goes to zero at the end of the trajectory.
     //
 
-    bool atTargetLocation = m_XProfile.TotalTime() < 0.001_s && 
-                            m_YProfile.TotalTime() < 0.001_s && 
-                            m_RProfile.TotalTime() < 0.001_s;
+    bool atTargetLocation = m_profilesDone && frc::Timer::GetFPGATimestamp() - m_profilesDoneTime > 200_ms;
    
     return atTargetLocation;
 }

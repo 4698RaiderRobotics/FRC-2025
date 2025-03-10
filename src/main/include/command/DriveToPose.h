@@ -46,6 +46,9 @@ private:
 
     frc::ChassisSpeeds m_speeds;
 
+    bool m_profilesDone;
+    units::second_t m_profilesDoneTime;
+
     // units::second_t m_ProfileTime{0_s};
 
     frc::TrapezoidProfile<units::meters> m_XProfile;
@@ -60,9 +63,9 @@ private:
     frc::TrapezoidProfile<units::meters>::State m_YGoal;
     frc::TrapezoidProfile<units::radians>::State m_RGoal;
 
-    frc::PIDController m_Xpid{ 2.0, 0.0, 0.0 };
-    frc::PIDController m_Ypid{ 2.0, 0.0, 0.0 };
-    frc::PIDController m_Rpid{ 3.0, 0.0, 0.0 };
+    frc::PIDController m_Xpid{ 5.0, 0.0, 0.0 };
+    frc::PIDController m_Ypid{ 5.0, 0.0, 0.0 };
+    frc::PIDController m_Rpid{ 4.0, 0.0, 0.0 };
 
     static const frc::TrapezoidProfile<units::meters>::Constraints XY_constraints;
     static const frc::TrapezoidProfile<units::radians>::Constraints R_constraints;

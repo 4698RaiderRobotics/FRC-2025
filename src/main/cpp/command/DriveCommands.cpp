@@ -34,8 +34,10 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
         }
         double omega = frc::ApplyDeadband<double>( omegaSupplier(), DEADBAND );
 
-        // Apply expo by squaring
-        linearMagnitude = linearMagnitude * linearMagnitude;
+        // Apply expo 
+        double m_expo = 0.75;
+        linearMagnitude = m_expo * std::pow(linearMagnitude, 3.0) + (1.0 - m_expo) * linearMagnitude;
+        // linearMagnitude = linearMagnitude * linearMagnitude;
         omega = std::copysign( omega*omega, omega );
 
         double Vx = linearMagnitude * linearDirection.Cos();
@@ -97,9 +99,9 @@ frc2::CommandPtr DriveCommands::DriveOpenLoop( Drive *d, frc::ChassisSpeeds spee
     ); 
 }
 
-frc2::CommandPtr DriveCommands::DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotRelative )
+frc2::CommandPtr DriveCommands::DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotRelative, double fractionFullSpeed )
 {
-    return DriveToPoseTrap( d, [d, move, robotRelative] {
+    return DriveToPoseTrap( d, [d, move, robotRelative, fractionFullSpeed] {
         frc::Pose2d newPose;
         frc::Pose2d currentPose = d->GetPose();
 
@@ -113,7 +115,8 @@ frc2::CommandPtr DriveCommands::DriveDeltaPose( Drive *d, frc::Transform2d move,
         }
 
         return newPose;
-    }
+    },
+    fractionFullSpeed
     ).WithName("DriveDeltaPose");
 }
 

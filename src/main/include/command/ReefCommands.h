@@ -45,12 +45,13 @@ public:
     static frc2::CommandPtr PlaceOnReef( 
         Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide, std::function<ReefPlacement ()> place_func );
     static frc2::CommandPtr DriveToReefPose( Drive *d, bool onRightSide );
+    static frc2::CommandPtr DriveToReefPoseDelta( Drive *d, frc::Transform2d move, bool onRightSide );
     static frc2::CommandPtr DriveToAlgaePose( Drive *d );
     static frc2::CommandPtr PlaceCoralNone( );
     static frc2::CommandPtr PlaceCoralL1( Drive *, Arm *, Intake *, Elevator * );
-    static frc2::CommandPtr PlaceCoralL2( Drive *, Arm *, Intake *, Elevator * );
-    static frc2::CommandPtr PlaceCoralL3( Drive *, Arm *, Intake *, Elevator * );
-    static frc2::CommandPtr PlaceCoralL4( Drive *, Arm *, Intake *, Elevator * );
+    static frc2::CommandPtr PlaceCoralL2( Drive *, Arm *, Intake *, Elevator *, bool onRightSide );
+    static frc2::CommandPtr PlaceCoralL3( Drive *, Arm *, Intake *, Elevator *, bool onRightSide );
+    static frc2::CommandPtr PlaceCoralL4( Drive *, Arm *, Intake *, Elevator *, bool onRightSide );
 
     static frc2::CommandPtr RemoveAlgae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator );
 

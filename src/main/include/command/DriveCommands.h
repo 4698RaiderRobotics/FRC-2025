@@ -19,7 +19,7 @@ public:
 
     static frc2::CommandPtr DriveToPosePP_NOTGOOD( Drive *d, std::function<frc::Pose2d()> poseFunc );
     static frc2::CommandPtr DriveOpenLoop( Drive *d, frc::ChassisSpeeds speed, bool robotRelative );
-    static frc2::CommandPtr DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotRelative );
+    static frc2::CommandPtr DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotRelative, double fractionFullSpeed );
 
 private:
     DriveCommands() = default;

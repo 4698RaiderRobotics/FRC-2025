@@ -42,11 +42,11 @@ namespace arm {
     constexpr units::degree_t kElbowMinAngle = -38_deg;
 
     // Elevator Rest Position
-    constexpr units::degree_t kElbowRestAngle = 130_deg;
+    constexpr units::degree_t kElbowRestAngle = 125_deg;
 
     // Elevator Raise / Lower Position
     constexpr units::degree_t kElbowForwardRaiseAngle = 60_deg;
-    constexpr units::degree_t kElbowBackwardRaiseAngle = 130_deg;
+    constexpr units::degree_t kElbowBackwardRaiseAngle = 125_deg;
 
     // Elbow Positions for Each Reef Height
      constexpr units::degree_t kElbowCoralL1 = 28_deg;
@@ -64,8 +64,8 @@ namespace arm {
      constexpr units::degree_t kElbowAlgaeHoldingPos = 51_deg;
 
     // Wrist setpoint Positions 
-     constexpr units::degree_t kWristHorizontal = -8_deg;
-     constexpr units::degree_t kWristVertical = 98_deg;
+     constexpr units::degree_t kWristHorizontal = -5_deg;
+     constexpr units::degree_t kWristVertical = 110_deg;
 
 }
 

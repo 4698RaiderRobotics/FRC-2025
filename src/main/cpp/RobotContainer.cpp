@@ -25,7 +25,7 @@
 #include "command/DriveCommands.h"
 #include "command/ReefCommands.h"
 #include "command/IntakeCommands.h"
-// #include "command/DriveToPose.h"
+#include "command/ControllerIO.h"
 #include "command/CoralViz.h"
 
 ReefPlacement RobotContainer::next_reef_place = ReefPlacement::NONE;
@@ -43,6 +43,8 @@ RobotContainer::RobotContainer()
     m_climber = new Climber( );
     m_elevator = new Elevator( );
     m_vision = new Vision( &m_drive->m_odometry );
+
+    ControllerIO::SetupControllerIO( m_drive, &driverCtrlr, &operatorCtrlr );
 
     // Extra deadband for the climber and elevator nudge
     climber_nudge_axis.SetDeadband( 0.25 );
@@ -135,30 +137,38 @@ void RobotContainer::ConfigureBindings()
         .OnTrue( SetReefPlacement( ReefPlacement::PLACING_L4 ) );
 
     operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_left, 0.75 )
-        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return next_reef_place; } ) );
+        .OnTrue( frc2::cmd::Sequence( 
+            ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return next_reef_place; } ),
+            SetReefPlacement( ReefPlacement::NONE )
+        ));
     operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_right, 0.75 )
-        .OnTrue( ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return next_reef_place; } ) );
+        .OnTrue( frc2::cmd::Sequence( 
+            ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return next_reef_place; } ),
+            SetReefPlacement( ReefPlacement::NONE )
+        ));
 
-    operatorCtrlr.POV( ctrl::intake_ground )
+    (operatorCtrlr.POV( ctrl::intake_ground ) && !operatorCtrlr.Start())
         .OnTrue( IntakeCommands::GroundPickup( m_arm, m_intake, m_elevator ) )
         .OnFalse( IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ) );
 
-    operatorCtrlr.POV( ctrl::intake_coral_station )
+    (operatorCtrlr.POV( ctrl::intake_coral_station ) && !operatorCtrlr.Start())
         .OnTrue( IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator ) )
         .OnFalse( IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ) );
+
+    (operatorCtrlr.POV( ctrl::intake_ground ) && operatorCtrlr.Start())
+        .WhileTrue( IntakeCommands::GroundResume( m_arm, m_intake, m_elevator, true ))
+        .OnFalse(IntakeCommands::GroundResume( m_arm, m_intake, m_elevator, false ));
+
+    (operatorCtrlr.POV( ctrl::intake_coral_station ) && operatorCtrlr.Start())
+        .WhileTrue( IntakeCommands::CoralStationResume( m_arm, m_intake, m_elevator, true ))
+        .OnFalse(IntakeCommands::CoralStationResume( m_arm, m_intake, m_elevator, false ));
 
     operatorCtrlr.RightStick().OnTrue( ReefCommands::RemoveAlgae( m_drive, m_arm, m_intake, m_elevator ));
 
     m_intake->HasCoralTrigger().OnTrue( 
         frc2::cmd::Parallel(
             CoralViz( [this] { return m_drive->GetPose(); }, [this] {return m_intake->isCenterBroken();} ).ToPtr(),
-            frc2::cmd::Sequence(
-                frc2::cmd::RunOnce( [this] { operatorCtrlr.SetRumble( frc::GenericHID::kBothRumble, 0.9 ); } ),
-                frc2::cmd::RunOnce( [this] { driverCtrlr.SetRumble( frc::GenericHID::kBothRumble, 0.9 ); } ),
-                frc2::cmd::Wait( 0.5_s ),
-                frc2::cmd::RunOnce( [this] { operatorCtrlr.SetRumble( frc::GenericHID::kBothRumble, 0 ); } ),
-                frc2::cmd::RunOnce( [this] { driverCtrlr.SetRumble( frc::GenericHID::kBothRumble, 0 ); } )
-            )
+            ControllerIO::CoralRumble()
         )
     );
 
@@ -204,8 +214,12 @@ void RobotContainer::ConfigureAutos()
         ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L4; } )
     );
     pathplanner::NamedCommands::registerCommand(
+        "PlaceOnReefLeftL1", 
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return ReefPlacement::PLACING_L1; } )
+    );
+    pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefLeftL4", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, ReefPlacement::PLACING_L4 )
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return ReefPlacement::PLACING_L4; } )
     );
     pathplanner::NamedCommands::registerCommand(
         "IntakeFromSource",

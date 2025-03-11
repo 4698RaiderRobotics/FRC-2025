@@ -32,7 +32,7 @@ Arm::Arm()
         // Stop and Reset Routine
         [this] { io->SetWristOpenLoop(0.0); io->ResetWristAngle( 0_deg ); SetWristPosition(ArmIO::WristHorizontal); },
         // Home Condition
-        [this] { return units::math::abs( metrics.wristVelocity ) < 0.5_rpm; },
+        [this] { return units::math::abs( metrics.wristVelocity ) < 0.1_rpm; },
         300_ms
     );
 
@@ -114,6 +114,17 @@ frc2::CommandPtr Arm::ChangeWristPosition( ArmIO::WristPosition pos )
         RunOnce( [this, pos] { SetWristPosition( pos ); }),
         frc2::cmd::WaitUntil( [this] { return WristAtGoal(); } ).WithTimeout( 2_s )
     ).WithName( "Change Wrist Position" );
+}
+
+frc2::CommandPtr Arm::ChangeElbowAndWrist( units::degree_t elbow_goal, ArmIO::WristPosition pos ) 
+{
+    return frc2::cmd::Sequence(
+        RunOnce( [this, elbow_goal] { SetElbowGoal( elbow_goal ); }),
+        RunOnce( [this, pos] { SetWristPosition( pos ); }),
+        frc2::cmd::WaitUntil( [this] { return ElbowAtGoal() && WristAtGoal(); } ).WithTimeout( 2_s )
+    ).WithName( "ChangeElbowAndWrist" );
+
+
 }
 
 void ArmIO::Metrics::Log( const std::string &key ) 

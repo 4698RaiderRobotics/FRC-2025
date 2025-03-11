@@ -23,6 +23,7 @@ public:
 
     frc2::CommandPtr ChangeElbowAngle( units::degree_t goal );
     frc2::CommandPtr ChangeWristPosition(ArmIO::WristPosition pos );
+    frc2::CommandPtr ChangeElbowAndWrist( units::degree_t elbow_goal, ArmIO::WristPosition pos );
 
 private:
     std::unique_ptr<ArmIO> io;

@@ -39,4 +39,6 @@ private:
     frc::TrapezoidProfile<units::degrees> m_Profile;
     frc::TrapezoidProfile<units::degrees>::State m_Goal;
     frc::TrapezoidProfile<units::degrees>::State m_Setpoint;
+
+    bool isOpenLoopWrist{false};
 };

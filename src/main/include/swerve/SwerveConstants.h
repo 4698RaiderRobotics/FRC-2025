@@ -23,7 +23,7 @@ namespace swerve {
             units::math::hypot(swerve::physical::kDriveBaseWidth, swerve::physical::kDriveBaseLength) / 2.0;
 
         // The wheel diameter.
-        constexpr units::inch_t kWheelDiameter = 4_in * 1.05;
+        constexpr units::inch_t kWheelDiameter = 4_in;
 
         // The max RPM of the drive motors (Kraken X60)
         constexpr units::revolutions_per_minute_t kDriveRPM = 6000_rpm;

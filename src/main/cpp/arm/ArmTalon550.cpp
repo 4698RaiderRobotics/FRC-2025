@@ -1,5 +1,6 @@
 
 #include "DeviceConstants.h"
+#include "Constants.h"
 
 #include "util/EncOffsets.h"
 
@@ -9,6 +10,8 @@
 
 using namespace rev::spark;
 using namespace device::arm;
+using namespace physical::arm;
+
 
 ArmTalon550::ArmTalon550()
     : elbowMtr{ deviceIDs::kElbowMotorID, "" },
@@ -74,13 +77,15 @@ ArmTalon550::ArmTalon550()
 
 void ArmTalon550::Update( Metrics &m )
 {
-    m_Setpoint = m_Profile.Calculate( 20_ms, m_Setpoint, m_Goal );
+    if( !isOpenLoopWrist ) {
+        m_Setpoint = m_Profile.Calculate( 20_ms, m_Setpoint, m_Goal );
 
-    double PIDOut = m_wristPID.Calculate( m.wristPosition.value(), m_Setpoint.position.value() );
-    double ffOut = m_simpleFF.Calculate( m_Setpoint.velocity ).value();
+        double PIDOut = m_wristPID.Calculate( m.wristPosition.value(), m_Setpoint.position.value() );
+        double ffOut = m_simpleFF.Calculate( m_Setpoint.velocity ).value();
 
-    wristMtr.Set( PIDOut + ffOut / 12.0 );
-
+        wristMtr.Set( PIDOut + ffOut / 12.0 );
+    }
+    
     ctre::phoenix6::BaseStatusSignal::RefreshAll( elbowPosition, elbowVelocity, elbowAppliedVolts, elbowCurrent );
     m.elbowPosition = elbowPosition.GetValue();
     m.elbowVelocity = elbowVelocity.GetValue();
@@ -102,14 +107,15 @@ void ArmTalon550::SetElbowGoal( units::degree_t goal )
 
 void ArmTalon550::SetWristPosition( WristPosition pos ) 
 {
+    isOpenLoopWrist = false;
     switch( pos ) {
     case WristHorizontal:
         // wristCtrlr.SetReference( 0.0, SparkBase::ControlType::kMAXMotionPositionControl );
-        m_Goal = { -5_deg, 0_rpm };
+        m_Goal = { kWristHorizontal, 0_rpm };
         break;
     case WristVertical:
         // wristCtrlr.SetReference( 90.0, SparkBase::ControlType::kMAXMotionPositionControl );
-        m_Goal = { 95_deg, 0_rpm };
+        m_Goal = { kWristVertical, 0_rpm };
         break;
     }
 }
@@ -124,6 +130,7 @@ void ArmTalon550::ResetWristAngle( units::degree_t position )
 
 void ArmTalon550::SetWristOpenLoop( double percentOutput )
 {
+    isOpenLoopWrist = true;
     wristMtr.Set( percentOutput );
 }
 

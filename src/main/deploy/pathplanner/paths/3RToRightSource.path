@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6250641025641017,
-        "y": 2.569807692307693
+        "x": 3.9247867941648096,
+        "y": 2.718
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.3911520014967707,
-        "y": 2.3749600607345123
+        "x": 3.6908746930974785,
+        "y": 2.5231523684268193
       },
-      "isLocked": false,
-      "linkedName": "Side3"
+      "isLocked": true,
+      "linkedName": "FrontProcessorRight"
     },
     {
       "anchor": {
@@ -36,7 +36,12 @@
       "name": "ReefToCoralStation",
       "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ReefToCoralStation"
+        }
+      }
     }
   ],
   "globalConstraints": {

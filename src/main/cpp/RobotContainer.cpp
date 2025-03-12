@@ -288,7 +288,14 @@ void RobotContainer::ConfigureAutos()
 
     for( unsigned int i=0; i<autos.size(); ++i ) {
         m_chooser.AddOption( autos[i].Description, i );
-        AutoCommands.push_back( pathplanner::PathPlannerAuto(autos[i].AutoName).WithName(autos[i].AutoName) );
+        try {
+            AutoCommands.push_back( pathplanner::PathPlannerAuto(autos[i].AutoName).WithName(autos[i].AutoName) );
+        } catch(const std::exception& e) {
+            fmt::print( "\n\n================> PathPlanner Auto NOT FOUND <==================\n" );
+            fmt::print( "Attempted to load auto \"{}\".\n\n", autos[i].AutoName );
+            fmt::print( "{}\n", e.what() );
+            fmt::print( "====================================================================\n\n" );
+        }
     }
     m_chooser.SetDefaultOption( autos[0].Description, 0 );
 

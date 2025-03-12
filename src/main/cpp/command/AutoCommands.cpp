@@ -24,13 +24,13 @@ frc2::CommandPtr AutoCommands::PrepareToPlaceOnReef( Arm *arm, Elevator *elevato
 {
     return frc2::cmd::Sequence(
         elevator->ChangeHeight( elevator::kElevatorMinHeight ),
-        arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
+        arm->ChangeElbowAndWrist( arm::kElbowForwardRaiseAngle, ArmIO::WristHorizontal ),
         frc2::cmd::Select<ReefPlacement>( 
             [p] { return p; }, 
             std::pair{ ReefPlacement::PLACING_L1, elevator->ChangeHeight( elevator::kHeightCoralL1 ) },
             std::pair{ ReefPlacement::PLACING_L2, elevator->ChangeHeight( elevator::kHeightCoralL2 ) },
             std::pair{ ReefPlacement::PLACING_L3, elevator->ChangeHeight( elevator::kHeightCoralL3 ) },
-            std::pair{ ReefPlacement::PLACING_L4, elevator->ChangeHeight( elevator::kHeightCoralL3 ) }
+            std::pair{ ReefPlacement::PLACING_L4, elevator->ChangeHeight( elevator::kHeightCoralL3 ) } // L4 is probably too high
         )
     );
 }
@@ -44,7 +44,7 @@ frc2::CommandPtr AutoCommands::ReefToCoralStation( Arm *arm, Intake *intake, Ele
         elevator->ChangeHeight( elevator::kHeightCoralStation ),
         arm->ChangeElbowAngle( arm::kElbowCoralStation ),
         intake->IntakeCoralNoIndex()
-    ).WithName( "PrepareForCoralStation" );
+    ).WithName( "ReefToCoralStation" );
 }
 
 frc2::CommandPtr AutoCommands::CoralStationPickup( Arm *arm, Intake *intake, Elevator *elevator )

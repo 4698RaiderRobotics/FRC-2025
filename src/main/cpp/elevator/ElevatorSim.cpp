@@ -13,7 +13,7 @@ ElevatorSim::ElevatorSim()
 : motorSim{ device::elevator::kDistancePerMotorRev, 1.0, simMotion }
 {
     // Somewhere to home from...
-    motorSim.SetPosition( 1_in );
+    motorSim.SetPosition( 0.1_in );
 }
 
 void ElevatorSim::Update( Metrics &m ) 

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.8795230263157885,
-        "y": 1.359786184210526
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 5.789164924742096,
-        "y": 1.3084394324977013
-      },
-      "isLocked": false,
-      "linkedName": "RightStart"
-    },
-    {
-      "anchor": {
         "x": 3.638825205835188,
         "y": 2.882935959109131
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.2262259115622376,
+        "y": 2.368256996047343
+      },
+      "isLocked": true,
+      "linkedName": "FrontProcessorLeft"
+    },
+    {
+      "anchor": {
+        "x": 1.545596590909091,
+        "y": 0.5598721590909099
+      },
       "prevControl": {
-        "x": 4.132063356164384,
-        "y": 1.9214041095890408
+        "x": 2.206071245116939,
+        "y": 1.3070433996927795
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "FrontProcessorLeft"
+      "linkedName": "RightSource"
     }
   ],
   "rotationTargets": [],
@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "PrepareToPlaceOnReefL3",
-      "waypointRelativePos": 0.20476190476190465,
+      "name": "ReefToCoralStation",
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "PrepareToPlaceOnReefL3"
+          "name": "ReefToCoralStation"
         }
       }
     }
@@ -53,14 +53,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 59.99999999999999
+    "velocity": 0,
+    "rotation": 53.392925187392535
   },
   "reversed": false,
-  "folder": "RightStart",
+  "folder": "ReefToRightSource",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 178.80651057601798
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": true
 }

@@ -31,7 +31,7 @@ Elevator::Elevator()
         // Stop and Reset Routine
         [this] { io->SetOpenLoop(0.0); io->ResetPosition( 0_in ); SetGoal( 0_in ); },
         // Home Condition
-        [this] { return units::math::abs( metrics.velocity ) < 0.01_fps; }
+        [this] { return units::math::abs( metrics.velocity ) < 0.05_fps; }
     );
 }
 

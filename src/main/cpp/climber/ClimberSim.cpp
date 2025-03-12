@@ -27,3 +27,8 @@ void ClimberSim::SetGoal( units::inch_t goal )
 {
    motorSim.SetMotionControl( goal );
 }
+
+void ClimberSim::SetOpenLoop( double percent )
+{
+   motorSim.SetOpenLoop( percent );
+}

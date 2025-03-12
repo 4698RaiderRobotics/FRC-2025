@@ -15,6 +15,9 @@ public:
     void Update( Metrics &m ) override;
 
     void SetGoal( units::inch_t goal ) override;
+    void SetOpenLoop( double percent ) override;
+    void ResetHeight( ) override;
+
 private:
     rev::spark::SparkFlex flex;
 
@@ -24,4 +27,6 @@ private:
     frc::TrapezoidProfile<units::meters> m_Profile;
     frc::TrapezoidProfile<units::meters>::State m_Goal;
     frc::TrapezoidProfile<units::meters>::State m_Setpoint;
+
+    bool isOpenLoop;
 };

@@ -27,13 +27,15 @@ ClimberVortex::ClimberVortex( )
 
 void ClimberVortex::Update( Metrics &m ) 
 {
-    m_Setpoint = m_Profile.Calculate( 20_ms, m_Setpoint, m_Goal );
+    if( !isOpenLoop ) {
+        m_Setpoint = m_Profile.Calculate( 20_ms, m_Setpoint, m_Goal );
 
-    double current_pos = units::meter_t(flex.GetEncoder().GetPosition() * 1_tr * kDistancePerMotorRev).value();
-    double PIDOut = m_PID.Calculate( current_pos, m_Setpoint.position.value() );
-    double ffOut = m_simpleFF.Calculate( m_Setpoint.velocity ).value();
+        double current_pos = units::meter_t(flex.GetEncoder().GetPosition() * 1_tr * kDistancePerMotorRev).value();
+        double PIDOut = m_PID.Calculate( current_pos, m_Setpoint.position.value() );
+        double ffOut = m_simpleFF.Calculate( m_Setpoint.velocity ).value();
 
-    flex.Set( PIDOut + ffOut / 12.0 );
+        flex.Set( PIDOut + ffOut / 12.0 );
+    }
 
     m.height = flex.GetEncoder().GetPosition() * 1_tr * kDistancePerMotorRev;
     m.velocity = flex.GetEncoder().GetVelocity() * 1_rpm * kDistancePerMotorRev;
@@ -44,5 +46,17 @@ void ClimberVortex::Update( Metrics &m )
 
 void ClimberVortex::SetGoal( units::inch_t goal ) 
 {
+    isOpenLoop = false;
     m_Goal = { goal, 0_mps };
+}
+
+void ClimberVortex::SetOpenLoop( double percent )
+{
+    isOpenLoop = true;
+    flex.Set( percent );
+}
+
+void ClimberVortex::ResetHeight( )
+{
+    flex.GetEncoder().SetPosition( 0.0 );
 }

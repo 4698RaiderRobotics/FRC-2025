@@ -4,6 +4,8 @@
 
 #include <frc2/command/SubsystemBase.h>
 
+#include "util/Utility.h"
+
 #include "ClimberIO.h"
 
 class Climber : public frc2::SubsystemBase {
@@ -22,6 +24,8 @@ public:
 private:
     std::unique_ptr<ClimberIO> io;
     ClimberIO::Metrics metrics;
+
+    util::MotorHomer climbHomer;
 
     const units::inch_t AT_GOAL_TOLERANCE = 1_in;
 };

@@ -22,4 +22,6 @@ public:
     virtual void Update( Metrics &m ) =0;
 
     virtual void SetGoal( units::inch_t goal ) =0;
+    virtual void SetOpenLoop( double percent ) =0;
+    virtual void ResetHeight( ) =0;
 };

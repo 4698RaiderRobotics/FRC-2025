@@ -7,31 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightTo3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PlaceOnReefRightL3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "3ToRightSource"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeFromSource"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RightSideSourceTo3"
+            "pathName": "RightTo3L"
           }
         },
         {
@@ -49,19 +25,49 @@
         {
           "type": "named",
           "data": {
-            "name": "IntakeFromSource"
+            "name": "CoralStationPickup"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RightSideSource4"
+            "pathName": "RightSideSourceTo3R"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "PlaceOnReefRightL3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3ToRightSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CoralStationPickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightSideSource4R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoEndAtReef"
           }
         }
       ]

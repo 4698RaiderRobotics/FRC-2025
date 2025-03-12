@@ -11,27 +11,34 @@
         "x": 2.2816667294046704,
         "y": 1.2929864800006479
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "RightSource"
     },
     {
       "anchor": {
-        "x": 3.6250641025641017,
-        "y": 2.569807692307693
+        "x": 3.9247867941648096,
+        "y": 2.718
       },
       "prevControl": {
-        "x": 3.447008242541325,
-        "y": 2.390625396170945
+        "x": 3.7467309341420325,
+        "y": 2.538817703863252
       },
       "nextControl": null,
-      "isLocked": false,
-      "linkedName": "Side3"
+      "isLocked": true,
+      "linkedName": "FrontProcessorRight"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "LeaveCoralStationToL3",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -41,8 +48,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 59.03624346792646
+    "velocity": 0.0,
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "RightSideSource",

@@ -27,6 +27,8 @@ public:
     frc::Pose2d GetClosestAlgaePose( frc::Pose2d currentPose );
     bool isAlgaeLow( frc::Pose2d currentPose );
 
+    void OutputPathPlannerJSON();
+
 private:
     frc::AprilTagFieldLayout aprilTags;
 

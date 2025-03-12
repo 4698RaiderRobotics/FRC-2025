@@ -24,6 +24,7 @@
 
 #include "command/DriveCommands.h"
 #include "command/ReefCommands.h"
+#include "command/AutoCommands.h"
 #include "command/IntakeCommands.h"
 #include "command/ControllerIO.h"
 #include "command/CoralViz.h"
@@ -206,42 +207,62 @@ void RobotContainer::ConfigureBindings()
 void RobotContainer::ConfigureAutos()
 {
     pathplanner::NamedCommands::registerCommand(
+        "RestPosition", 
+        IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
+    );
+    pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefRightL1", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L1; } )
+        AutoCommands::AutoPlaceCoralL1( m_drive, m_arm, m_intake, m_elevator, true )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefRightL2", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L2; } )
+        AutoCommands::AutoPlaceCoralL2( m_drive, m_arm, m_intake, m_elevator, true )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefRightL3", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L3; } )
+        AutoCommands::AutoPlaceCoralL3( m_drive, m_arm, m_intake, m_elevator, true )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefRightL4", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L4; } )
+        AutoCommands::AutoPlaceCoralL4( m_drive, m_arm, m_intake, m_elevator, true )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefLeftL1", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return ReefPlacement::PLACING_L1; } )
+        AutoCommands::AutoPlaceCoralL1( m_drive, m_arm, m_intake, m_elevator, false )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefLeftL2", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return ReefPlacement::PLACING_L2; } )
+        AutoCommands::AutoPlaceCoralL2( m_drive, m_arm, m_intake, m_elevator, false )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefLeftL3", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return ReefPlacement::PLACING_L3; } )
+        AutoCommands::AutoPlaceCoralL3( m_drive, m_arm, m_intake, m_elevator, false )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefLeftL4", 
-        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return ReefPlacement::PLACING_L4; } )
+        AutoCommands::AutoPlaceCoralL4( m_drive, m_arm, m_intake, m_elevator, false )
     );
     pathplanner::NamedCommands::registerCommand(
-        "IntakeFromSource",
-        IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator )
+        "ReefToCoralStation",
+        AutoCommands::ReefToCoralStation( m_arm, m_intake, m_elevator )
     );
-  
+    pathplanner::NamedCommands::registerCommand(
+        "PrepareToPlaceOnReefL3", 
+        AutoCommands::PrepareToPlaceOnReef( m_arm, m_elevator, ReefPlacement::PLACING_L3 )
+    );
+    pathplanner::NamedCommands::registerCommand(
+        "LeaveCoralStationToL3", 
+        AutoCommands::LeaveCoralStation( m_arm, m_intake, m_elevator, ReefPlacement::PLACING_L3 )
+    );
+    pathplanner::NamedCommands::registerCommand(
+        "CoralStationPickup", 
+        AutoCommands::CoralStationPickup( m_arm, m_intake, m_elevator )
+    );
+    pathplanner::NamedCommands::registerCommand(
+        "AutoEndAtReef", 
+        AutoCommands::AutoEndAtReef( m_drive, m_arm, m_intake, m_elevator )
+    );
+
     std::vector<AutoNameMap> autos = { 
         {"Center One Piece L1", "CenterOnePieceL1"},
         {"Center One Piece L4", "CenterOnePieceL4"},

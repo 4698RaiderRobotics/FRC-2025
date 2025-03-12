@@ -97,19 +97,32 @@ frc2::CommandPtr Intake::IntakeAlgae()
 
 frc2::CommandPtr Intake::IntakeCoral()
 {
-    return frc2::cmd::Sequence( 
-        RunOnce( [this] { SpinIn(); }),
-        frc2::cmd::WaitUntil( [this] { return isCenterBroken();} ).WithTimeout( 10_s ),
+    return frc2::cmd::Sequence(
+        IntakeCoralNoIndex(),
         frc2::cmd::Either( 
             // If Coral is in intake.  Need to shift it up to the end.
-            frc2::cmd::Sequence( 
-                RunOnce( [this] { ShiftUp(); }),
-                frc2::cmd::WaitUntil( [this] { return isEndBroken();} ).WithTimeout( 1_s )
-            ), 
+            IndexCoral(), 
             // If No Coral in the intake
             frc2::cmd::None(),
             [this] {return isCenterBroken(); }
-        ),
+        )
+    );
+}
+
+frc2::CommandPtr Intake::IntakeCoralNoIndex()
+{
+    return frc2::cmd::Sequence( 
+        RunOnce( [this] { SpinIn(); }),
+        frc2::cmd::WaitUntil( [this] { return isCenterBroken();} ).WithTimeout( 10_s ),
+        RunOnce( [this] { Stop(); })
+    );
+}
+
+frc2::CommandPtr Intake::IndexCoral()
+{
+    return frc2::cmd::Sequence( 
+        RunOnce( [this] { ShiftUp(); }),
+        frc2::cmd::WaitUntil( [this] { return isEndBroken();} ).WithTimeout( 1.5_s ),
         RunOnce( [this] { Stop(); })
     );
 }
@@ -133,7 +146,7 @@ frc2::CommandPtr Intake::EjectCoralL2_4( bool waitForPipeSwitch )
             // If Pipe Switch tripped (instead of timed out) then Eject coral.
             frc2::cmd::Sequence( 
                 RunOnce( [this] { ShiftDown(); }),
-                frc2::cmd::Wait( 1_s ),
+                frc2::cmd::Wait( 0.5_s ),
                 RunOnce( [this] { Stop(); })
             ), 
             // If Pipe Switch not tripped tripped

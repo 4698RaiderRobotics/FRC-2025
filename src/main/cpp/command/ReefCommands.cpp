@@ -21,14 +21,8 @@ using namespace physical;
 
 ReefPlacingPoses ReefCommands::reefPoses = ReefPlacingPoses();
 
-const units::inch_t reef_place_shift_out = 23_in;
-const units::inch_t reef_place_L1_shift_in = 0_in;
-const units::inch_t reef_place_L2_shift_in = 6_in;
-const units::inch_t reef_place_L3_shift_in = 8.5_in;
-const units::inch_t reef_place_L4_shift_in = 13_in;
-const units::inch_t reef_algae_shift_in = 5_in;
-
-ReefPlacingPoses::ReefPlacingPoses() {
+ReefPlacingPoses::ReefPlacingPoses() 
+{
     const int Red_Reef_Tag_IDs[] = { 6, 7, 8, 9, 10, 11 };
     const int Blue_Reef_Tag_IDs[] = { 17, 18, 19, 20, 21, 22 };
     const units::inch_t pose_shift_out = 23_in;
@@ -73,14 +67,85 @@ ReefPlacingPoses::ReefPlacingPoses() {
         blueRightReefPlacingPoses.push_back( blueTag2dPose.TransformBy( leftShift ) );
     }
 
+    // OutputPathPlannerJSON();
 }
 
-frc2::CommandPtr ElevatorRaisePosition( Arm *arm )
+void ReefPlacingPoses::OutputPathPlannerJSON() 
 {
-    return frc2::cmd::Sequence(
-        arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
-        arm->ChangeWristPosition( ArmIO::WristHorizontal )
-    );
+    std::vector<frc::Pose2d> PP_poses;
+
+    const char *PP_names[] = {
+        "FrontProcessorLeft",  "FrontProcessorRight",  
+        "FrontCenterLeft",  "FrontCenterRight",  
+        "FrontAwayLeft",  "FrontAwayRight",  
+        "BackAwayLeft",  "BackAwayRight",  
+        "BackCenterLeft",  "BackCenterRight",  
+        "BackProcessorLeft",  "BackProcessorRight"
+    };
+
+    for( size_t i=0; i<blueLeftReefPlacingPoses.size(); ++i ) {
+        PP_poses.push_back( blueLeftReefPlacingPoses[i] );
+        PP_poses.push_back( blueRightReefPlacingPoses[i] );
+    }
+
+    fmt::print( "{{\n  \"version\": \"2025.0\",\n  \"waypoints\": [\n");
+
+    for( size_t i=0; i<PP_poses.size(); ++i ) {
+        fmt::print("    {{\n");
+        fmt::print("      \"anchor\": {{\n");
+        fmt::print("        \"x\": {},\n", PP_poses[i].Translation().X().value() );
+        fmt::print("        \"y\": {}\n", PP_poses[i].Translation().Y().value() );
+        fmt::print("      }},\n");
+        if( i == 0 ) {
+            fmt::print("      \"prevControl\": null,\n");
+        } else {
+            fmt::print("      \"prevControl\": {{\n");
+            fmt::print("        \"x\": {},\n", PP_poses[i].Translation().X().value() + 0.1 );
+            fmt::print("        \"y\": {}\n", PP_poses[i].Translation().Y().value() );
+            fmt::print("      }},\n");
+        }
+        if( i == PP_poses.size()-1 ) {
+            fmt::print("      \"nextControl\": null,\n");
+        } else {
+            fmt::print("      \"nextControl\": {{\n");
+            fmt::print("        \"x\": {},\n", PP_poses[i].Translation().X().value() - 0.1 );
+            fmt::print("        \"y\": {}\n", PP_poses[i].Translation().Y().value() );
+            fmt::print("      }},\n");
+        }
+        fmt::print("      \"isLocked\": true,\n");
+        fmt::print("      \"linkedName\": \"{}\"\n", PP_names[i] );
+        if( i == PP_poses.size()-1 ) {
+            fmt::print("    }}\n" );
+        } else {
+            fmt::print("    }},\n" );
+        }
+    }
+
+    fmt::print( "  ],\n");
+    fmt::print( "  \"rotationTargets\": [],\n");
+    fmt::print( "  \"constraintZones\": [],\n");
+    fmt::print( "  \"pointTowardsZones\": [],\n");
+    fmt::print( "  \"eventMarkers\": [],\n");
+    fmt::print( "  \"globalConstraints\": {{\n");
+    fmt::print( "    \"maxVelocity\": 3.0,\n");
+    fmt::print( "    \"maxAcceleration\": 3.0,\n");
+    fmt::print( "    \"maxAngularVelocity\": 540.0,\n");
+    fmt::print( "    \"maxAngularAcceleration\": 720.0,\n");
+    fmt::print( "    \"nominalVoltage\": 12.0,\n");
+    fmt::print( "    \"unlimited\": false\n");
+    fmt::print( "  }},\n");
+    fmt::print( "  \"goalEndState\": {{\n");
+    fmt::print( "    \"velocity\": 0.0,\n");
+    fmt::print( "    \"rotation\": -119.99999999999999\n");
+    fmt::print( "  }},\n");
+    fmt::print( "  \"reversed\": false,\n");
+    fmt::print( "  \"folder\": null,\n");
+    fmt::print( "  \"idealStartingState\": {{\n");
+    fmt::print( "    \"velocity\": 0.0,\n");
+    fmt::print( "    \"rotation\": -59.99999999999999\n");
+    fmt::print( "  }},\n");
+    fmt::print( "  \"useDefaultConstraints\": true\n");
+    fmt::print( "}}\n");
 }
 
 frc2::CommandPtr ReefCommands::PlaceOnReef( 
@@ -163,15 +228,14 @@ frc2::CommandPtr ReefCommands::PlaceCoralL1( Drive *d, Arm *arm, Intake *intake,
         arm->ChangeWristPosition( ArmIO::WristHorizontal ),
         DriveCommands::DriveDeltaPose( d, {reef_place_L1_shift_in, 0_in, 0_deg}, true, 0.5 ).WithTimeout( 1_s),
         intake->EjectCoralL1(),
-        DriveCommands::DriveDeltaPose( d, {-8_in, 0_in, 0_deg}, true, 1.0 ),
-        frc2::cmd::RunOnce( [intake] { intake->Stop(); })
+        DriveCommands::DriveDeltaPose( d, {-8_in, 0_in, 0_deg}, true, 1.0 )
     ).WithName( "Place Coral in L1" );
 }
 
 frc2::CommandPtr ReefCommands::PlaceCoralL2( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide )
 {
     return frc2::cmd::Sequence(
-        ElevatorRaisePosition( arm ),
+        arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
         frc2::cmd::Parallel(
             elevator->ChangeHeight( elevator::kHeightCoralL2 ),
             frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > elevator::kHeightCoralL2 - 4_in;} )
@@ -195,7 +259,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL2( Drive *d, Arm *arm, Intake *intake,
 frc2::CommandPtr ReefCommands::PlaceCoralL3( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide )
 {
     return frc2::cmd::Sequence(
-        ElevatorRaisePosition( arm ),
+        arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
         frc2::cmd::Parallel(
             elevator->ChangeHeight( elevator::kHeightCoralL3 ),
             frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > elevator::kHeightCoralL3 - 12_in;} )
@@ -204,7 +268,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL3( Drive *d, Arm *arm, Intake *intake,
         // elevator->ChangeHeight( elevator::kHeightCoralL3 ),
         // arm->ChangeWristPosition( ArmIO::WristVertical ),
         // arm->ChangeElbowAngle( arm::kElbowCoralL3 ),
-        DriveToReefPoseDelta(  d, {reef_place_L3_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
+        DriveToReefPoseDelta( d, {reef_place_L3_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
         intake->EjectCoralL2_4( false ),
         frc2::cmd::Parallel(
             frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
@@ -223,13 +287,13 @@ frc2::CommandPtr ReefCommands::PlaceCoralL3( Drive *d, Arm *arm, Intake *intake,
 frc2::CommandPtr ReefCommands::PlaceCoralL4( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide )
 {
     return frc2::cmd::Sequence(
-        ElevatorRaisePosition( arm ),
+        arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
         frc2::cmd::Parallel(
             elevator->ChangeHeight( elevator::kHeightCoralL4 ),
             frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > elevator::kHeightCoralL4 - 20_in;} )
                 .AndThen( arm->ChangeElbowAndWrist( arm::kElbowCoralL4, ArmIO::WristVertical ) )
         ),
-        DriveToReefPoseDelta(  d, {reef_place_L4_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
+        DriveToReefPoseDelta( d, {reef_place_L4_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
         intake->EjectCoralL2_4( false ),
         frc2::cmd::Parallel(
             frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
@@ -249,7 +313,7 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
 {
     return frc2::cmd::Sequence( 
         DriveToAlgaePose( d ),
-        ElevatorRaisePosition( arm ),
+        arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
         frc2::cmd::RunOnce( [intake] {intake->ShiftDown();}, {intake} ),
         frc2::cmd::Either( 
             frc2::cmd::Sequence(

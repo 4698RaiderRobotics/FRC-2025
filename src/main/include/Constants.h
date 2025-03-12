@@ -121,4 +121,10 @@ namespace climber {
     constexpr units::inch_t kClimberClimbHeight = 4_in;
 }
 
+const units::inch_t reef_place_L1_shift_in = 0_in;
+const units::inch_t reef_place_L2_shift_in = 6_in;
+const units::inch_t reef_place_L3_shift_in = 8.5_in;
+const units::inch_t reef_place_L4_shift_in = 13_in;
+const units::inch_t reef_algae_shift_in = 5_in;
+
 }

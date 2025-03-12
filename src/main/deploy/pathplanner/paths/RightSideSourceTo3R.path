@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.545596590909091,
-        "y": 0.5598721590909099
+        "x": 1.4836726410964847,
+        "y": 0.5035191218828584
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2816667294046704,
-        "y": 1.2929864800006479
+        "x": 2.219742779592064,
+        "y": 1.2366334427925962
       },
       "isLocked": true,
       "linkedName": "RightSource"
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "LeaveCoralStationToL3",
+      "name": "Leave CS to L3",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": {

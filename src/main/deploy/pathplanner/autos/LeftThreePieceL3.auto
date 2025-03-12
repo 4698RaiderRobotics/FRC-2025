@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "5ToLeftSource"
+            "pathName": "5LToLeftSource"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftSideSourceTo5"
+            "pathName": "LeftSideSourceTo5RL3"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "5ToLeftSource"
+            "pathName": "5LToLeftSource"
           }
         },
         {

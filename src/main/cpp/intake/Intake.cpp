@@ -122,7 +122,8 @@ frc2::CommandPtr Intake::IndexCoral()
 {
     return frc2::cmd::Sequence( 
         RunOnce( [this] { ShiftUp(); }),
-        frc2::cmd::WaitUntil( [this] { return isEndBroken();} ).WithTimeout( 1.5_s ),
+        // frc2::cmd::WaitUntil( [this] { return isEndBroken();} ).WithTimeout( 1.5_s ),
+        frc2::cmd::Wait( 1_s ),
         RunOnce( [this] { Stop(); })
     );
 }

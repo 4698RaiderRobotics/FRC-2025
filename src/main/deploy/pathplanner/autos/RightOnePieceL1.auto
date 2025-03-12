@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightTo2"
+            "pathName": "RightTo3LeftL1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefRightL1"
+            "name": "PlaceOnReefLeftL1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoEndAtReef"
           }
         }
       ]

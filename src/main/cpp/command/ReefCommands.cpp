@@ -237,18 +237,22 @@ frc2::CommandPtr ReefCommands::PlaceCoralL2( Drive *d, Arm *arm, Intake *intake,
     return frc2::cmd::Sequence(
         arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
         frc2::cmd::Parallel(
-            elevator->ChangeHeight( elevator::kHeightCoralL2 ),
+            elevator->ChangeHeight( elevator::kHeightCoralL2 + 4_in ),
             frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > elevator::kHeightCoralL2 - 4_in;} )
-                .AndThen( arm->ChangeElbowAndWrist( arm::kElbowCoralL2, ArmIO::WristVertical ) )
+                .AndThen( arm->ChangeElbowAndWrist( arm::kElbowCoralL2 - 14_deg, ArmIO::WristVertical ) )
         ),
         // elevator->ChangeHeight( elevator::kHeightCoralL2 ),
         // arm->ChangeWristPosition( ArmIO::WristVertical ),
         // arm->ChangeElbowAngle( arm::kElbowCoralL2 ),
         DriveToReefPoseDelta(  d, {reef_place_L2_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
+        frc2::cmd::Parallel(
+            elevator->ChangeHeight( elevator::kHeightCoralL2 ),
+            arm->ChangeElbowAngle( arm::kElbowCoralL2 )
+        ),
         intake->EjectCoralL2_4( false ),
         frc2::cmd::Parallel(
             frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
-            arm->ChangeElbowAngle( arm::kElbowCoralL2 - 10_deg ).WithTimeout(0.1_s),
+            arm->ChangeElbowAngle( arm::kElbowCoralL2 - 5_deg ).WithTimeout(0.1_s),
             elevator->ChangeHeight( elevator::kHeightCoralL2 - 3_in )
         ),
         DriveCommands::DriveDeltaPose( d, {-15_in, 0_in, 0_deg}, true, 1.0 ),
@@ -261,18 +265,22 @@ frc2::CommandPtr ReefCommands::PlaceCoralL3( Drive *d, Arm *arm, Intake *intake,
     return frc2::cmd::Sequence(
         arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
         frc2::cmd::Parallel(
-            elevator->ChangeHeight( elevator::kHeightCoralL3 ),
+            elevator->ChangeHeight( elevator::kHeightCoralL3 + 4_in ),
             frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > elevator::kHeightCoralL3 - 12_in;} )
-                .AndThen( arm->ChangeElbowAndWrist( arm::kElbowCoralL3, ArmIO::WristVertical ) )
+                .AndThen( arm->ChangeElbowAndWrist( arm::kElbowCoralL3 - 14_deg, ArmIO::WristVertical ) )
         ),
         // elevator->ChangeHeight( elevator::kHeightCoralL3 ),
         // arm->ChangeWristPosition( ArmIO::WristVertical ),
         // arm->ChangeElbowAngle( arm::kElbowCoralL3 ),
-        DriveToReefPoseDelta( d, {reef_place_L3_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
+        DriveToReefPoseDelta( d, {reef_place_L3_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout(1.5_s),
+        frc2::cmd::Parallel(
+            elevator->ChangeHeight( elevator::kHeightCoralL3 ),
+            arm->ChangeElbowAngle( arm::kElbowCoralL3 )
+        ),
         intake->EjectCoralL2_4( false ),
         frc2::cmd::Parallel(
             frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
-            arm->ChangeElbowAngle( arm::kElbowCoralL3 - 10_deg ).WithTimeout(0.1_s),
+            arm->ChangeElbowAngle( arm::kElbowCoralL3 - 5_deg ).WithTimeout(0.1_s),
             elevator->ChangeHeight( elevator::kHeightCoralL3 - 3_in )
         ),
         DriveCommands::DriveDeltaPose( d, {-15_in, 0_in, 0_deg}, true, 1.0 ),

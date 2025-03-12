@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4836726410964847,
-        "y": 0.5035191218828584
+        "x": 7.0046052631578934,
+        "y": 6.324588815789473
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3805418036120511,
-        "y": 1.6546914833398931
+        "x": 6.0553510273972595,
+        "y": 6.8798801369863005
       },
-      "isLocked": true,
-      "linkedName": "RightSource"
+      "isLocked": false,
+      "linkedName": "LeftStart"
     },
     {
       "anchor": {
-        "x": 3.0734,
-        "y": 3.8608000000000002
+        "x": 3.92478679416481,
+        "y": 5.334
       },
       "prevControl": {
-        "x": 2.0734,
-        "y": 3.8608000000000002
+        "x": 3.1620481613043765,
+        "y": 6.655102065009894
       },
       "nextControl": null,
       "isLocked": true,
-      "linkedName": "FrontCenterRight"
+      "linkedName": "FrontAwayLeft"
     }
   ],
   "rotationTargets": [],
@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Leave CS to L3",
-      "waypointRelativePos": 0,
+      "name": "Prepare For L1",
+      "waypointRelativePos": 0.10238095238095243,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "LeaveCoralStationToL3"
+          "name": "PrepareToPlaceOnReefL1"
         }
       }
     }
@@ -53,14 +53,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 0.0,
+    "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": "RightSideSource",
+  "folder": "LeftStart",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 53.392925187392535
+    "rotation": -179.86407421799103
   },
   "useDefaultConstraints": true
 }

@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.545596590909091,
-        "y": 0.5598721590909099
+        "x": 1.4836726410964847,
+        "y": 0.5035191218828584
       },
       "prevControl": {
-        "x": 2.206071245116939,
-        "y": 1.3070433996927795
+        "x": 2.1441472953043323,
+        "y": 1.2506903624847276
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ReefToCoralStation",
+      "name": "Reef To CS",
       "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {

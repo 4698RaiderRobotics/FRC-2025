@@ -187,8 +187,10 @@ void RobotContainer::ConfigureBindings()
         .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
     (nudge_hold_button && operatorCtrlr.Y()).WhileTrue( frc2::cmd::Run( [this] {m_intake->SpinOut();}, {m_intake} ))
         .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
-    (nudge_hold_button && operatorCtrlr.X()).WhileTrue( frc2::cmd::Run( [this] {m_intake->ShiftDown();}, {m_intake} ))
-        .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
+    // (nudge_hold_button && operatorCtrlr.X()).WhileTrue( frc2::cmd::Run( [this] {m_intake->ShiftDown();}, {m_intake} ))
+    //     .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
+    (nudge_hold_button && operatorCtrlr.X()).WhileTrue( m_intake->IntakeCoralNoIndex() )
+        .OnFalse( m_intake->IndexCoral() );
 
     }
 
@@ -247,6 +249,10 @@ void RobotContainer::ConfigureAutos()
         AutoCommands::ReefToCoralStation( m_arm, m_intake, m_elevator )
     );
     pathplanner::NamedCommands::registerCommand(
+        "PrepareToPlaceOnReefL1", 
+        AutoCommands::PrepareToPlaceOnReef( m_arm, m_elevator, ReefPlacement::PLACING_L1 )
+    );
+    pathplanner::NamedCommands::registerCommand(
         "PrepareToPlaceOnReefL3", 
         AutoCommands::PrepareToPlaceOnReef( m_arm, m_elevator, ReefPlacement::PLACING_L3 )
     );
@@ -264,22 +270,25 @@ void RobotContainer::ConfigureAutos()
     );
 
     std::vector<AutoNameMap> autos = { 
-        {"Center One Piece L1", "CenterOnePieceL1"},
-        {"Center One Piece L4", "CenterOnePieceL4"},
-        {"Center to left source two piece", "CenterToLeftSideSourceTwoPiece"},
-        {"Center to right source two piece", "CenterToRightSideSourceTwoPiece"},
+        // {"Center One Piece L1", "CenterOnePieceL1"},
+        // {"Center One Piece L4", "CenterOnePieceL4"},
+        // {"Center to left source two piece", "CenterToLeftSideSourceTwoPiece"},
+        // {"Center to right source two piece", "CenterToRightSideSourceTwoPiece"},
     
-        {"Left One Piece L1", "LeftOnePieceL1"},
-        {"Left One Piece L3", "LeftOnePieceL3"},
-        {"Left One Piece L4", "LeftOnePieceL4"},
-        {"Left Three Piece L3", "LeftThreePieceL3"},
-        {"Left Three Piece L4", "LeftThreePieceL4"},
+        // {"Left One Piece L1", "LeftOnePieceL1"},
+        // {"Left One Piece L3", "LeftOnePieceL3"},
+        // {"Left One Piece L4", "LeftOnePieceL4"},
+        {"Left Two Piece P55 L13", "LeftTwoPiece-P55-L13"},
+        // {"Left Three Piece L3", "LeftThreePieceL3"},
+        // {"Left Three Piece L4", "LeftThreePieceL4"},
     
-        {"Right One Piece L1", "RightOnePieceL1"},
-        {"Right One Piece L4", "RightOnePieceL4"},
-        {"Right Two Piece L4", "RightTwoPieceL4"},
-        {"Right Three Piece L3", "RightThreePieceL3"},
-        {"Right Three Piece L4", "RightThreePieceL4"}
+        // {"Right One Piece L1", "RightOnePieceL1"},
+        // {"Right One Piece L4", "RightOnePieceL4"},
+        // {"Right Two Piece L4", "RightTwoPieceL4"},
+        {"Right Two Piece P33 L13", "RightTwoPiece-P33-L13"},
+        // {"Right Three Piece L3", "RightThreePieceL3"},
+        {"Right Three Piece P334 L133", "RightThreePiece-P334-L133"},
+        // {"Right Three Piece L4", "RightThreePieceL4"}
     };
 
     // std::vector<AutoNameMap> choreoAutos = { 
@@ -287,14 +296,15 @@ void RobotContainer::ConfigureAutos()
     // };
 
     for( unsigned int i=0; i<autos.size(); ++i ) {
-        m_chooser.AddOption( autos[i].Description, i );
         try {
             AutoCommands.push_back( pathplanner::PathPlannerAuto(autos[i].AutoName).WithName(autos[i].AutoName) );
+            m_chooser.AddOption( autos[i].Description, i );
         } catch(const std::exception& e) {
             fmt::print( "\n\n================> PathPlanner Auto NOT FOUND <==================\n" );
             fmt::print( "Attempted to load auto \"{}\".\n\n", autos[i].AutoName );
             fmt::print( "{}\n", e.what() );
             fmt::print( "====================================================================\n\n" );
+            m_chooser.AddOption( fmt::format("<LOAD FAILED> {}", autos[i].Description), i );
         }
     }
     m_chooser.SetDefaultOption( autos[0].Description, 0 );

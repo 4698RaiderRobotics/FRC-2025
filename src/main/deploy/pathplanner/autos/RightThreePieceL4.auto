@@ -51,6 +51,18 @@
           "data": {
             "name": "IntakeFromSource"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightSideSourceTo3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL1"
+          }
         }
       ]
     }

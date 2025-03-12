@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefRightL1"
+            "name": "PlaceOnReefRightL4"
           }
         },
         {
@@ -23,9 +23,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeFromSource"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "LeftSideSource5"
+            "pathName": "LeftSideSourceTo5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL4"
           }
         }
       ]

@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefRightL1"
+            "name": "PlaceOnReefRightL4"
           }
         },
         {
@@ -31,13 +31,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftSideSource5"
+            "pathName": "LeftSideSourceTo5"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefRightL4"
+            "name": "PlaceOnReefLeftL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5ToLeftSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeFromSource"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftSideSourceTo5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL1"
           }
         }
       ]

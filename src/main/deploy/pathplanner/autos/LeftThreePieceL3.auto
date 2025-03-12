@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightTo3"
+            "pathName": "LeftTo5"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefRightL4"
+            "name": "PlaceOnReefRightL3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3ToRightSource"
+            "pathName": "5ToLeftSource"
           }
         },
         {
@@ -31,31 +31,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightSideSourceTo3"
+            "pathName": "LeftSideSourceTo5"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefLeftL4"
+            "name": "PlaceOnReefLeftL3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3ToRightSource"
+            "pathName": "5ToLeftSource"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "IntakeFromSource"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftSideSource4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefLeftL3"
           }
         }
       ]
     }
   },
   "resetOdom": false,
-  "folder": "RightSideStart",
+  "folder": "LeftSideStart",
   "choreoAuto": false
 }

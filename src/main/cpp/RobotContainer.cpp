@@ -210,12 +210,28 @@ void RobotContainer::ConfigureAutos()
         ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L1; } )
     );
     pathplanner::NamedCommands::registerCommand(
+        "PlaceOnReefRightL2", 
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L2; } )
+    );
+    pathplanner::NamedCommands::registerCommand(
+        "PlaceOnReefRightL3", 
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L3; } )
+    );
+    pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefRightL4", 
         ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return ReefPlacement::PLACING_L4; } )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefLeftL1", 
         ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return ReefPlacement::PLACING_L1; } )
+    );
+    pathplanner::NamedCommands::registerCommand(
+        "PlaceOnReefLeftL2", 
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return ReefPlacement::PLACING_L2; } )
+    );
+    pathplanner::NamedCommands::registerCommand(
+        "PlaceOnReefLeftL3", 
+        ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return ReefPlacement::PLACING_L3; } )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefLeftL4", 
@@ -227,16 +243,22 @@ void RobotContainer::ConfigureAutos()
     );
   
     std::vector<AutoNameMap> autos = { 
+        {"Center One Piece L1", "CenterOnePieceL1"},
+        {"Center One Piece L4", "CenterOnePieceL4"},
         {"Center to left source two piece", "CenterToLeftSideSourceTwoPiece"},
         {"Center to right source two piece", "CenterToRightSideSourceTwoPiece"},
     
         {"Left One Piece L1", "LeftOnePieceL1"},
+        {"Left One Piece L3", "LeftOnePieceL3"},
         {"Left One Piece L4", "LeftOnePieceL4"},
-        {"Left Two Piece", "LeftTwoPiece"},
+        {"Left Three Piece L3", "LeftThreePieceL3"},
+        {"Left Three Piece L4", "LeftThreePieceL4"},
     
         {"Right One Piece L1", "RightOnePieceL1"},
         {"Right One Piece L4", "RightOnePieceL4"},
-        {"Right Two Piece L4", "RightTwoPieceL4"}
+        {"Right Two Piece L4", "RightTwoPieceL4"},
+        {"Right Three Piece L3", "RightThreePieceL3"},
+        {"Right Three Piece L4", "RightThreePieceL4"}
     };
 
     // std::vector<AutoNameMap> choreoAutos = { 

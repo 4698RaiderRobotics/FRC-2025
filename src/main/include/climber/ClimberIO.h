@@ -16,6 +16,8 @@ public:
         units::volt_t appliedVolts = 0_V;
         units::ampere_t current = 0_A;
 
+        bool homeSwitchTripped{false};
+
         void Log( const std::string &key );
     };
 

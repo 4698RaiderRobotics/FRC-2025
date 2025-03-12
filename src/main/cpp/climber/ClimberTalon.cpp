@@ -57,3 +57,8 @@ void ClimberTalon::SetOpenLoop( double percent )
 {
     talon.Set( percent );
 }
+
+void ClimberTalon::ResetHeight( )
+{
+   talon.SetPosition( 0_tr );
+}

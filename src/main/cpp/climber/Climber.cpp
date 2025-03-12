@@ -25,15 +25,15 @@ Climber::Climber()
         io = std::unique_ptr<ClimberIO> (new ClimberSim());
     }
 
-    // climbHomer = util::MotorHomer(
-    //     // Start routine
-    //     [this] { io->SetOpenLoop(-0.05); },
-    //     // Stop and Reset Routine
-    //     [this] { io->SetOpenLoop(0.0); io->ResetHeight(); SetGoal(0.0_in); },
-    //     // Home Condition
-    //     [this] { return units::math::abs( metrics.wristVelocity ) < 0.1_rpm; },
-    //     300_ms
-    // );
+    climbHomer = util::MotorHomer(
+        // Start routine
+        [this] { io->SetOpenLoop(-0.05); },
+        // Stop and Reset Routine
+        [this] { io->SetOpenLoop(0.0); io->ResetHeight(); SetGoal(0.0_in); },
+        // Home Condition
+        [this] { return metrics.homeSwitchTripped; },
+        300_ms
+    );
 }
 
 void Climber::Periodic() {
@@ -102,4 +102,5 @@ void ClimberIO::Metrics::Log( const std::string &key )
     AUTOLOG( key, velocity );
     AUTOLOG( key, appliedVolts );
     AUTOLOG( key, current );
+    AUTOLOG( key, homeSwitchTripped );
 }

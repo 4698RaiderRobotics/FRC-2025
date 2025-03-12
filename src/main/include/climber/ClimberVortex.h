@@ -2,6 +2,8 @@
 
 #include "ClimberIO.h"
 
+#include <frc/DigitalInput.h>
+
 #include <frc/controller/PIDController.h>
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/trajectory/TrapezoidProfile.h>
@@ -20,6 +22,8 @@ public:
 
 private:
     rev::spark::SparkFlex flex;
+
+    frc::DigitalInput climberHome;
 
     frc::PIDController m_PID;
     frc::SimpleMotorFeedforward<units::meters> m_simpleFF;

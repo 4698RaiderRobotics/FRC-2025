@@ -105,5 +105,8 @@ namespace deviceIDs {
     constexpr int kIntakeCenterSensorPort = 0;
     constexpr int kIntakeEndSensorPort = 1;
     constexpr int kIntakePipeSwitchPort = 2;
+
+    constexpr int kClimberHomeSwitch = 3;
+
 }
 

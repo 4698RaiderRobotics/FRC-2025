@@ -11,15 +11,33 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL4"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "1ToRightSource"
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeFromSource"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "RightSideSource3"
+            "pathName": "RightSideSourceTo3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefRightL4"
           }
         }
       ]

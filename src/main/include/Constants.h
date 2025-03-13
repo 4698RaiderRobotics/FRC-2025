@@ -20,10 +20,10 @@ namespace vision {
 
     constexpr int kNumberOfCameras = 2;
     static const CameraLayoutInfo cameraInfo[kNumberOfCameras] = {
-        // Front Right Camera
+        // Front Left Camera
         "Front_Left",
         {frc::Translation3d{10.8079_in, 7.48097_in, 7.89409_in}, frc::Rotation3d{3.10403_deg, -14.84949_deg, -46.8458_deg}},
-        // Back Left Camera
+        // Front Right Camera
         "Front_Right",
         {frc::Translation3d(10.33464_in, -6.32108_in, 8.60338_in), frc::Rotation3d(0.274182_deg, -14.47084_deg, 44.39811_deg)},
         // Back Right Camera
@@ -121,10 +121,35 @@ namespace climber {
     constexpr units::inch_t kClimberClimbHeight = 4_in;
 }
 
-const units::inch_t reef_place_L1_shift_in = 0_in;
-const units::inch_t reef_place_L2_shift_in = 6_in;
-const units::inch_t reef_place_L3_shift_in = 8.5_in;
-const units::inch_t reef_place_L4_shift_in = 13_in;
-const units::inch_t reef_algae_shift_in = 5_in;
+    // *****************     REEF PLACEMENT      **********************
+namespace reef {
+
+        // NOTE:
+        // If pose_shift_out or pose_shift_lateral is changed then the PathPlanner
+        // JSON data for the pose locations must be regenerated for autos to work correctly.
+        // See ReefPlacingPoses::OutputPathPlannerJSON()
+    constexpr units::inch_t pose_shift_out = 23_in;
+    constexpr units::inch_t pose_shift_lateral = 6.5_in;
+    constexpr units::inch_t algae_remove_pose_shift_out = 21_in;
+
+    // Position away from April Tag to place/remove.
+    constexpr units::inch_t place_L1 = 21_in;
+    constexpr units::inch_t place_L2 = 18_in;
+    constexpr units::inch_t place_L3 = 14.5_in;
+    constexpr units::inch_t place_L4 = 10_in;
+    constexpr units::inch_t remove_algae = 16_in;
+
+    // const units::inch_t place_L1_shift_in = 0_in;
+    // const units::inch_t place_L2_shift_in = 6_in;
+    // const units::inch_t place_L3_shift_in = 8.5_in;
+    // const units::inch_t place_L4_shift_in = 13_in;
+    // const units::inch_t algae_shift_in = 5_in;
+
+    constexpr units::inch_t place_L1_shift_in = pose_shift_out - place_L1;
+    constexpr units::inch_t place_L2_shift_in = pose_shift_out - place_L2;
+    constexpr units::inch_t place_L3_shift_in = pose_shift_out - place_L3;
+    constexpr units::inch_t place_L4_shift_in = pose_shift_out - place_L4;
+    constexpr units::inch_t algae_shift_in = algae_remove_pose_shift_out - remove_algae;
+}
 
 }

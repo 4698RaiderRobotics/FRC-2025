@@ -25,16 +25,13 @@ ReefPlacingPoses::ReefPlacingPoses()
 {
     const int Red_Reef_Tag_IDs[] = { 6, 7, 8, 9, 10, 11 };
     const int Blue_Reef_Tag_IDs[] = { 17, 18, 19, 20, 21, 22 };
-    const units::inch_t pose_shift_out = 23_in;
-    const units::inch_t pose_shift_lateral = 6.5_in;
-    const units::inch_t algae_remove_pose_shift_out = 21_in;
 
     aprilTags = frc::AprilTagFieldLayout::LoadField( frc::AprilTagField::k2025ReefscapeWelded );
 
     // Placing pose is out from the april tag and to the left or right (looking at the AprilTag)
-    frc::Transform2d algaeShift{ algae_remove_pose_shift_out, 0_in, 180_deg };
-    frc::Transform2d leftShift{ pose_shift_out, -pose_shift_lateral, 180_deg };
-    frc::Transform2d rightShift{ pose_shift_out, pose_shift_lateral, 180_deg };
+    frc::Transform2d algaeShift{ reef::algae_remove_pose_shift_out, 0_in, 180_deg };
+    frc::Transform2d leftShift{ reef::pose_shift_out, -reef::pose_shift_lateral, 180_deg };
+    frc::Transform2d rightShift{ reef::pose_shift_out, reef::pose_shift_lateral, 180_deg };
 
     // Construct all the placing poses for the tags facing toward the driver
     for( int i=0; i<3; ++i ) {
@@ -225,7 +222,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL1( Drive *d, Arm *arm, Intake *intake,
             arm->ChangeElbowAngle( arm::kElbowCoralL1 )
         ),
         arm->ChangeWristPosition( ArmIO::WristHorizontal ),
-        DriveCommands::DriveDeltaPose( d, {reef_place_L1_shift_in, 0_in, 0_deg}, true, 0.5 ).WithTimeout( 1_s),
+        DriveCommands::DriveDeltaPose( d, {reef::place_L1_shift_in, 0_in, 0_deg}, true, 0.5 ).WithTimeout( 1_s),
         intake->EjectCoralL1(),
         DriveCommands::DriveDeltaPose( d, {-8_in, 0_in, 0_deg}, true, 1.0 )
     ).WithName( "Place Coral in L1" );
@@ -243,7 +240,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL2( Drive *d, Arm *arm, Intake *intake,
         // elevator->ChangeHeight( elevator::kHeightCoralL2 ),
         // arm->ChangeWristPosition( ArmIO::WristVertical ),
         // arm->ChangeElbowAngle( arm::kElbowCoralL2 ),
-        DriveToReefPoseDelta(  d, {reef_place_L2_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
+        DriveToReefPoseDelta(  d, {reef::place_L2_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
         frc2::cmd::Parallel(
             elevator->ChangeHeight( elevator::kHeightCoralL2 ),
             arm->ChangeElbowAngle( arm::kElbowCoralL2 )
@@ -271,7 +268,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL3( Drive *d, Arm *arm, Intake *intake,
         // elevator->ChangeHeight( elevator::kHeightCoralL3 ),
         // arm->ChangeWristPosition( ArmIO::WristVertical ),
         // arm->ChangeElbowAngle( arm::kElbowCoralL3 ),
-        DriveToReefPoseDelta( d, {reef_place_L3_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout(1.5_s),
+        DriveToReefPoseDelta( d, {reef::place_L3_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout(1.5_s),
         frc2::cmd::Parallel(
             elevator->ChangeHeight( elevator::kHeightCoralL3 ),
             arm->ChangeElbowAngle( arm::kElbowCoralL3 )
@@ -300,7 +297,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL4( Drive *d, Arm *arm, Intake *intake,
             frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > elevator::kHeightCoralL4 - 20_in;} )
                 .AndThen( arm->ChangeElbowAndWrist( arm::kElbowCoralL4, ArmIO::WristVertical ) )
         ),
-        DriveToReefPoseDelta( d, {reef_place_L4_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
+        DriveToReefPoseDelta( d, {reef::place_L4_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
         intake->EjectCoralL2_4( false ),
         frc2::cmd::Parallel(
             frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
@@ -335,7 +332,7 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
             ),
             [d] { return ReefCommands::reefPoses.isAlgaeLow( d->GetPose() ); }
         ),
-        DriveCommands::DriveDeltaPose( d, {reef_algae_shift_in, 0_in, 0_deg}, true, 0.5 ),
+        DriveCommands::DriveDeltaPose( d, {reef::algae_shift_in, 0_in, 0_deg}, true, 0.5 ),
         frc2::cmd::Either( 
             elevator->ChangeHeight( elevator::kHeightRemoveAlgaeLow + 4_in ),
             elevator->ChangeHeight( elevator::kHeightRemoveAlgaeHigh + 4_in ),
@@ -344,7 +341,7 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
         frc2::cmd::Wait( 0.8_s ),
         frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} ),
         frc2::cmd::Parallel(
-            DriveCommands::DriveDeltaPose( d, {-reef_algae_shift_in, 0_in, 0_deg}, true, 0.5 ),
+            DriveCommands::DriveDeltaPose( d, {-reef::algae_shift_in, 0_in, 0_deg}, true, 0.5 ),
             arm->ChangeElbowAngle( arm::kElbowAlgaeHoldingPos ),
             elevator->ChangeHeight( elevator::kHeightRemoveAlgaeLow + 4_in )
         )

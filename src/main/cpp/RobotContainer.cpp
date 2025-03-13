@@ -261,6 +261,10 @@ void RobotContainer::ConfigureAutos()
         AutoCommands::LeaveCoralStation( m_arm, m_intake, m_elevator, ReefPlacement::PLACING_L3 )
     );
     pathplanner::NamedCommands::registerCommand(
+        "LeaveCoralStationToL4", 
+        AutoCommands::LeaveCoralStation( m_arm, m_intake, m_elevator, ReefPlacement::PLACING_L4 )
+    );
+    pathplanner::NamedCommands::registerCommand(
         "CoralStationPickup", 
         AutoCommands::CoralStationPickup( m_arm, m_intake, m_elevator )
     );
@@ -278,16 +282,18 @@ void RobotContainer::ConfigureAutos()
         // {"Left One Piece L1", "LeftOnePieceL1"},
         // {"Left One Piece L3", "LeftOnePieceL3"},
         // {"Left One Piece L4", "LeftOnePieceL4"},
-        {"Left Two Piece P55 L13", "LeftTwoPiece-P55-L13"},
+        // {"Left Two Piece P55 L13", "LeftTwoPiece-P55-L13"},
+        {"Left Two Piece P55 L14", "LeftTwoPiece-P55-L14"},
         // {"Left Three Piece L3", "LeftThreePieceL3"},
         // {"Left Three Piece L4", "LeftThreePieceL4"},
     
         // {"Right One Piece L1", "RightOnePieceL1"},
         // {"Right One Piece L4", "RightOnePieceL4"},
         // {"Right Two Piece L4", "RightTwoPieceL4"},
-        {"Right Two Piece P33 L13", "RightTwoPiece-P33-L13"},
+        // {"Right Two Piece P33 L13", "RightTwoPiece-P33-L13"},
+        {"Right Two Piece P33 L14", "RightTwoPiece-P33-L14"},
         // {"Right Three Piece L3", "RightThreePieceL3"},
-        {"Right Three Piece P334 L133", "RightThreePiece-P334-L133"},
+        // {"Right Three Piece P334 L133", "RightThreePiece-P334-L133"},
         // {"Right Three Piece L4", "RightThreePieceL4"}
     };
 

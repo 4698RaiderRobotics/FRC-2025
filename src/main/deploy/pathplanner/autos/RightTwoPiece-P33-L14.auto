@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "RightTo3LeftL1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefRightL4"
+            "name": "PlaceOnReefLeftL1"
           }
         },
         {
@@ -25,13 +25,13 @@
         {
           "type": "named",
           "data": {
-            "name": "IntakeFromSource"
+            "name": "CoralStationPickup"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RightSideSourceTo3RL3"
+            "pathName": "RightSideSourceTo3RL4"
           }
         },
         {
@@ -41,15 +41,9 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "3LToRightSource"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "IntakeFromSource"
+            "name": "AutoEndAtReef"
           }
         }
       ]

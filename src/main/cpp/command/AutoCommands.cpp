@@ -73,7 +73,7 @@ frc2::CommandPtr AutoCommands::LeaveCoralStation( Arm *arm, Intake *intake, Elev
     return frc2::cmd::Parallel(
         intake->IndexCoral(),
         frc2::cmd::Sequence(
-            arm->ChangeElbowAndWrist( arm::kElbowBackwardRaiseAngle, ArmIO::WristHorizontal ),
+            arm->ChangeElbowAndWrist( arm::kElbowBackwardRaiseAngle, ArmIO::WristHorizontal ).WithTimeout( 0.5_s ),
             elevator->ChangeHeight( elevator::kElevatorMinHeight ),
             arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
             frc2::cmd::Select<ReefPlacement>( 

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightTo3LeftL1"
+            "pathName": "LeftTo5LeftL1"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3LToRightSource"
+            "pathName": "5LToLeftSource"
           }
         },
         {
@@ -31,13 +31,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightSideSourceTo3R"
+            "pathName": "LeftSideSourceTo5RL4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefRightL3"
+            "name": "PlaceOnReefRightL4"
           }
         },
         {
@@ -50,6 +50,6 @@
     }
   },
   "resetOdom": false,
-  "folder": "RightSideStart",
+  "folder": "LeftSideStart",
   "choreoAuto": false
 }

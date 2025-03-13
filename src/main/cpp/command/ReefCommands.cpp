@@ -154,7 +154,9 @@ frc2::CommandPtr ReefCommands::PlaceOnReef(
     return frc2::cmd::Sequence(
         frc2::cmd::Either( 
             frc2::cmd::Sequence(
+                frc2::cmd::RunOnce( [intake] {intake->ShiftUp();}, {intake}),
                 DriveToReefPose( d, onRightSide ),
+                intake->StopCmd(),
                 frc2::cmd::Select<ReefPlacement>( 
                     [place_func] { return place_func(); }, 
                     // std::pair{ ReefPlacement::NONE, PlaceCoralNone() },
@@ -163,9 +165,6 @@ frc2::CommandPtr ReefCommands::PlaceOnReef(
                     std::pair{ ReefPlacement::PLACING_L3, PlaceCoralL3( d, arm, intake, elevator, onRightSide ) },
                     std::pair{ ReefPlacement::PLACING_L4, PlaceCoralL4( d, arm, intake, elevator, onRightSide ) }
                 ),
-                // frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
-                // DriveCommands::DriveDeltaPose( d, {-15_in, 0_in, 0_deg}, true, 1.0 ),
-                // frc2::cmd::RunOnce( [intake] { intake->Stop(); }),
                 frc2::cmd::Race(
                     IntakeCommands::RestPosition( arm, intake, elevator ),
                     frc2::cmd::Sequence(
@@ -284,7 +283,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL3( Drive *d, Arm *arm, Intake *intake,
             elevator->ChangeHeight( elevator::kHeightCoralL3 - 3_in )
         ),
         DriveCommands::DriveDeltaPose( d, {-15_in, 0_in, 0_deg}, true, 1.0 ),
-        frc2::cmd::RunOnce( [intake] { intake->Stop(); })
+        intake->StopCmd()
         // frc2::cmd::Parallel(
         //     intake->EjectCoralL2_4( true ),
         //     DriveCommands::DriveOpenLoop( d, {1_fps, 0_fps, 0_rpm}, true ).WithTimeout( 1_s)

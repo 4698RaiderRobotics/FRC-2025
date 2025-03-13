@@ -158,6 +158,13 @@ frc2::CommandPtr Intake::EjectCoralL2_4( bool waitForPipeSwitch )
 
 }
 
+frc2::CommandPtr Intake::StopCmd()
+{
+    return RunOnce( [this] { Stop(); });
+
+}
+
+
 void IntakeIO::Metrics::Log( const std::string &key ) 
 {
     AUTOLOG( key, upperPosition );

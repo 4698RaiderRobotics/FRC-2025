@@ -1,5 +1,6 @@
 
 #include <frc/RobotBase.h>
+#include <frc/DriverStation.h>
 #include <frc2/command/Commands.h>
 
 #include "Constants.h"
@@ -12,10 +13,12 @@
 
 using namespace physical::intake;
 
+const IntakeIO::SpinSpeed IntakeIO::hold_in{ -0.05, -0.05 };
 const IntakeIO::SpinSpeed IntakeIO::spin_in{ -kIntakeInSpeed, -kIntakeInSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_out{ kIntakeOutSpeed, kIntakeOutSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_out_fast{ kIntakeShiftFastSpeed, kIntakeShiftFastSpeed };
 const IntakeIO::SpinSpeed IntakeIO::shift_up{ kIntakeShiftSlowSpeed, -kIntakeShiftFastSpeed };
+const IntakeIO::SpinSpeed IntakeIO::shift_up_slow{ kIntakeShiftSlowSpeed * 0.5, -kIntakeShiftFastSpeed * 0.5 };
 const IntakeIO::SpinSpeed IntakeIO::shift_down{ -kIntakeShiftFastSpeed, kIntakeShiftSlowSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_stop{ 0.0, 0.0 };
 
@@ -28,43 +31,64 @@ Intake::Intake()
     } else {
         io = std::unique_ptr<IntakeSim> (new IntakeSim());
     }
-
 }
 
 void Intake::Periodic()
 {
     io->Update( metrics );
     metrics.Log( "Intake" );
+
+    if( frc::DriverStation::IsDisabled() ) {
+        Stop();
+    } else if( metrics.centerBeamBroken && isStopped ) {
+        io->SpinMotors( IntakeIO::hold_in );
+    }
 }
 
 void Intake::SpinIn()
 {
+    isStopped = false;
     io->SpinMotors( IntakeIO::spin_in );
 }
 
 void Intake::SpinOut()
 {
+    isStopped = false;
     io->SpinMotors( IntakeIO::spin_out );
 }
 
 void Intake::SpinOutFast()
 {
+    isStopped = false;
     io->SpinMotors( IntakeIO::spin_out_fast );
 }
 
 void Intake::ShiftUp()
 {
+    isStopped = false;
     io->SpinMotors( IntakeIO::shift_up );
+}
+
+void Intake::ShiftUpSlow()
+{
+    isStopped = false;
+    io->SpinMotors( IntakeIO::shift_up_slow );
 }
 
 void Intake::ShiftDown()
 {
+    isStopped = false;
     io->SpinMotors( IntakeIO::shift_down );
 }
 
 void Intake::Stop()
 {
-    io->SpinMotors( IntakeIO::spin_stop );
+    isStopped = true;
+    if( metrics.centerBeamBroken ) {
+        io->SpinMotors( IntakeIO::hold_in );
+    } else {
+        io->SpinMotors( IntakeIO::spin_stop );
+    }
 }
 
 bool Intake::isCenterBroken()
@@ -98,7 +122,7 @@ frc2::CommandPtr Intake::IntakeAlgae()
 frc2::CommandPtr Intake::IntakeCoral()
 {
     return frc2::cmd::Sequence(
-        IntakeCoralNoIndex(),
+        IntakeCoralNoIndex( 10_s ),
         frc2::cmd::Either( 
             // If Coral is in intake.  Need to shift it up to the end.
             IndexCoral(), 
@@ -109,11 +133,11 @@ frc2::CommandPtr Intake::IntakeCoral()
     );
 }
 
-frc2::CommandPtr Intake::IntakeCoralNoIndex()
+frc2::CommandPtr Intake::IntakeCoralNoIndex( units::second_t timeout )
 {
     return frc2::cmd::Sequence( 
         RunOnce( [this] { SpinIn(); }),
-        frc2::cmd::WaitUntil( [this] { return isCenterBroken();} ).WithTimeout( 10_s ),
+        frc2::cmd::WaitUntil( [this] { return isCenterBroken() || isEndBroken();} ).WithTimeout( timeout ),
         RunOnce( [this] { Stop(); })
     );
 }

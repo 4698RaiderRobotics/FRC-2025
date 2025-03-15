@@ -51,7 +51,7 @@ frc2::CommandPtr AutoCommands::ReefToCoralStation( Arm *arm, Intake *intake, Ele
             elevator->ChangeHeight( elevator::kHeightCoralStation ),
             frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > 2_in;} )
                 .AndThen( arm->ChangeElbowAngle( arm::kElbowCoralStation ) ),
-            intake->IntakeCoralNoIndex()
+            intake->IntakeCoralNoIndex( 10_s )
         )
     ).WithName( "ReefToCoralStation" );
 }
@@ -63,7 +63,7 @@ frc2::CommandPtr AutoCommands::CoralStationPickup( Arm *arm, Intake *intake, Ele
             elevator->ChangeHeight( elevator::kHeightCoralStation ),
             frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > 2_in;} )
                 .AndThen( arm->ChangeElbowAngle( arm::kElbowCoralStation ) ),
-            intake->IntakeCoralNoIndex()
+            intake->IntakeCoralNoIndex( 1.5_s )
         )
     ).WithName( "CoralStationPickup" );
 }
@@ -153,7 +153,7 @@ frc2::CommandPtr AutoCommands::AutoPlaceCoralL4( Drive *d, Arm *arm, Intake *int
         frc2::cmd::Parallel(
             frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
             arm->ChangeElbowAngle( arm::kElbowCoralL4 - 10_deg ).WithTimeout(0.1_s),
-            elevator->ChangeHeight( elevator::kHeightCoralL4 - 3_in )
+            elevator->ChangeHeight( elevator::kHeightCoralL4 - 2_in )
         )
     ).WithName("AutoPlaceCoralL4");
 }

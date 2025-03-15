@@ -39,5 +39,5 @@ public:
     // does nothing
     virtual void PollingPipeSwitch() {};
 
-    static const SpinSpeed spin_in, spin_out, spin_out_fast, shift_up, shift_down, spin_stop;
+    static const SpinSpeed hold_in, spin_in, spin_out, spin_out_fast, shift_up, shift_up_slow, shift_down, spin_stop;
 };

@@ -45,6 +45,8 @@ public:
         homing_is_done = false;
     }
 
+    bool isHoming( ) { return !homing_is_done; }
+    
 private:
     std::function<void()> startFunc;
     std::function<void()> stopResetFunc;

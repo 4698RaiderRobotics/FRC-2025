@@ -11,8 +11,8 @@ Intake550::Intake550()
     : upperMotor{ deviceIDs::kIntakeUpperMotorID, rev::spark::SparkLowLevel::MotorType::kBrushless },
     lowerMotor{ deviceIDs::kIntakeLowerMotorID, rev::spark::SparkLowLevel::MotorType::kBrushless },
     centerBeamBreak{ deviceIDs::kIntakeCenterSensorPort },
-    endBeamBreak{ deviceIDs::kIntakeEndSensorPort },
-    pipeSwitch{ deviceIDs::kIntakePipeSwitchPort }
+    endBeamBreak{ deviceIDs::kIntakeEndSensorPort }
+    // pipeSwitch{ deviceIDs::kIntakePipeSwitchPort }
 {
 
     SparkMaxConfig config{};
@@ -43,7 +43,7 @@ void Intake550::Update( Metrics &m )
 
     m.centerBeamBroken = !centerBeamBreak.Get();
     m.endBeamBroken = !endBeamBreak.Get();
-    m.pipeSwitchTripped = !pipeSwitch.Get();
+    // m.pipeSwitchTripped = !pipeSwitch.Get();
 }
 
 void Intake550::SpinMotors( const SpinSpeed &s )

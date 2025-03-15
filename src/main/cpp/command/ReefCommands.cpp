@@ -14,6 +14,7 @@
 #include "swerve/Drive.h"
 #include "intake/Intake.h"
 #include "elevator/Elevator.h"
+#include "climber/Climber.h"
 
 #include "Constants.h"
 
@@ -151,7 +152,7 @@ frc2::CommandPtr ReefCommands::PlaceOnReef(
     return frc2::cmd::Sequence(
         frc2::cmd::Either( 
             frc2::cmd::Sequence(
-                frc2::cmd::RunOnce( [intake] {intake->ShiftUp();}, {intake}),
+                frc2::cmd::RunOnce( [intake] {intake->ShiftUpSlow();}, {intake}),
                 DriveToReefPose( d, onRightSide ),
                 intake->StopCmd(),
                 frc2::cmd::Select<ReefPlacement>( 
@@ -302,7 +303,7 @@ frc2::CommandPtr ReefCommands::PlaceCoralL4( Drive *d, Arm *arm, Intake *intake,
         frc2::cmd::Parallel(
             frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
             arm->ChangeElbowAngle( arm::kElbowCoralL4 - 10_deg ).WithTimeout(0.1_s),
-            elevator->ChangeHeight( elevator::kHeightCoralL4 - 3_in )
+            elevator->ChangeHeight( elevator::kHeightCoralL4 - 2_in )
         ),
         DriveCommands::DriveDeltaPose( d, {-15_in, 0_in, 0_deg}, true, 1.0 ),
         frc2::cmd::RunOnce( [intake] { intake->Stop(); })
@@ -345,6 +346,14 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
             arm->ChangeElbowAngle( arm::kElbowAlgaeHoldingPos ),
             elevator->ChangeHeight( elevator::kHeightRemoveAlgaeLow + 4_in )
         )
+    );
+}
+
+frc2::CommandPtr ReefCommands::PrepareToClimb( Arm *arm, Climber *climber )
+{
+    return frc2::cmd::Parallel( 
+        arm->ChangeElbowAngle( arm::kElbowGroundPickup ),
+        climber->RaiseClimber()
     );
 }
 

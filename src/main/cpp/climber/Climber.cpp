@@ -29,10 +29,10 @@ Climber::Climber()
         // Start routine
         [this] { io->SetOpenLoop(-0.05); },
         // Stop and Reset Routine
-        [this] { io->SetOpenLoop(0.0); io->ResetHeight(); SetGoal(0.0_in); },
+        [this] { io->SetOpenLoop(0.0); io->ResetHeight(); SetGoal(kClimberRestHeight); },
         // Home Condition
         [this] { return metrics.homeSwitchTripped; },
-        300_ms
+        100_ms
     );
 }
 
@@ -40,44 +40,34 @@ void Climber::Periodic() {
     io->Update( metrics );
     metrics.Log( "Climber" );
 
-    if( frc::DriverStation::IsDisabled() ) {
-        SetGoal( metrics.height );
-    }
-
     // Update the mechanism2d
     // Angle is related to height approximately by height=bar_length*theta
     climber_lig->SetAngle( 10_deg + ( metrics.height / 11_in )*1_rad );
+
+    if( frc::DriverStation::IsDisabled() ) {
+        SetGoal( metrics.height );
+        return;
+    }
+
+    climbHomer.Home();
 }
 
 void Climber::SetGoal( units::inch_t goal ) 
 {
-    // if( goal < kClimberMinHeight ) {
-    //      metrics.goal = kClimberMinHeight;
-    // } else if( goal > kClimberMaxHeight ) {
-    //      metrics.goal = kClimberMaxHeight;
-    // } else {
-        metrics.goal = goal;
-    // }
+    metrics.goal = util::clamp( goal, kClimberMinHeight, kClimberMaxHeight );
     io->SetGoal( metrics.goal );
 }
 
 void Climber::Nudge( units::inch_t nudge ) 
 {
-    SetGoal( metrics.goal + nudge );
+    metrics.goal += nudge;
+    io->SetGoal( metrics.goal );
 }
 
 bool Climber::AtGoal() 
 {
     return units::math::abs( metrics.height - metrics.goal ) < AT_GOAL_TOLERANCE;
 }
-
-// frc2::CommandPtr Climber::ChangeHeight( units::inch_t goal ) 
-// {
-//     return frc2::cmd::Sequence(
-//         RunOnce( [this, goal] { SetGoal( goal ); }),
-//         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
-//     ).WithName( "Climber Change Height" );
-// }
 
 frc2::CommandPtr Climber::RaiseClimber( )
 {

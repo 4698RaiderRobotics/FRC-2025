@@ -118,8 +118,8 @@ void RobotContainer::ConfigureBindings()
 
     driverCtrlr.Button( ctrl::manual_eject ).OnTrue( m_intake->EjectCoralL1() );
 
-    // driverCtrlr.POV( ctrl::raise_climber ).OnTrue( m_climber->RaiseClimber() );
-    // driverCtrlr.POV( ctrl::start_climb ).OnTrue( m_climber->DoClimb() );
+    driverCtrlr.POV( ctrl::raise_climber ).OnTrue( ReefCommands::PrepareToClimb( m_arm, m_climber ) );
+    driverCtrlr.POV( ctrl::start_climb ).OnTrue( m_climber->DoClimb() );
 
     // driverCtrlr.POV( 0 ).OnTrue( DriveToPose( m_drive, [] { return frc::Pose2d{ 610_in, 158.50_in, 180_deg}; } ).ToPtr() );
 
@@ -189,7 +189,7 @@ void RobotContainer::ConfigureBindings()
         .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
     // (nudge_hold_button && operatorCtrlr.X()).WhileTrue( frc2::cmd::Run( [this] {m_intake->ShiftDown();}, {m_intake} ))
     //     .OnFalse(frc2::cmd::RunOnce( [this] {m_intake->Stop();}, {m_intake} ));
-    (nudge_hold_button && operatorCtrlr.X()).WhileTrue( m_intake->IntakeCoralNoIndex() )
+    (nudge_hold_button && operatorCtrlr.X()).WhileTrue( m_intake->IntakeCoralNoIndex( 10_s ) )
         .OnFalse( m_intake->IndexCoral() );
 
     }

@@ -18,6 +18,7 @@ class Arm;
 class Drive;
 class Intake;
 class Elevator;
+class Climber;
 
 class ReefPlacingPoses {
 public:
@@ -56,6 +57,9 @@ public:
     static frc2::CommandPtr PlaceCoralL4( Drive *, Arm *, Intake *, Elevator *, bool onRightSide );
 
     static frc2::CommandPtr RemoveAlgae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator );
+
+
+    static frc2::CommandPtr PrepareToClimb( Arm *arm, Climber *climber );
 
 private:
     ReefCommands() = default;

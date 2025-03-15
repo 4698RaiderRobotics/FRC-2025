@@ -42,7 +42,7 @@ void ClimberVortex::Update( Metrics &m )
     m.velocity = flex.GetEncoder().GetVelocity() * 1_rpm * kDistancePerMotorRev;
     m.appliedVolts = flex.GetAppliedOutput() * flex.GetBusVoltage() * 1_V;
     m.current = flex.GetOutputCurrent() * 1_A;
-    m.homeSwitchTripped = climberHome.Get();
+    m.homeSwitchTripped = !climberHome.Get();
 }
 
 void ClimberVortex::SetGoal( units::inch_t goal ) 

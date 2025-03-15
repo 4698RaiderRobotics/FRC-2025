@@ -14,6 +14,7 @@ public:
     void SpinOut();
     void SpinOutFast();
     void ShiftUp();
+    void ShiftUpSlow();
     void ShiftDown();
     void Stop();
     bool isCenterBroken();
@@ -22,7 +23,7 @@ public:
 
     frc2::CommandPtr IntakeAlgae();
     frc2::CommandPtr IntakeCoral();
-    frc2::CommandPtr IntakeCoralNoIndex();
+    frc2::CommandPtr IntakeCoralNoIndex( units::second_t timeout );
     frc2::CommandPtr IndexCoral();
     frc2::CommandPtr EjectCoralL1();
     frc2::CommandPtr EjectCoralL2_4( bool waitForPipeSwitch );
@@ -33,4 +34,6 @@ public:
 private:
     std::unique_ptr<IntakeIO> io;
     IntakeIO::Metrics metrics;
+
+    bool isStopped{true};
 };

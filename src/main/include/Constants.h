@@ -109,16 +109,16 @@ namespace elevator {
 namespace climber {
 
     // Maximum height for the climber position
-    constexpr units::inch_t kClimberMaxHeight = 11.5_in;
+    constexpr units::inch_t kClimberMaxHeight = 5_in;
     // Minimum height for the climber position
-    constexpr units::inch_t kClimberMinHeight = 0.0_in;
+    constexpr units::inch_t kClimberMinHeight = -6.5_in;
     // Resting height for the climber 
-    constexpr units::inch_t kClimberRestHeight = 1_in;
+    constexpr units::inch_t kClimberRestHeight = 0_in;
 
     // Raising height for the climber 
-    constexpr units::inch_t kClimberRaiseHeight = 11_in;
+    constexpr units::inch_t kClimberRaiseHeight = 4.75_in;
     // Climb height for the climber 
-    constexpr units::inch_t kClimberClimbHeight = 4_in;
+    constexpr units::inch_t kClimberClimbHeight = -5.75_in;
 }
 
     // *****************     REEF PLACEMENT      **********************

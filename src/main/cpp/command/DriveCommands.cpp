@@ -15,6 +15,24 @@
 
 const double DEADBAND = 0.1;
 
+units::revolutions_per_minute_t DriveCommands::currentTurnSpeedLimit = swerve::physical::kTurnSpeedLimit;
+units::meters_per_second_t DriveCommands::currentDriveSpeedLimit = swerve::physical::kDriveSpeedLimit;
+
+
+frc2::CommandPtr DriveCommands::SetDriveSpeed( bool useSlowSpeed )
+{
+    return frc2::cmd::RunOnce( [useSlowSpeed] {
+        if( useSlowSpeed ) {
+            currentTurnSpeedLimit = swerve::physical::kTurnSpeedLimit * 0.15;
+            currentDriveSpeedLimit = swerve::physical::kDriveSpeedLimit * 0.15;
+        } else {
+            currentTurnSpeedLimit = swerve::physical::kTurnSpeedLimit;
+            currentDriveSpeedLimit = swerve::physical::kDriveSpeedLimit;
+        }
+    });
+}
+
+
 frc2::CommandPtr DriveCommands::JoystickDrive( 
     Drive *d, 
     std::function<double()> xSupplier, 
@@ -37,8 +55,12 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
         // Apply expo 
         double m_expo = 0.75;
         linearMagnitude = m_expo * std::pow(linearMagnitude, 3.0) + (1.0 - m_expo) * linearMagnitude;
+
+        // Use 9th degree expo...
+        double omega_expo = 0.68;
+        double omega_ex = omega_expo * std::pow( omega, 9.0 ) + (1.0 - omega_expo) * omega;
         // linearMagnitude = linearMagnitude * linearMagnitude;
-        omega = std::copysign( omega*omega, omega );
+        omega = std::copysign( omega_ex, omega );
 
         double Vx = linearMagnitude * linearDirection.Cos();
         double Vy = linearMagnitude * linearDirection.Sin();
@@ -48,9 +70,9 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
 
         d->RunVelocity( 
             frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-                Vx * swerve::physical::kDriveSpeedLimit,
-                Vy * swerve::physical::kDriveSpeedLimit,
-                omega * swerve::physical::kTurnSpeedLimit,
+                Vx * currentDriveSpeedLimit,
+                Vy * currentDriveSpeedLimit,
+                omega * currentTurnSpeedLimit,
                 isFlipped ? d->GetRotation() + frc::Rotation2d(180_deg) : d->GetRotation()
             )
         ); 

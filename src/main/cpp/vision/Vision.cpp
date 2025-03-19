@@ -110,7 +110,7 @@ void Vision::ProcessCamera( int camNumber )
                         resultData.std_dev /= 3.0;
                     }
                     resultData.addToOdometry = true;
-                } else if( resultData.deltaDistance < 1_m ) {
+                } else if( resultData.deltaDistance < 1_m || resultData.tagDistance < 1_m ) {
                     // Use poses that are close to the robot while Enabled
                     resultData.addToOdometry = true;
                 }

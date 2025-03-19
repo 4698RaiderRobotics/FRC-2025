@@ -166,6 +166,8 @@ void RobotContainer::ConfigureBindings()
 
     operatorCtrlr.RightStick().OnTrue( ReefCommands::RemoveAlgae( m_drive, m_arm, m_intake, m_elevator ));
 
+    operatorCtrlr.LeftStick().OnTrue( IntakeCommands::ElevatorRaise( m_arm, m_elevator ));
+
     m_intake->HasCoralTrigger().OnTrue( 
         frc2::cmd::Parallel(
             CoralViz( [this] { return m_drive->GetPose(); }, [this] {return m_intake->isCenterBroken();} ).ToPtr(),
@@ -257,6 +259,10 @@ void RobotContainer::ConfigureAutos()
         AutoCommands::PrepareToPlaceOnReef( m_arm, m_elevator, ReefPlacement::PLACING_L3 )
     );
     pathplanner::NamedCommands::registerCommand(
+        "PrepareToPlaceOnReefL4", 
+        AutoCommands::PrepareToPlaceOnReef( m_arm, m_elevator, ReefPlacement::PLACING_L4 )
+    );
+    pathplanner::NamedCommands::registerCommand(
         "LeaveCoralStationToL3", 
         AutoCommands::LeaveCoralStation( m_arm, m_intake, m_elevator, ReefPlacement::PLACING_L3 )
     );
@@ -275,7 +281,7 @@ void RobotContainer::ConfigureAutos()
 
     std::vector<AutoNameMap> autos = { 
         // {"Center One Piece L1", "CenterOnePieceL1"},
-        // {"Center One Piece L4", "CenterOnePieceL4"},
+        {"Center One Piece L4", "CenterOnePieceL4"},
         // {"Center to left source two piece", "CenterToLeftSideSourceTwoPiece"},
         // {"Center to right source two piece", "CenterToRightSideSourceTwoPiece"},
     
@@ -301,10 +307,13 @@ void RobotContainer::ConfigureAutos()
     //     {"Test Choreo", "TestPath"}
     // };
 
+    AutoCommands.push_back( DriveCommands::DriveDeltaPose( m_drive, {1.5_m, 0_m, 0_deg}, true, 0.5 ));
+    m_chooser.AddOption( "Leave ONLY", 0 );
+
     for( unsigned int i=0; i<autos.size(); ++i ) {
         try {
             AutoCommands.push_back( pathplanner::PathPlannerAuto(autos[i].AutoName).WithName(autos[i].AutoName) );
-            m_chooser.AddOption( autos[i].Description, i );
+            m_chooser.AddOption( autos[i].Description, i+1 );
         } catch(const std::exception& e) {
             fmt::print( "\n\n================> PathPlanner Auto NOT FOUND <==================\n" );
             fmt::print( "Attempted to load auto \"{}\".\n\n", autos[i].AutoName );
@@ -313,7 +322,7 @@ void RobotContainer::ConfigureAutos()
             m_chooser.AddOption( fmt::format("<LOAD FAILED> {}", autos[i].Description), i );
         }
     }
-    m_chooser.SetDefaultOption( autos[0].Description, 0 );
+    m_chooser.SetDefaultOption( "Leave ONLY", 0 );
 
     // for( unsigned int i=0; i<choreoAutos.size(); ++i ) {
     //     m_chooser.AddOption( choreoAutos[i].Description, i + autos.size() );

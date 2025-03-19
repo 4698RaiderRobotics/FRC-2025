@@ -48,7 +48,7 @@ namespace swerve {
         constexpr double kTurnGearRatio = 150.0 / 7.0;
 
         // The Maximum turning speed for the robot under Joystick control
-        const units::revolutions_per_minute_t kTurnSpeedLimit = kMaxTurnSpeed * 0.5;
+        const units::revolutions_per_minute_t kTurnSpeedLimit = kMaxTurnSpeed * 0.3;
 
         // The Maximum translation speed for the robot under Joystick control
         constexpr units::meters_per_second_t kDriveSpeedLimit = kMaxDriveSpeed * 0.75;

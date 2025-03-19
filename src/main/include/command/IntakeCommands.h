@@ -16,6 +16,7 @@ public:
     static frc2::CommandPtr CoralStationResume( Arm *arm, Intake *intake, Elevator *elevator, bool eject );
     static frc2::CommandPtr GroundPickup( Arm *arm, Intake *intake, Elevator *elevator );
     static frc2::CommandPtr GroundResume( Arm *arm, Intake *intake, Elevator *elevator, bool eject );
+    static frc2::CommandPtr ElevatorRaise( Arm *arm, Elevator *elevator );
 
 private:
     IntakeCommands() = default;

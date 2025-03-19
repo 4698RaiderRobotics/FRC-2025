@@ -29,6 +29,7 @@ DataLogger& DataLogger::GetInstance() {
         singleton->log = &frc::DataLogManager::GetLog();
         singleton->nt_table = nt::NetworkTableInstance::GetDefault().GetTable("");
         singleton->isFMSAttached = frc::DriverStation::IsFMSAttached();
+        Log( "DataLogger/isFMSAttahed", singleton->isFMSAttached );
     }
         
     return *singleton;

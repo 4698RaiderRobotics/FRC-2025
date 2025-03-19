@@ -104,7 +104,7 @@ frc2::CommandPtr Arm::ChangeElbowAngle( units::degree_t goal )
 {
     return frc2::cmd::Sequence(
         RunOnce( [this, goal] { SetElbowGoal( goal ); }),
-        frc2::cmd::WaitUntil( [this] { return ElbowAtGoal(); } ).WithTimeout( 2_s )
+        frc2::cmd::WaitUntil( [this] { return ElbowAtGoal(); } ).WithTimeout( 1_s )
     ).WithName( fmt::format( "Change Arm Angle to {}", goal ) );
 }
 
@@ -112,7 +112,7 @@ frc2::CommandPtr Arm::ChangeWristPosition( ArmIO::WristPosition pos )
 {
     return frc2::cmd::Sequence(
         RunOnce( [this, pos] { SetWristPosition( pos ); }),
-        frc2::cmd::WaitUntil( [this] { return WristAtGoal(); } ).WithTimeout( 2_s )
+        frc2::cmd::WaitUntil( [this] { return WristAtGoal(); } ).WithTimeout( 1_s )
     ).WithName( "Change Wrist Position" );
 }
 
@@ -121,7 +121,7 @@ frc2::CommandPtr Arm::ChangeElbowAndWrist( units::degree_t elbow_goal, ArmIO::Wr
     return frc2::cmd::Sequence(
         RunOnce( [this, elbow_goal] { SetElbowGoal( elbow_goal ); }),
         RunOnce( [this, pos] { SetWristPosition( pos ); }),
-        frc2::cmd::WaitUntil( [this] { return ElbowAtGoal() && WristAtGoal(); } ).WithTimeout( 2_s )
+        frc2::cmd::WaitUntil( [this] { return ElbowAtGoal() && WristAtGoal(); } ).WithTimeout( 1_s )
     ).WithName( "ChangeElbowAndWrist" );
 
 

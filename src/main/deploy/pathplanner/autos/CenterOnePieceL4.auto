@@ -7,13 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterTo1"
+            "pathName": "CenterTo1LeftL4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefRightL4"
+            "name": "PrepareToPlaceOnReefL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefLeftL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoEndAtReef"
           }
         }
       ]

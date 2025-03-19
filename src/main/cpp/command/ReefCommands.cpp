@@ -352,6 +352,7 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
 frc2::CommandPtr ReefCommands::PrepareToClimb( Arm *arm, Climber *climber )
 {
     return frc2::cmd::Parallel( 
+        DriveCommands::SetDriveSpeed( true ),
         arm->ChangeElbowAngle( arm::kElbowGroundPickup ),
         climber->RaiseClimber()
     );

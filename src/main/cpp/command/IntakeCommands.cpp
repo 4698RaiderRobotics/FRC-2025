@@ -94,3 +94,11 @@ frc2::CommandPtr IntakeCommands::GroundResume( Arm *arm, Intake *intake, Elevato
         )
     ).WithName( "Ground Resume" );
 }
+
+frc2::CommandPtr IntakeCommands::ElevatorRaise( Arm *arm, Elevator *elevator )
+{
+    return frc2::cmd::Sequence( 
+        arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
+        elevator->ChangeHeight( elevator::kHeightDislogAlgae )
+    );
+}       

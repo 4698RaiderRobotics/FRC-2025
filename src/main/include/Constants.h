@@ -73,7 +73,7 @@ namespace arm {
 namespace intake {
 
     // Intaking and Ejecting Motor Speed
-    constexpr double kIntakeInSpeed = 0.25;
+    constexpr double kIntakeInSpeed = 0.30;
     constexpr double kIntakeOutSpeed = 0.15;
 
     // Shift speed of the motors
@@ -103,6 +103,8 @@ namespace elevator {
     // Heights for removing Algae
     constexpr units::inch_t kHeightRemoveAlgaeLow = 0_in;
     constexpr units::inch_t kHeightRemoveAlgaeHigh = 18_in;
+
+    constexpr units::inch_t kHeightDislogAlgae = 39_in;
 }
 
     // *****************     CLIMBER SUBSYSTEM      **********************

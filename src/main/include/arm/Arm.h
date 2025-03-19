@@ -32,5 +32,5 @@ private:
     util::MotorHomer elbowHomer;
 
     const units::degree_t ELBOW_GOAL_TOLERANCE = 4_deg;
-    const units::degree_t WRIST_GOAL_TOLERANCE = 10_deg;
+    const units::degree_t WRIST_GOAL_TOLERANCE = 15_deg;
 };

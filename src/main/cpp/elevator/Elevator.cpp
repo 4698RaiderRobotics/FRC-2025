@@ -81,6 +81,8 @@ void ElevatorIO::Metrics::Log( const std::string &key )
     AUTOLOG( key, height );
     AUTOLOG( key, goal );
     AUTOLOG( key, velocity );
-    AUTOLOG( key, appliedVolts );
-    AUTOLOG( key, current );
+    AUTOLOG( key, M1AppliedVolts );
+    AUTOLOG( key, M1Current );
+    AUTOLOG( key, M2AppliedVolts );
+    AUTOLOG( key, M2Current );
 }

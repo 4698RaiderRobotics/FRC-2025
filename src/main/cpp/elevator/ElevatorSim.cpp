@@ -31,8 +31,10 @@ void ElevatorSim::Update( Metrics &m )
         m.velocity = motorSim.GetVelocity();
     }
 
-    m.appliedVolts = motorSim.GetVoltage();
-    m.current = motorSim.GetCurrent();
+    m.M1AppliedVolts = motorSim.GetVoltage();
+    m.M2AppliedVolts = motorSim.GetVoltage();
+    m.M1Current = motorSim.GetCurrent();
+    m.M2Current = motorSim.GetCurrent();
 }
 
 void ElevatorSim::ResetPosition( units::inch_t position )

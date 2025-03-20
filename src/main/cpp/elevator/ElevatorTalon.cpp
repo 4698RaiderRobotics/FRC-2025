@@ -8,44 +8,68 @@
 using namespace device::elevator;
 
 ElevatorTalon::ElevatorTalon( )
-    : talon{ deviceIDs::kElevatorID, "" }
+    : talon{ deviceIDs::kElevatorID, "" }, talon_follower{ deviceIDs::kElevatorID2, "" }
 {
-    ctre::phoenix6::configs::TalonFXConfiguration talonConfigs{};
-    talonConfigs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
-    talonConfigs.CurrentLimits.SupplyCurrentLimit = 40_A;
-    talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    talonConfigs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+    {   // Configure the main talon
+        ctre::phoenix6::configs::TalonFXConfiguration talonConfigs{};
+        talonConfigs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
+        talonConfigs.CurrentLimits.SupplyCurrentLimit = 40_A;
+        talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        talonConfigs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
 
-    talonConfigs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
+        talonConfigs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
+        
+        SET_PIDSVGA( talonConfigs.Slot0, kMotionConfig.tuner )
     
-    SET_PIDSVGA( talonConfigs.Slot0, kMotionConfig.tuner )
- 
-    talonConfigs.MotionMagic.MotionMagicCruiseVelocity = kMotionConfig.mp.MaxVelocity / kDistancePerMotorRev;
-    talonConfigs.MotionMagic.MotionMagicAcceleration = kMotionConfig.mp.MaxAcceleration / kDistancePerMotorRev;
-    talonConfigs.MotionMagic.MotionMagicJerk = kMotionConfig.mp.MaxJerk / kDistancePerMotorRev;
+        talonConfigs.MotionMagic.MotionMagicCruiseVelocity = kMotionConfig.mp.MaxVelocity / kDistancePerMotorRev;
+        talonConfigs.MotionMagic.MotionMagicAcceleration = kMotionConfig.mp.MaxAcceleration / kDistancePerMotorRev;
+        talonConfigs.MotionMagic.MotionMagicJerk = kMotionConfig.mp.MaxJerk / kDistancePerMotorRev;
 
-    talon.GetConfigurator().Apply(talonConfigs);
+        talon.GetConfigurator().Apply(talonConfigs);
+    }
+    {   // Configure the follower talon
+        ctre::phoenix6::configs::TalonFXConfiguration configs{};
+        configs.CurrentLimits.SupplyCurrentLimit = 40_A;
+        configs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        configs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+
+        talon_follower.GetConfigurator().Apply(configs);
+    }
+
+    talon_follower.SetControl(ctre::phoenix6::controls::Follower{talon.GetDeviceID(), false});
 
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll( 
         50_Hz,
         talonPosition,
         talonVelocity, 
         talonAppliedVolts, 
-        talonCurrent
+        talonCurrent,
+        followerAppliedVolts,
+        followerCurrent
     );
 
     talon.OptimizeBusUtilization();
+    talon_follower.OptimizeBusUtilization();
 }
 
 void ElevatorTalon::Update( Metrics &m ) 
 {
 
-    ctre::phoenix6::BaseStatusSignal::RefreshAll( talonPosition, talonVelocity, talonAppliedVolts, talonCurrent );
+    ctre::phoenix6::BaseStatusSignal::RefreshAll( 
+        talonPosition,
+        talonVelocity, 
+        talonAppliedVolts, 
+        talonCurrent,
+        followerAppliedVolts,
+        followerCurrent
+    );
 
     m.height = talonPosition.GetValue() * kDistancePerMotorRev;
     m.velocity = talonVelocity.GetValue() * kDistancePerMotorRev;
-    m.appliedVolts = talonAppliedVolts.GetValue();
-    m.current = talonCurrent.GetValue();
+    m.M1AppliedVolts = talonAppliedVolts.GetValue();
+    m.M1Current = talonCurrent.GetValue();
+    m.M2AppliedVolts = followerAppliedVolts.GetValue();
+    m.M2Current = followerCurrent.GetValue();
 }
 
 void ElevatorTalon::ResetPosition( units::inch_t position )

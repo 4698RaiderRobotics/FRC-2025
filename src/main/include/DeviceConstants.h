@@ -100,6 +100,7 @@ namespace deviceIDs {
     constexpr int kElbowEncoderID = 26;
 
     constexpr int kElevatorID = 20;
+    constexpr int kElevatorID2 = 27;
 
     constexpr int kClimberID = 24;
 

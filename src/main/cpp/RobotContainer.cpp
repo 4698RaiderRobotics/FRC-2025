@@ -69,39 +69,37 @@ void RobotContainer::ConfigureDefaults()
         )
     );
 
-    if( !frc::DriverStation::IsFMSAttached() ) {
-        m_arm->SetDefaultCommand(
-            frc2::cmd::Run( [this] {
-                if( nudge_hold_button.Get() ) {
-                    m_arm->NudgeElbow(elbow_nudge_axis.GetAxis() * 0.5_deg);
-                    if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) > 0.75 ) {
-                        m_arm->SetWristPosition( ArmIO::WristHorizontal);
-                    } else if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) < -0.75 ) {
-                        m_arm->SetWristPosition( ArmIO::WristVertical);
-                    }
+    m_arm->SetDefaultCommand(
+        frc2::cmd::Run( [this] {
+            if( nudge_hold_button.Get() ) {
+                m_arm->NudgeElbow(elbow_nudge_axis.GetAxis() * 0.5_deg);
+                if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) > 0.75 ) {
+                    m_arm->SetWristPosition( ArmIO::WristHorizontal);
+                } else if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) < -0.75 ) {
+                    m_arm->SetWristPosition( ArmIO::WristVertical);
                 }
-            },
-            { m_arm }
-        ).WithName("Elbow-Wrist Nudge"));
+            }
+        },
+        { m_arm }
+    ).WithName("Elbow-Wrist Nudge"));
 
-        m_climber->SetDefaultCommand(
-            frc2::cmd::Run( [this] {
-                if( nudge_hold_button.Get() ) {
-                    m_climber->Nudge(climber_nudge_axis.GetAxis() * -0.1_in);
-                }
-            },
-            { m_climber }
-        ).WithName("Climber Nudge"));
+    m_climber->SetDefaultCommand(
+        frc2::cmd::Run( [this] {
+            if( nudge_hold_button.Get() ) {
+                m_climber->Nudge(climber_nudge_axis.GetAxis() * -0.1_in);
+            }
+        },
+        { m_climber }
+    ).WithName("Climber Nudge"));
 
-        m_elevator->SetDefaultCommand(
-            frc2::cmd::Run( [this] {
-                if( nudge_hold_button.Get() ) {
-                    m_elevator->Nudge(elevator_nudge_axis.GetAxis() * 0.25_in);
-                }
-            },
-            { m_elevator }
-        ).WithName("Elevator Nudge"));
-    }
+    m_elevator->SetDefaultCommand(
+        frc2::cmd::Run( [this] {
+            if( nudge_hold_button.Get() ) {
+                m_elevator->Nudge(elevator_nudge_axis.GetAxis() * 0.25_in);
+            }
+        },
+        { m_elevator }
+    ).WithName("Elevator Nudge"));
 }
 
 void RobotContainer::ConfigureBindings() 
@@ -168,12 +166,20 @@ void RobotContainer::ConfigureBindings()
 
     operatorCtrlr.LeftStick().OnTrue( IntakeCommands::ElevatorRaise( m_arm, m_elevator ));
 
+
+    /**************************          TRIGGERS          ********************* */
+
     m_intake->HasCoralTrigger().OnTrue( 
         frc2::cmd::Parallel(
             CoralViz( [this] { return m_drive->GetPose(); }, [this] {return m_intake->isCenterBroken();} ).ToPtr(),
             ControllerIO::CoralRumble()
         )
     );
+
+    m_climber->isHoming()
+        .OnTrue( m_arm->SetClimberHoming( true )) 
+        .OnFalse( m_arm->SetClimberHoming( false ));
+
 
     /**************************          DEBUG MODE          ********************* */
     if( !frc::DriverStation::IsFMSAttached() ) {

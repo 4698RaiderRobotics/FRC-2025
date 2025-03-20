@@ -15,18 +15,23 @@ ClimberSim::ClimberSim()
 
 void ClimberSim::Update( Metrics &m ) 
 {
-    motorSim.Update();
+   motorSim.Update();
 
-    m.height = motorSim.GetPosition();
-    m.velocity = motorSim.GetVelocity();
-    m.appliedVolts = motorSim.GetVoltage();
-    m.current = motorSim.GetCurrent();
+   m.height = motorSim.GetPosition();
+   m.velocity = motorSim.GetVelocity();
+   m.appliedVolts = motorSim.GetVoltage();
+   m.current = motorSim.GetCurrent();
 
-    if( m.height <= 0.0_in ) {
+   if( !isHomed && m.height <= -1.0_in ) {
       m.homeSwitchTripped = true;
-    } else {
+      isHomed = true;
+   } else if( isHomed ) {
+      if( units::math::abs(m.height) < 0.5_in  ) {
+         m.homeSwitchTripped = true;
+      }
+   } else {
       m.homeSwitchTripped = false;
-    }
+   }
 }
 
 void ClimberSim::SetGoal( units::inch_t goal ) 

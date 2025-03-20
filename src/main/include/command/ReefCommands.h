@@ -58,7 +58,6 @@ public:
 
     static frc2::CommandPtr RemoveAlgae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator );
 
-
     static frc2::CommandPtr PrepareToClimb( Arm *arm, Climber *climber );
 
 private:

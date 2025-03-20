@@ -29,17 +29,20 @@ Robot::Robot()
 
     frc::MechanismRoot2d* climber_root = robot_mech.GetRoot("climber_root", 14/39.0, 6/39.0);
     climber_lig = climber_root->Append<frc::MechanismLigament2d>("climber", 11/39.0, 15_deg, 6, frc::Color8Bit{frc::Color::kRed});
+}
 
+void Robot::RobotInit() 
+{
+    // This not working in Robot::Robot() constructor ??
     frc::SmartDashboard::PutData( "Robot/Mechanism2d", &robot_mech );
     EncOffsets::GetInstance().SetupUI();
 }
 
-void Robot::RobotPeriodic() {
+void Robot::RobotPeriodic() 
+{
     LoggedRobot::RobotPeriodic();
     frc2::CommandScheduler::GetInstance().Run();
 }
-
-void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() 
 {
@@ -48,7 +51,8 @@ void Robot::DisabledPeriodic()
 
 void Robot::DisabledExit() {}
 
-void Robot::AutonomousInit() {
+void Robot::AutonomousInit() 
+{
     m_autonomousCommand = m_container.GetAutonomousCommand();
 
     if (m_autonomousCommand != nullptr) {
@@ -60,7 +64,8 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::AutonomousExit() {}
 
-void Robot::TeleopInit() {
+void Robot::TeleopInit() 
+{
     if (m_autonomousCommand != nullptr) {
         m_autonomousCommand->Cancel();
     }

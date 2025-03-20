@@ -17,6 +17,7 @@ public:
 
 private:
     LinearSim motorSim;
+    bool isHomed{false};
 };
 
 

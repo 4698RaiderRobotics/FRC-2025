@@ -17,6 +17,7 @@
 using namespace physical::arm;
 
 Arm::Arm()
+    : back_rest_angle{ kElbowRestAngle }
 {
     SetName( "Arm" );
 
@@ -100,6 +101,18 @@ bool Arm::isArmBackward()
     return metrics.elbowPosition > 90_deg;
 }
 
+void Arm::AdjustToHoming( bool isClimberHoming )
+{
+    if( isClimberHoming ) {
+        back_rest_angle = kElbowHomingRestAngle;
+        if( metrics.elbowPosition > back_rest_angle ) {
+            SetElbowGoal( back_rest_angle );
+        }
+    } else {
+        back_rest_angle = kElbowRestAngle;
+    }
+}
+
 frc2::CommandPtr Arm::ChangeElbowAngle( units::degree_t goal ) 
 {
     return frc2::cmd::Sequence(
@@ -123,8 +136,16 @@ frc2::CommandPtr Arm::ChangeElbowAndWrist( units::degree_t elbow_goal, ArmIO::Wr
         RunOnce( [this, pos] { SetWristPosition( pos ); }),
         frc2::cmd::WaitUntil( [this] { return ElbowAtGoal() && WristAtGoal(); } ).WithTimeout( 1_s )
     ).WithName( "ChangeElbowAndWrist" );
+}
 
+frc2::CommandPtr Arm::GotoElbowRest()
+{
+    return RunOnce( [this] { SetElbowGoal( back_rest_angle ); });
+}
 
+frc2::CommandPtr Arm::SetClimberHoming( bool isClimberHoming )
+{
+    return RunOnce( [this, isClimberHoming] { AdjustToHoming( isClimberHoming ); });
 }
 
 void ArmIO::Metrics::Log( const std::string &key ) 

@@ -15,6 +15,9 @@ wristSim{ device::arm::kWristGearRatio, 0.5 }
 {
     // Somewhere to home from...
     wristSim.SetPosition( 10_deg );
+
+    // Typical resting position
+    elbowSim.SetPosition( 130_deg );
 }
 
 void ArmSim::Update( Metrics &m ) 

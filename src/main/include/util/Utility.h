@@ -45,7 +45,8 @@ public:
         homing_is_done = false;
     }
 
-    bool isHoming( ) { return !homing_is_done; }
+    bool isHomingActive( ) { return homing_is_active; }
+    bool isHomingDone( ) { return homing_is_done; }
     
 private:
     std::function<void()> startFunc;

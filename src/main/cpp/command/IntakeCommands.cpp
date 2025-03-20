@@ -23,9 +23,10 @@ frc2::CommandPtr IntakeCommands::RestPosition( Arm *arm, Intake *intake, Elevato
             arm->ChangeElbowAndWrist( arm::kElbowBackwardRaiseAngle, ArmIO::WristHorizontal ),
             frc2::cmd::Parallel(
                 frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} ),
-                elevator->ChangeHeight( 0.0_in )
-            ),
-            arm->ChangeElbowAngle( arm::kElbowRestAngle )
+                elevator->ChangeHeight( 0.0_in ),
+                frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() < 8_in; })
+                    .AndThen( arm->GotoElbowRest() )
+            )
         ),
         // Arm is in forward position
         frc2::cmd::Sequence(
@@ -36,11 +37,10 @@ frc2::CommandPtr IntakeCommands::RestPosition( Arm *arm, Intake *intake, Elevato
                 frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} ),
                 elevator->ChangeHeight( 0.0_in )
             ),
-            arm->ChangeElbowAngle( arm::kElbowRestAngle )
+            arm->GotoElbowRest()
         ),
         [arm, elevator] { return arm->isArmBackward(); }
     ).WithName( "Rest Position" );
-
 }
 
 frc2::CommandPtr IntakeCommands::CoralStationPickup( Arm *arm, Intake *intake, Elevator *elevator )

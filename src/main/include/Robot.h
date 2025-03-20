@@ -24,8 +24,8 @@ extern frc::MechanismLigament2d* climber_lig;
 class Robot : public LoggedRobot {
 public:
     Robot();
+    void RobotInit() override;
     void RobotPeriodic() override;
-    void DisabledInit() override;
     void DisabledPeriodic() override;
     void DisabledExit() override;
     void AutonomousInit() override;

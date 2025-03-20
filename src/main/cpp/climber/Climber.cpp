@@ -85,6 +85,12 @@ frc2::CommandPtr Climber::DoClimb( )
     );
 }
 
+frc2::Trigger Climber::isHoming()
+{
+    return frc2::Trigger( [this] { return climbHomer.isHomingActive(); } );
+}
+
+
 void ClimberIO::Metrics::Log( const std::string &key )
 {
     AUTOLOG( key, height );

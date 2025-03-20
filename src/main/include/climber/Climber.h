@@ -3,6 +3,7 @@
 #include <units/length.h>
 
 #include <frc2/command/SubsystemBase.h>
+#include <frc2/command/button/Trigger.h>
 
 #include "util/Utility.h"
 
@@ -20,6 +21,8 @@ public:
     // frc2::CommandPtr ChangeHeight( units::inch_t goal );
     frc2::CommandPtr RaiseClimber( );
     frc2::CommandPtr DoClimb( );
+
+    frc2::Trigger isHoming();
 
 private:
     std::unique_ptr<ClimberIO> io;

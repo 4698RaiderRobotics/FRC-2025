@@ -14,6 +14,7 @@ ElevatorTalon::ElevatorTalon( )
     talonConfigs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
     talonConfigs.CurrentLimits.SupplyCurrentLimit = 40_A;
     talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonConfigs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
 
     talonConfigs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
     

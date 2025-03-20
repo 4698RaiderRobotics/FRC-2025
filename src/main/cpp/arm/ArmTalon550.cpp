@@ -32,6 +32,7 @@ ArmTalon550::ArmTalon550()
     talonConfigs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
     talonConfigs.CurrentLimits.SupplyCurrentLimit = 40_A;
     talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonConfigs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
 
     talonConfigs.Feedback.FeedbackRemoteSensorID = deviceIDs::kElbowEncoderID;
     talonConfigs.Feedback.FeedbackSensorSource = ctre::phoenix6::signals::FeedbackSensorSourceValue::RemoteCANcoder;

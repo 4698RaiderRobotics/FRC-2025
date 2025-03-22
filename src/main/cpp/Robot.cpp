@@ -11,7 +11,6 @@
 #include "util/EncOffsets.h"
 
     // Global variables of mech2d
-frc::Mechanism2d robot_mech{ 60/39.0, 100/39.0 };  // units are meters
 frc::MechanismLigament2d* elevator_lig;
 frc::MechanismLigament2d* elbow_lig;
 frc::MechanismLigament2d* wrist_lig1;

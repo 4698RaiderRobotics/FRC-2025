@@ -94,7 +94,7 @@ frc2::CommandPtr AutoCommands::AutoPlaceCoralL1( Drive *d, Arm *arm, Intake *int
 {
     return frc2::cmd::Sequence(
         arm->ChangeElbowAndWrist( arm::kElbowCoralL1, ArmIO::WristHorizontal ),
-        DriveCommands::DriveDeltaPose( d, {reef::place_L1_shift_in, 0_in, 0_deg}, true, 0.5 ).WithTimeout( 1_s),
+        DriveCommands::DriveDeltaPose( d, {reef::place_L1_shift_in, 0_in, 0_deg}, true, 1.0 ).WithTimeout(1_s),
         intake->EjectCoralL1()
     ).WithName("AutoPlaceCoralL1");
 }
@@ -106,7 +106,7 @@ frc2::CommandPtr AutoCommands::AutoPlaceCoralL2( Drive *d, Arm *arm, Intake *int
             elevator->ChangeHeight( elevator::kHeightCoralL2 + 4_in ),
             arm->ChangeElbowAndWrist( arm::kElbowCoralL2 - 14_deg, ArmIO::WristVertical )
         ),
-        ReefCommands::DriveToReefPoseDelta( d, {reef::place_L2_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout( 1_s),
+        ReefCommands::DriveToReefPoseDelta( d, {reef::place_L2_shift_in, 0_in, 0_deg}, onRightSide ).WithTimeout(1_s),
         frc2::cmd::Parallel(
             elevator->ChangeHeight( elevator::kHeightCoralL2 ),
             arm->ChangeElbowAngle( arm::kElbowCoralL2 )

@@ -154,13 +154,13 @@ frc2::CommandPtr Intake::IndexCoral()
 
 frc2::CommandPtr Intake::EjectCoralL1()
 {
-    return frc2::cmd::Sequence( 
-        RunOnce( [this] { SpinOut(); }),
+    return // frc2::cmd::Sequence( 
+        Run( [this] { SpinOut(); }
 //            .Until( [this] { return !isCenterBroken(); } )
 //            .WithTimeout( 1_s ),
-        frc2::cmd::Wait( 0.5_s ),
-        RunOnce( [this] { Stop(); })
-    ).WithName( "Eject Coral L1");
+        // frc2::cmd::Wait( 0.5_s ),
+        // RunOnce( [this] { Stop(); })
+    ).WithTimeout( 0.25_s ).WithName( "Eject Coral L1");
 }
 
 frc2::CommandPtr Intake::EjectCoralL2_4( bool waitForPipeSwitch )
@@ -180,6 +180,14 @@ frc2::CommandPtr Intake::EjectCoralL2_4( bool waitForPipeSwitch )
         )
     ).WithName( "Eject Coral L2-4");
 
+}
+
+frc2::CommandPtr Intake::EjectCoralL2_4_Fast()
+{
+    return frc2::cmd::Sequence(
+        Run( [this] { ShiftDown(); }).Until( [this] { return isEndBroken(); }).WithTimeout(0.5_s),
+        frc2::cmd::Wait( 0.2_s)
+    );
 }
 
 frc2::CommandPtr Intake::StopCmd()

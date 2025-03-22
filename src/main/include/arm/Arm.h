@@ -13,12 +13,17 @@ public:
     Arm();
     void Periodic() override;
 
+    units::degree_t GetElbowAngle();
     void SetElbowGoal( units::degree_t goal );
     void NudgeElbow( units::degree_t nudge );
-    void SetWristPosition( ArmIO::WristPosition pos );
+
+    ArmIO::WristPosition GetWristGoal();
+    void SetWristGoal( ArmIO::WristPosition pos );
+
     bool AllAtGoal();
     bool WristAtGoal();
     bool ElbowAtGoal();
+    
     bool isArmBackward();
     void AdjustToHoming( bool isClimberHoming );
 

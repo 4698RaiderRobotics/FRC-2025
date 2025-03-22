@@ -14,7 +14,7 @@
 #include "RobotContainer.h"
 
     // Global variables of mech2d
-extern frc::Mechanism2d robot_mech;
+// extern frc::Mechanism2d robot_mech;
 extern frc::MechanismLigament2d* elevator_lig;
 extern frc::MechanismLigament2d* elbow_lig;
 extern frc::MechanismLigament2d* wrist_lig1;
@@ -39,4 +39,6 @@ private:
     frc2::Command* m_autonomousCommand{nullptr};
 
     RobotContainer m_container;
+
+    frc::Mechanism2d robot_mech{ 60/39.0, 100/39.0 };  // units are meters
 };

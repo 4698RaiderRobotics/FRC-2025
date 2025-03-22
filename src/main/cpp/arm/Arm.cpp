@@ -31,7 +31,7 @@ Arm::Arm()
         // Start routine
         [this] { io->SetWristOpenLoop(-0.05); },
         // Stop and Reset Routine
-        [this] { io->SetWristOpenLoop(0.0); io->ResetWristAngle( 0_deg ); SetWristPosition(ArmIO::WristHorizontal); },
+        [this] { io->SetWristOpenLoop(0.0); io->ResetWristAngle( 0_deg ); SetWristGoal(ArmIO::WristHorizontal); },
         // Home Condition
         [this] { return units::math::abs( metrics.wristVelocity ) < 0.1_rpm; },
         300_ms
@@ -67,7 +67,7 @@ void Arm::NudgeElbow( units::degree_t nudge ) {
     SetElbowGoal( metrics.elbowGoal + nudge );
 }
 
-void Arm::SetWristPosition( ArmIO::WristPosition pos )
+void Arm::SetWristGoal( ArmIO::WristPosition pos )
 {
     switch( pos ) {
     case ArmIO::WristHorizontal:
@@ -124,7 +124,7 @@ frc2::CommandPtr Arm::ChangeElbowAngle( units::degree_t goal )
 frc2::CommandPtr Arm::ChangeWristPosition( ArmIO::WristPosition pos ) 
 {
     return frc2::cmd::Sequence(
-        RunOnce( [this, pos] { SetWristPosition( pos ); }),
+        RunOnce( [this, pos] { SetWristGoal( pos ); }),
         frc2::cmd::WaitUntil( [this] { return WristAtGoal(); } ).WithTimeout( 1_s )
     ).WithName( "Change Wrist Position" );
 }
@@ -133,14 +133,14 @@ frc2::CommandPtr Arm::ChangeElbowAndWrist( units::degree_t elbow_goal, ArmIO::Wr
 {
     return frc2::cmd::Sequence(
         RunOnce( [this, elbow_goal] { SetElbowGoal( elbow_goal ); }),
-        RunOnce( [this, pos] { SetWristPosition( pos ); }),
+        RunOnce( [this, pos] { SetWristGoal( pos ); }),
         frc2::cmd::WaitUntil( [this] { return ElbowAtGoal() && WristAtGoal(); } ).WithTimeout( 1_s )
     ).WithName( "ChangeElbowAndWrist" );
 }
 
-frc2::CommandPtr Arm::GotoElbowRest()
+units::degree_t Arm::GetElbowRest()
 {
-    return RunOnce( [this] { SetElbowGoal( back_rest_angle ); });
+    return back_rest_angle;
 }
 
 frc2::CommandPtr Arm::SetClimberHoming( bool isClimberHoming )

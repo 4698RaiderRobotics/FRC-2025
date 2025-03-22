@@ -13,24 +13,24 @@ public:
     Arm();
     void Periodic() override;
 
-    units::degree_t GetElbowAngle();
+    units::degree_t GetElbowAngle() { return metrics.elbowPosition; }
     void SetElbowGoal( units::degree_t goal );
     void NudgeElbow( units::degree_t nudge );
 
-    ArmIO::WristPosition GetWristGoal();
+    // ArmIO::WristPosition GetWristGoal();
     void SetWristGoal( ArmIO::WristPosition pos );
 
     bool AllAtGoal();
     bool WristAtGoal();
     bool ElbowAtGoal();
-    
+    units::degree_t GetElbowRest();
+
     bool isArmBackward();
     void AdjustToHoming( bool isClimberHoming );
 
     frc2::CommandPtr ChangeElbowAngle( units::degree_t goal );
     frc2::CommandPtr ChangeWristPosition(ArmIO::WristPosition pos );
     frc2::CommandPtr ChangeElbowAndWrist( units::degree_t elbow_goal, ArmIO::WristPosition pos );
-    frc2::CommandPtr GotoElbowRest();
     frc2::CommandPtr SetClimberHoming( bool isClimberHoming );
 
 private:

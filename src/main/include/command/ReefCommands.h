@@ -49,7 +49,7 @@ public:
         Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide, std::function<ReefPlacement ()> place_func );
     static frc2::CommandPtr PrepareToPlaceOnReef( Arm *arm, Elevator *elevator, std::function<ReefPlacement ()> place_func );
 
-    static frc2::CommandPtr DriveToReefPose( Drive *d, bool onRightSide );
+    static frc2::CommandPtr DriveToReefPose( Drive *d, bool onRightSide, std::function<ReefPlacement ()> place_func );
     static frc2::CommandPtr DriveToReefPoseDelta( Drive *d, frc::Transform2d move, bool onRightSide );
     static frc2::CommandPtr DriveToAlgaePose( Drive *d );
     static frc2::CommandPtr PlaceCoralNone( );

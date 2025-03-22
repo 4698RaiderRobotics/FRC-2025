@@ -3,6 +3,7 @@
 #include <frc2/command/Commands.h>
 
 #include "command/IntakeCommands.h"
+#include "command/MoveMechanism.h"
 
 #include "arm/Arm.h"
 #include "swerve/Drive.h"
@@ -15,42 +16,47 @@ using namespace physical;
 
 frc2::CommandPtr IntakeCommands::RestPosition( Arm *arm, Intake *intake, Elevator *elevator )
 {
-    return frc2::cmd::Either(
-        // Arm is in backward position and elevator is up
-        frc2::cmd::Sequence(
-            // arm->ChangeWristPosition( ArmIO::WristHorizontal ),
-            // arm->ChangeElbowAngle( arm::kElbowBackwardRaiseAngle ),
-            arm->ChangeElbowAndWrist( arm::kElbowBackwardRaiseAngle, ArmIO::WristHorizontal ),
-            frc2::cmd::Parallel(
-                frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} ),
-                elevator->ChangeHeight( 0.0_in ),
-                frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() < 8_in; })
-                    .AndThen( arm->GotoElbowRest() )
-            )
-        ),
-        // Arm is in forward position
-        frc2::cmd::Sequence(
-            // arm->ChangeWristPosition( ArmIO::WristHorizontal ),
-            // arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
-            arm->ChangeElbowAndWrist( arm::kElbowForwardRaiseAngle, ArmIO::WristHorizontal ),
-            frc2::cmd::Parallel(
-                frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} ),
-                elevator->ChangeHeight( 0.0_in )
-            ),
-            arm->GotoElbowRest()
-        ),
-        [arm, elevator] { return arm->isArmBackward(); }
-    ).WithName( "Rest Position" );
+    return frc2::cmd::Sequence(
+        MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kElbowRestAngle, ArmIO::WristHorizontal ).ToPtr(),
+        frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} )
+    );
+    // return frc2::cmd::Either(
+    //     // Arm is in backward position and elevator is up
+    //     frc2::cmd::Sequence(
+    //         // arm->ChangeWristPosition( ArmIO::WristHorizontal ),
+    //         // arm->ChangeElbowAngle( arm::kElbowBackwardRaiseAngle ),
+    //         arm->ChangeElbowAndWrist( arm::kElbowBackwardRaiseAngle, ArmIO::WristHorizontal ),
+    //         frc2::cmd::Parallel(
+    //             frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} ),
+    //             elevator->ChangeHeight( 0.0_in ),
+    //             frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() < 8_in; })
+    //                 .AndThen( arm->GotoElbowRest() )
+    //         )
+    //     ),
+    //     // Arm is in forward position
+    //     frc2::cmd::Sequence(
+    //         // arm->ChangeWristPosition( ArmIO::WristHorizontal ),
+    //         // arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
+    //         arm->ChangeElbowAndWrist( arm::kElbowForwardRaiseAngle, ArmIO::WristHorizontal ),
+    //         frc2::cmd::Parallel(
+    //             frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} ),
+    //             elevator->ChangeHeight( 0.0_in )
+    //         ),
+    //         arm->GotoElbowRest()
+    //     ),
+    //     [arm, elevator] { return arm->isArmBackward(); }
+    // ).WithName( "Rest Position" );
 }
 
 frc2::CommandPtr IntakeCommands::CoralStationPickup( Arm *arm, Intake *intake, Elevator *elevator )
 {
     return frc2::cmd::Sequence(
-        arm->ChangeWristPosition( ArmIO::WristHorizontal ),  
-        elevator->ChangeHeight( elevator::kElevatorMinHeight ),
-        arm->ChangeElbowAngle( arm::kElbowBackwardRaiseAngle ),
-        elevator->ChangeHeight( elevator::kHeightCoralStation ),
-        arm->ChangeElbowAngle( arm::kElbowCoralStation ),
+        MoveMechanism( arm, elevator, elevator::kHeightCoralStation, arm::kElbowCoralStation, ArmIO::WristHorizontal ).ToPtr(),
+        // arm->ChangeWristPosition( ArmIO::WristHorizontal ),  
+        // elevator->ChangeHeight( elevator::kElevatorMinHeight ),
+        // arm->ChangeElbowAngle( arm::kElbowBackwardRaiseAngle ),
+        // elevator->ChangeHeight( elevator::kHeightCoralStation ),
+        // arm->ChangeElbowAngle( arm::kElbowCoralStation ),
         intake->IntakeCoral(),
         RestPosition( arm, intake, elevator )
     ).WithName( "Coral Station Pickup" );

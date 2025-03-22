@@ -23,6 +23,10 @@ void MoveMechanism::Init()
 {
     final_move = false;
 
+    if( units::math::abs( elbow_goal - arm::kElbowRestAngle ) < 0.1_deg ) {
+        elbow_goal = m_arm->GetElbowRest();
+    }
+
     if( m_arm->isArmBackward() ) {
         // Arm is back
         move_arm_backward = false;

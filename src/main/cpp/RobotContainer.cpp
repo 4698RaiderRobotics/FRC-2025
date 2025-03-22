@@ -74,9 +74,9 @@ void RobotContainer::ConfigureDefaults()
             if( nudge_hold_button.Get() ) {
                 m_arm->NudgeElbow(elbow_nudge_axis.GetAxis() * 0.5_deg);
                 if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) > 0.75 ) {
-                    m_arm->SetWristPosition( ArmIO::WristHorizontal);
+                    m_arm->SetWristGoal( ArmIO::WristHorizontal);
                 } else if( operatorCtrlr.GetHID().GetRawAxis(ctrl::nudge_wrist_axis) < -0.75 ) {
-                    m_arm->SetWristPosition( ArmIO::WristVertical);
+                    m_arm->SetWristGoal( ArmIO::WristVertical);
                 }
             }
         },

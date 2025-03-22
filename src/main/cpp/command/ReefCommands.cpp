@@ -155,7 +155,25 @@ frc2::CommandPtr ReefCommands::PlaceOnReef(
         frc2::cmd::Either( 
             frc2::cmd::Sequence(
                 frc2::cmd::RunOnce( [intake] {intake->ShiftUpSlow();}, {intake}),
-                DriveToReefPose( d, onRightSide, place_func ),
+                frc2::cmd::Select<ReefPlacement>( 
+                    [place_func] { return place_func(); }, 
+                    std::pair{ ReefPlacement::PLACING_L1, frc2::cmd::Parallel(
+                        PrePlaceCoralL1( arm, elevator ),
+                        DriveToReefPose( d, onRightSide, place_func )
+                    )},
+                    std::pair{ ReefPlacement::PLACING_L2,frc2::cmd::Parallel(
+                        PrePlaceCoralL2( arm, elevator ),
+                        DriveToReefPose( d, onRightSide, place_func )
+                    )},
+                    std::pair{ ReefPlacement::PLACING_L3, frc2::cmd::Parallel(
+                        PrePlaceCoralL3( arm, elevator ),
+                        DriveToReefPose( d, onRightSide, place_func )
+                    )},
+                    std::pair{ ReefPlacement::PLACING_L4, frc2::cmd::Parallel(
+                        PrePlaceCoralL4( arm, elevator ),
+                        DriveToReefPose( d, onRightSide, place_func )
+                    )}
+                ),
                 intake->StopCmd(),
                 frc2::cmd::Select<ReefPlacement>( 
                     [place_func] { return place_func(); }, 

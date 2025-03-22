@@ -93,14 +93,17 @@ void MoveMechanism::Execute()
             }
         } else {
             // Arm has moved to a place where the elevator can move where it needs to go
-            final_move = true;
-            m_elevator->SetGoal( height_goal );
-            if( wrist_goal == ArmIO::WristVertical ) {
-                if( m_arm->GetElbowAngle() < 50_deg || m_elevator->GetHeight() > 21_in ) {
+            if( !final_move ) {
+                m_elevator->SetGoal( height_goal );
+                if( wrist_goal == ArmIO::WristVertical ) {
+                    if( m_arm->GetElbowAngle() < 50_deg || m_elevator->GetHeight() > 21_in ) {
+                        m_arm->SetWristGoal( wrist_goal );
+                        final_move = true;
+                    }
+                } else {
                     m_arm->SetWristGoal( wrist_goal );
+                    final_move = true;
                 }
-            } else {
-                m_arm->SetWristGoal( wrist_goal );
             }
         }
     }

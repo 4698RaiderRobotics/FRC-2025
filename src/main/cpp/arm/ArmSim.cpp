@@ -37,9 +37,9 @@ void ArmSim::Update( Metrics &m )
 
     // Don't let the wrist sim go outside 0-90 degrees.
     // Set open loop to zero so velocity is zero and homing works.
+    m.wristGoal = util::clamp( m.wristGoal, 0_deg, 90_deg );
     if( m.wristPosition < 0_deg || m.wristPosition > 90_deg ) {
         m.wristPosition = util::clamp( m.wristPosition, 0_deg, 90_deg );
-        m.wristGoal = util::clamp( m.wristGoal, 0_deg, 90_deg );
         wristSim.SetPosition( m.wristPosition );
         wristSim.SetOpenLoop( 0.0 );
     }

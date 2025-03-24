@@ -15,9 +15,12 @@ public:
     void SetGoal( units::inch_t goal ) override;
 private:
     ctre::phoenix6::hardware::TalonFX talon;
+    ctre::phoenix6::hardware::TalonFX talon_follower;
 
     ctre::phoenix6::StatusSignal<units::turn_t> talonPosition = talon.GetPosition();
     ctre::phoenix6::StatusSignal<units::turns_per_second_t> talonVelocity = talon.GetVelocity();
     ctre::phoenix6::StatusSignal<units::volt_t> talonAppliedVolts = talon.GetMotorVoltage();
     ctre::phoenix6::StatusSignal<units::ampere_t> talonCurrent = talon.GetSupplyCurrent();
+    ctre::phoenix6::StatusSignal<units::volt_t> followerAppliedVolts = talon_follower.GetMotorVoltage();
+    ctre::phoenix6::StatusSignal<units::ampere_t> followerCurrent = talon_follower.GetSupplyCurrent();
 };

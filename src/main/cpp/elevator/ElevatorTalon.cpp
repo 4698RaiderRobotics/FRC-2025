@@ -12,8 +12,8 @@ ElevatorTalon::ElevatorTalon( )
 {
     {   // Configure the main talon
         ctre::phoenix6::configs::TalonFXConfiguration talonConfigs{};
-        talonConfigs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
-        talonConfigs.CurrentLimits.SupplyCurrentLimit = 40_A;
+        talonConfigs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
+        talonConfigs.CurrentLimits.SupplyCurrentLimit = 60_A;
         talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonConfigs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
 
@@ -29,7 +29,7 @@ ElevatorTalon::ElevatorTalon( )
     }
     {   // Configure the follower talon
         ctre::phoenix6::configs::TalonFXConfiguration configs{};
-        configs.CurrentLimits.SupplyCurrentLimit = 40_A;
+        configs.CurrentLimits.SupplyCurrentLimit = 60_A;
         configs.CurrentLimits.SupplyCurrentLimitEnable = true;
         configs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
 

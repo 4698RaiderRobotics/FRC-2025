@@ -50,7 +50,7 @@ namespace elevator {
     constexpr units::inch_t kGearDiameter = 1.504_in;
 
         // Gear Ratio
-    constexpr double kGearRatio = 10;
+    constexpr double kGearRatio = 5;
 
         // The number of inches traveled per rotation of the motor
         // wheel circumference / gear ratio
@@ -59,9 +59,9 @@ namespace elevator {
         // PIDSGVA and Motion Profile settings
     constexpr MotionConfig<units::inches> kMotionConfig = {
         // { 8.0, 0.0, 0.0, 0.175, 0.375, 0.122, 0.0 },
-        { 7.5, 0.0, 0.0, 0.175, 0.375, 0.122, 0.0 },
+        { 7.5, 0.0, 0.0, 0.175, 0.375, 0.125, 0.0 },
         // { 2_mps, 3_mps_sq, 30_mps_cu }
-        { 2.25_mps, 5_mps_sq, 40_mps_cu }
+        { 4.4_mps, 8_mps_sq, 60_mps_cu }
     };
 }
 

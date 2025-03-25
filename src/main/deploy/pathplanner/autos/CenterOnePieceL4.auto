@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "PrepareToPlaceOnReefL4"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CenterTo1LeftL4"
@@ -13,13 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "PrepareToPlaceOnReefL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PlaceOnReefLeftL4"
+            "name": "PlaceOnReefL4"
           }
         },
         {

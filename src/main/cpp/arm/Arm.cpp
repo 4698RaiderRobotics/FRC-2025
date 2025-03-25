@@ -67,6 +67,15 @@ void Arm::NudgeElbow( units::degree_t nudge ) {
     SetElbowGoal( metrics.elbowGoal + nudge );
 }
 
+ArmIO::WristPosition Arm::GetWristGoal() 
+{ 
+    if( metrics.wristGoal < 45_deg ) {
+        return ArmIO::WristHorizontal;
+    } else {
+        return ArmIO::WristVertical;
+    }
+}
+
 void Arm::SetWristGoal( ArmIO::WristPosition pos )
 {
     switch( pos ) {

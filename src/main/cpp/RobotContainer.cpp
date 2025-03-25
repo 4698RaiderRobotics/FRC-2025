@@ -221,37 +221,53 @@ void RobotContainer::ConfigureAutos()
         IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
     );
     pathplanner::NamedCommands::registerCommand(
-        "PlaceOnReefRightL1", 
-        AutoCommands::AutoPlaceCoralL1( m_drive, m_arm, m_intake, m_elevator, true )
+        "PlaceOnReefL1", 
+        AutoCommands::AutoPlaceCoralL1( m_intake )
     );
     pathplanner::NamedCommands::registerCommand(
-        "PlaceOnReefRightL2", 
-        AutoCommands::AutoPlaceCoralL2( m_drive, m_arm, m_intake, m_elevator, true )
+        "PlaceOnReefL2", 
+        AutoCommands::AutoPlaceCoralL2( m_arm, m_intake, m_elevator )
     );
     pathplanner::NamedCommands::registerCommand(
-        "PlaceOnReefRightL3", 
-        AutoCommands::AutoPlaceCoralL3( m_drive, m_arm, m_intake, m_elevator, true )
+        "PlaceOnReefL3", 
+        AutoCommands::AutoPlaceCoralL3( m_arm, m_intake, m_elevator )
     );
     pathplanner::NamedCommands::registerCommand(
-        "PlaceOnReefRightL4", 
-        AutoCommands::AutoPlaceCoralL4( m_drive, m_arm, m_intake, m_elevator, true )
+        "PlaceOnReefL4", 
+        AutoCommands::AutoPlaceCoralL4( m_arm, m_intake, m_elevator )
     );
-    pathplanner::NamedCommands::registerCommand(
-        "PlaceOnReefLeftL1", 
-        AutoCommands::AutoPlaceCoralL1( m_drive, m_arm, m_intake, m_elevator, false )
-    );
-    pathplanner::NamedCommands::registerCommand(
-        "PlaceOnReefLeftL2", 
-        AutoCommands::AutoPlaceCoralL2( m_drive, m_arm, m_intake, m_elevator, false )
-    );
-    pathplanner::NamedCommands::registerCommand(
-        "PlaceOnReefLeftL3", 
-        AutoCommands::AutoPlaceCoralL3( m_drive, m_arm, m_intake, m_elevator, false )
-    );
-    pathplanner::NamedCommands::registerCommand(
-        "PlaceOnReefLeftL4", 
-        AutoCommands::AutoPlaceCoralL4( m_drive, m_arm, m_intake, m_elevator, false )
-    );
+    // pathplanner::NamedCommands::registerCommand(
+    //     "PlaceOnReefRightL1", 
+    //     AutoCommands::AutoPlaceCoralL1( m_drive, m_arm, m_intake, m_elevator, true )
+    // );
+    // pathplanner::NamedCommands::registerCommand(
+    //     "PlaceOnReefRightL2", 
+    //     AutoCommands::AutoPlaceCoralL2( m_drive, m_arm, m_intake, m_elevator, true )
+    // );
+    // pathplanner::NamedCommands::registerCommand(
+    //     "PlaceOnReefRightL3", 
+    //     AutoCommands::AutoPlaceCoralL3( m_drive, m_arm, m_intake, m_elevator, true )
+    // );
+    // pathplanner::NamedCommands::registerCommand(
+    //     "PlaceOnReefRightL4", 
+    //     AutoCommands::AutoPlaceCoralL4( m_drive, m_arm, m_intake, m_elevator, true )
+    // );
+    // pathplanner::NamedCommands::registerCommand(
+    //     "PlaceOnReefLeftL1", 
+    //     AutoCommands::AutoPlaceCoralL1( m_drive, m_arm, m_intake, m_elevator, false )
+    // );
+    // pathplanner::NamedCommands::registerCommand(
+    //     "PlaceOnReefLeftL2", 
+    //     AutoCommands::AutoPlaceCoralL2( m_drive, m_arm, m_intake, m_elevator, false )
+    // );
+    // pathplanner::NamedCommands::registerCommand(
+    //     "PlaceOnReefLeftL3", 
+    //     AutoCommands::AutoPlaceCoralL3( m_drive, m_arm, m_intake, m_elevator, false )
+    // );
+    // pathplanner::NamedCommands::registerCommand(
+    //     "PlaceOnReefLeftL4", 
+    //     AutoCommands::AutoPlaceCoralL4( m_drive, m_arm, m_intake, m_elevator, false )
+    // );
     pathplanner::NamedCommands::registerCommand(
         "ReefToCoralStation",
         AutoCommands::ReefToCoralStation( m_arm, m_intake, m_elevator )
@@ -297,7 +313,7 @@ void RobotContainer::ConfigureAutos()
         // {"Left Two Piece P55 L13", "LeftTwoPiece-P55-L13"},
         {"Left Two Piece P55 L14", "LeftTwoPiece-P55-L14"},
         // {"Left Three Piece L3", "LeftThreePieceL3"},
-        // {"Left Three Piece L4", "LeftThreePieceL4"},
+        {"Left Three Piece P655 L444", "LeftThreePiece-P655-L444"},
     
         // {"Right One Piece L1", "RightOnePieceL1"},
         // {"Right One Piece L4", "RightOnePieceL4"},
@@ -305,7 +321,7 @@ void RobotContainer::ConfigureAutos()
         // {"Right Two Piece P33 L13", "RightTwoPiece-P33-L13"},
         {"Right Two Piece P33 L14", "RightTwoPiece-P33-L14"},
         // {"Right Three Piece L3", "RightThreePieceL3"},
-        // {"Right Three Piece P334 L133", "RightThreePiece-P334-L133"},
+        {"Right Three Piece P233 L444", "RightThreePiece-P233-L444"},
         // {"Right Three Piece L4", "RightThreePieceL4"}
     };
 

@@ -1,0 +1,214 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.8039252058351885,
+        "y": 3.1688975474387524
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.5539252058351885,
+        "y": 3.1688975474387524
+      },
+      "isLocked": true,
+      "linkedName": "FrontProcessorLeftL4"
+    },
+    {
+      "anchor": {
+        "x": 4.08988679416481,
+        "y": 3.003797547438752
+      },
+      "prevControl": {
+        "x": 4.33988679416481,
+        "y": 3.003797547438752
+      },
+      "nextControl": {
+        "x": 3.8398867941648103,
+        "y": 3.003797547438752
+      },
+      "isLocked": true,
+      "linkedName": "FrontProcessorRightL4"
+    },
+    {
+      "anchor": {
+        "x": 3.4036,
+        "y": 4.191
+      },
+      "prevControl": {
+        "x": 3.6536,
+        "y": 4.191
+      },
+      "nextControl": {
+        "x": 3.1536,
+        "y": 4.191
+      },
+      "isLocked": true,
+      "linkedName": "FrontCenterLeftL4"
+    },
+    {
+      "anchor": {
+        "x": 3.4036,
+        "y": 3.8608000000000002
+      },
+      "prevControl": {
+        "x": 3.6536,
+        "y": 3.8608000000000002
+      },
+      "nextControl": {
+        "x": 3.1536,
+        "y": 3.8608000000000002
+      },
+      "isLocked": true,
+      "linkedName": "FrontCenterRightL4"
+    },
+    {
+      "anchor": {
+        "x": 4.08988679416481,
+        "y": 5.0480024525612475
+      },
+      "prevControl": {
+        "x": 4.33988679416481,
+        "y": 5.0480024525612475
+      },
+      "nextControl": {
+        "x": 3.8398867941648103,
+        "y": 5.0480024525612475
+      },
+      "isLocked": true,
+      "linkedName": "FrontAwayLeftL4"
+    },
+    {
+      "anchor": {
+        "x": 3.8039252058351885,
+        "y": 4.882902452561248
+      },
+      "prevControl": {
+        "x": 4.0539252058351885,
+        "y": 4.882902452561248
+      },
+      "nextControl": {
+        "x": 3.5539252058351885,
+        "y": 4.882902452561248
+      },
+      "isLocked": true,
+      "linkedName": "FrontAwayRightL4"
+    },
+    {
+      "anchor": {
+        "x": 4.888759205835189,
+        "y": 5.0480024525612475
+      },
+      "prevControl": {
+        "x": 5.138759205835189,
+        "y": 5.0480024525612475
+      },
+      "nextControl": {
+        "x": 4.638759205835189,
+        "y": 5.0480024525612475
+      },
+      "isLocked": true,
+      "linkedName": "BackAwayLeftL4"
+    },
+    {
+      "anchor": {
+        "x": 5.17472079416481,
+        "y": 4.882902452561247
+      },
+      "prevControl": {
+        "x": 5.42472079416481,
+        "y": 4.882902452561247
+      },
+      "nextControl": {
+        "x": 4.92472079416481,
+        "y": 4.882902452561247
+      },
+      "isLocked": true,
+      "linkedName": "BackAwayRightL4"
+    },
+    {
+      "anchor": {
+        "x": 5.575046,
+        "y": 4.191
+      },
+      "prevControl": {
+        "x": 5.825046,
+        "y": 4.191
+      },
+      "nextControl": {
+        "x": 5.325046,
+        "y": 4.191
+      },
+      "isLocked": true,
+      "linkedName": "BackCenterLeftL4"
+    },
+    {
+      "anchor": {
+        "x": 5.575046,
+        "y": 3.8608000000000002
+      },
+      "prevControl": {
+        "x": 5.825046,
+        "y": 3.8608000000000002
+      },
+      "nextControl": {
+        "x": 5.325046,
+        "y": 3.8608000000000002
+      },
+      "isLocked": true,
+      "linkedName": "BackCenterRightL4"
+    },
+    {
+      "anchor": {
+        "x": 5.17472079416481,
+        "y": 3.1688975474387524
+      },
+      "prevControl": {
+        "x": 5.42472079416481,
+        "y": 3.1688975474387524
+      },
+      "nextControl": {
+        "x": 4.92472079416481,
+        "y": 3.1688975474387524
+      },
+      "isLocked": true,
+      "linkedName": "BackProcessorLeftL4"
+    },
+    {
+      "anchor": {
+        "x": 4.888759205835189,
+        "y": 3.0037975474387526
+      },
+      "prevControl": {
+        "x": 5.138759205835189,
+        "y": 3.0037975474387526
+      },
+      "nextControl": null,
+      "isLocked": true,
+      "linkedName": "BackProcessorRightL4"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": 119.99999999999999
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0.0,
+    "rotation": 59.99999999999999
+  },
+  "useDefaultConstraints": true
+}

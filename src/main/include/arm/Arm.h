@@ -17,7 +17,7 @@ public:
     void SetElbowGoal( units::degree_t goal );
     void NudgeElbow( units::degree_t nudge );
 
-    // ArmIO::WristPosition GetWristGoal();
+    ArmIO::WristPosition GetWristGoal();
     void SetWristGoal( ArmIO::WristPosition pos );
 
     bool AllAtGoal();

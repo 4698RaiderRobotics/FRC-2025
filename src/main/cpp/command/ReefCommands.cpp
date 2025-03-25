@@ -22,6 +22,9 @@
 
 using namespace physical;
 
+void WritePathPlannerJSONFile( std::string fname, std::vector<frc::Pose2d> &PP_poses, std::vector<std::string> &PP_names );
+
+
 ReefPlacingPoses ReefCommands::reefPoses = ReefPlacingPoses();
 
 ReefPlacingPoses::ReefPlacingPoses() 
@@ -74,7 +77,7 @@ void ReefPlacingPoses::OutputPathPlannerJSON()
 {
     std::vector<frc::Pose2d> PP_poses;
 
-    const char *PP_names[] = {
+    std::vector<std::string> PP_names = {
         "FrontProcessorLeft",  "FrontProcessorRight",  
         "FrontCenterLeft",  "FrontCenterRight",  
         "FrontAwayLeft",  "FrontAwayRight",  
@@ -88,64 +91,90 @@ void ReefPlacingPoses::OutputPathPlannerJSON()
         PP_poses.push_back( blueRightReefPlacingPoses[i] );
     }
 
-    fmt::print( "{{\n  \"version\": \"2025.0\",\n  \"waypoints\": [\n");
+    WritePathPlannerJSONFile( "ReefPoints.path", PP_poses, PP_names );
+
+    PP_poses.clear();
+    PP_names = {
+        "FrontProcessorLeftL4",  "FrontProcessorRightL4",  
+        "FrontCenterLeftL4",  "FrontCenterRightL4",  
+        "FrontAwayLeftL4",  "FrontAwayRightL4",  
+        "BackAwayLeftL4",  "BackAwayRightL4",  
+        "BackCenterLeftL4",  "BackCenterRightL4",  
+        "BackProcessorLeftL4",  "BackProcessorRightL4"
+    };
+
+    for( size_t i=0; i<blueLeftReefPlacingPoses.size(); ++i ) {
+        PP_poses.push_back( blueLeftReefPlacingPoses[i].TransformBy( {reef::place_L4_shift_in, 0_in, 0_deg} ) );
+        PP_poses.push_back( blueRightReefPlacingPoses[i].TransformBy( {reef::place_L4_shift_in, 0_in, 0_deg} ) );
+    }
+
+    WritePathPlannerJSONFile( "ReefPointsL4.path", PP_poses, PP_names );
+}
+
+void WritePathPlannerJSONFile( std::string fname, std::vector<frc::Pose2d> &PP_poses, std::vector<std::string> &PP_names ) 
+{
+    FILE *fp = fopen( fname.c_str(), "wt" );
+
+    fmt::print( fp, "{{\n  \"version\": \"2025.0\",\n  \"waypoints\": [\n");
 
     for( size_t i=0; i<PP_poses.size(); ++i ) {
-        fmt::print("    {{\n");
-        fmt::print("      \"anchor\": {{\n");
-        fmt::print("        \"x\": {},\n", PP_poses[i].Translation().X().value() );
-        fmt::print("        \"y\": {}\n", PP_poses[i].Translation().Y().value() );
-        fmt::print("      }},\n");
+        fmt::print(fp, "    {{\n");
+        fmt::print(fp, "      \"anchor\": {{\n");
+        fmt::print(fp, "        \"x\": {},\n", PP_poses[i].Translation().X().value() );
+        fmt::print(fp, "        \"y\": {}\n", PP_poses[i].Translation().Y().value() );
+        fmt::print(fp, "      }},\n");
         if( i == 0 ) {
-            fmt::print("      \"prevControl\": null,\n");
+            fmt::print(fp, "      \"prevControl\": null,\n");
         } else {
-            fmt::print("      \"prevControl\": {{\n");
-            fmt::print("        \"x\": {},\n", PP_poses[i].Translation().X().value() + 0.1 );
-            fmt::print("        \"y\": {}\n", PP_poses[i].Translation().Y().value() );
-            fmt::print("      }},\n");
+            fmt::print(fp, "      \"prevControl\": {{\n");
+            fmt::print(fp, "        \"x\": {},\n", PP_poses[i].Translation().X().value() + 0.1 );
+            fmt::print(fp, "        \"y\": {}\n", PP_poses[i].Translation().Y().value() );
+            fmt::print(fp, "      }},\n");
         }
         if( i == PP_poses.size()-1 ) {
-            fmt::print("      \"nextControl\": null,\n");
+            fmt::print(fp, "      \"nextControl\": null,\n");
         } else {
-            fmt::print("      \"nextControl\": {{\n");
-            fmt::print("        \"x\": {},\n", PP_poses[i].Translation().X().value() - 0.1 );
-            fmt::print("        \"y\": {}\n", PP_poses[i].Translation().Y().value() );
-            fmt::print("      }},\n");
+            fmt::print(fp, "      \"nextControl\": {{\n");
+            fmt::print(fp, "        \"x\": {},\n", PP_poses[i].Translation().X().value() - 0.1 );
+            fmt::print(fp, "        \"y\": {}\n", PP_poses[i].Translation().Y().value() );
+            fmt::print(fp, "      }},\n");
         }
-        fmt::print("      \"isLocked\": true,\n");
-        fmt::print("      \"linkedName\": \"{}\"\n", PP_names[i] );
+        fmt::print(fp, "      \"isLocked\": true,\n");
+        fmt::print(fp, "      \"linkedName\": \"{}\"\n", PP_names[i] );
         if( i == PP_poses.size()-1 ) {
-            fmt::print("    }}\n" );
+            fmt::print(fp, "    }}\n" );
         } else {
-            fmt::print("    }},\n" );
+            fmt::print(fp, "    }},\n" );
         }
     }
 
-    fmt::print( "  ],\n");
-    fmt::print( "  \"rotationTargets\": [],\n");
-    fmt::print( "  \"constraintZones\": [],\n");
-    fmt::print( "  \"pointTowardsZones\": [],\n");
-    fmt::print( "  \"eventMarkers\": [],\n");
-    fmt::print( "  \"globalConstraints\": {{\n");
-    fmt::print( "    \"maxVelocity\": 3.0,\n");
-    fmt::print( "    \"maxAcceleration\": 3.0,\n");
-    fmt::print( "    \"maxAngularVelocity\": 540.0,\n");
-    fmt::print( "    \"maxAngularAcceleration\": 720.0,\n");
-    fmt::print( "    \"nominalVoltage\": 12.0,\n");
-    fmt::print( "    \"unlimited\": false\n");
-    fmt::print( "  }},\n");
-    fmt::print( "  \"goalEndState\": {{\n");
-    fmt::print( "    \"velocity\": 0.0,\n");
-    fmt::print( "    \"rotation\": -119.99999999999999\n");
-    fmt::print( "  }},\n");
-    fmt::print( "  \"reversed\": false,\n");
-    fmt::print( "  \"folder\": null,\n");
-    fmt::print( "  \"idealStartingState\": {{\n");
-    fmt::print( "    \"velocity\": 0.0,\n");
-    fmt::print( "    \"rotation\": -59.99999999999999\n");
-    fmt::print( "  }},\n");
-    fmt::print( "  \"useDefaultConstraints\": true\n");
-    fmt::print( "}}\n");
+    fmt::print( fp, "  ],\n");
+    fmt::print( fp, "  \"rotationTargets\": [],\n");
+    fmt::print( fp, "  \"constraintZones\": [],\n");
+    fmt::print( fp, "  \"pointTowardsZones\": [],\n");
+    fmt::print( fp, "  \"eventMarkers\": [],\n");
+    fmt::print( fp, "  \"globalConstraints\": {{\n");
+    fmt::print( fp, "    \"maxVelocity\": 3.0,\n");
+    fmt::print( fp, "    \"maxAcceleration\": 3.0,\n");
+    fmt::print( fp, "    \"maxAngularVelocity\": 540.0,\n");
+    fmt::print( fp, "    \"maxAngularAcceleration\": 720.0,\n");
+    fmt::print( fp, "    \"nominalVoltage\": 12.0,\n");
+    fmt::print( fp, "    \"unlimited\": false\n");
+    fmt::print( fp, "  }},\n");
+    fmt::print( fp, "  \"goalEndState\": {{\n");
+    fmt::print( fp, "    \"velocity\": 0.0,\n");
+    fmt::print( fp, "    \"rotation\": -119.99999999999999\n");
+    fmt::print( fp, "  }},\n");
+    fmt::print( fp, "  \"reversed\": false,\n");
+    fmt::print( fp, "  \"folder\": null,\n");
+    fmt::print( fp, "  \"idealStartingState\": {{\n");
+    fmt::print( fp, "    \"velocity\": 0.0,\n");
+    fmt::print( fp, "    \"rotation\": -59.99999999999999\n");
+    fmt::print( fp, "  }},\n");
+    fmt::print( fp, "  \"useDefaultConstraints\": true\n");
+    fmt::print( fp, "}}\n");
+
+    fclose( fp );
 }
 
 frc2::CommandPtr ReefCommands::PlaceOnReef( 

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.9247867941648096,
-        "y": 2.718
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.6908746930974785,
-        "y": 2.5231523684268193
-      },
-      "isLocked": true,
-      "linkedName": "FrontProcessorRight"
-    },
-    {
-      "anchor": {
         "x": 1.4836726410964847,
         "y": 0.5035191218828584
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.219742779592064,
+        "y": 1.2366334427925962
+      },
+      "isLocked": true,
+      "linkedName": "RightSource"
+    },
+    {
+      "anchor": {
+        "x": 3.8039252058351885,
+        "y": 3.1688975474387524
+      },
       "prevControl": {
-        "x": 2.256114465145803,
-        "y": 1.277837533212741
+        "x": 3.1098432061909262,
+        "y": 1.8611188356164383
       },
       "nextControl": null,
-      "isLocked": false,
-      "linkedName": "RightSource"
+      "isLocked": true,
+      "linkedName": "FrontProcessorLeftL4"
     }
   ],
   "rotationTargets": [],
@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Reef To CS",
-      "waypointRelativePos": 0.0,
+      "name": "Leave CS to L4",
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "ReefToCoralStation"
+          "name": "LeaveCoralStationToL4"
         }
       }
     }
@@ -53,14 +53,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 53.392925187392535
+    "velocity": 0.0,
+    "rotation": 59.99999999999999
   },
   "reversed": false,
-  "folder": "ReefToRightSource",
+  "folder": "RightSideSource",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 53.392925187392535
   },
   "useDefaultConstraints": true
 }

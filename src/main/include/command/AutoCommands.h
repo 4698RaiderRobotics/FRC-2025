@@ -19,10 +19,10 @@ public:
     static frc2::CommandPtr ReefToCoralStation( Arm *arm, Intake *intake, Elevator *elevator );
     static frc2::CommandPtr CoralStationPickup( Arm *arm, Intake *intake, Elevator *elevator );
     static frc2::CommandPtr LeaveCoralStation( Arm *arm, Intake *intake, Elevator *elevator, ReefPlacement p );
-    static frc2::CommandPtr AutoPlaceCoralL1( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide );
-    static frc2::CommandPtr AutoPlaceCoralL2( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide );
-    static frc2::CommandPtr AutoPlaceCoralL3( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide );
-    static frc2::CommandPtr AutoPlaceCoralL4( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide );
+    static frc2::CommandPtr AutoPlaceCoralL1( Intake *intake );
+    static frc2::CommandPtr AutoPlaceCoralL2( Arm *arm, Intake *intake, Elevator *elevator );
+    static frc2::CommandPtr AutoPlaceCoralL3( Arm *arm, Intake *intake, Elevator *elevator );
+    static frc2::CommandPtr AutoPlaceCoralL4( Arm *arm, Intake *intake, Elevator *elevator );
     static frc2::CommandPtr AutoEndAtReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator );
 
 

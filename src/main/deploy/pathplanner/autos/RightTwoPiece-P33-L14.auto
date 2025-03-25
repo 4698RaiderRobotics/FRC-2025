@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefLeftL1"
+            "name": "PlaceOnReefL1"
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefRightL4"
+            "name": "PlaceOnReefL4"
           }
         },
         {

@@ -22,6 +22,7 @@ MoveMechanism::MoveMechanism( Arm *arm, Elevator *elevator, units::inch_t height
 void MoveMechanism::Init() 
 {
     final_move = false;
+    delay_for_wrist = false;
 
     if( units::math::abs( elbow_goal - arm::kElbowRestAngle ) < 0.1_deg ) {
         elbow_goal = m_arm->GetElbowRest();
@@ -58,6 +59,14 @@ void MoveMechanism::Init()
             } else {
                 move_elevator_down = false;
             }
+                // If the elevator is lowish and wrist is vertical and the arm needs to move back
+                // then we need to delay a little to let the wrist move horizontal before moving the
+                // arm back
+            if( m_elevator->GetHeight() < 20_in && 
+                m_arm->GetWristGoal() == ArmIO::WristVertical &&
+                wrist_goal == ArmIO::WristHorizontal ) {
+                delay_for_wrist = true;
+            }
         }
     }
 }
@@ -74,6 +83,9 @@ void MoveMechanism::Execute()
             m_arm->SetElbowGoal( arm::kElbowForwardRaiseAngle );
         }
         if( wrist_goal == ArmIO::WristHorizontal ) {
+            // if( delay_for_wrist ) {
+            //     wrist_start_time = frc::Timer::GetFPGATimestamp();
+            // }
             m_arm->SetWristGoal( wrist_goal );
         }
         m_elevator->SetGoal( elevator::kElevatorMinHeight );
@@ -82,6 +94,10 @@ void MoveMechanism::Execute()
         }
     } else {
         // Elevator is in a place that is ok to move the elbow where it needs to go
+        // if( delay_for_wrist && frc::Timer::GetFPGATimestamp() - wrist_start_time < 250_ms ) {
+        if( (move_arm_backward || move_arm_forward ) && delay_for_wrist && !m_arm->WristAtGoal() ) {
+            return;
+        }
         m_arm->SetElbowGoal( elbow_goal );
         if( move_arm_backward ) {
             if( m_arm->GetElbowAngle() > 90_deg ) {

@@ -11,21 +11,21 @@
         "x": 6.279560074860461,
         "y": 4.070961658820941
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "CenterStart"
     },
     {
       "anchor": {
-        "x": 5.905246,
+        "x": 5.575046,
         "y": 4.191
       },
       "prevControl": {
-        "x": 6.383872714705164,
-        "y": 4.184273028944403
+        "x": 6.7765839041095886,
+        "y": 4.205308219178082
       },
       "nextControl": null,
       "isLocked": true,
-      "linkedName": "BackCenterLeft"
+      "linkedName": "BackCenterLeftL4"
     }
   ],
   "rotationTargets": [],
@@ -41,7 +41,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 180.0
   },
   "reversed": false,

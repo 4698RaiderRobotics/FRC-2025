@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftTo5LeftL1"
+            "pathName": "RightTo2RightL4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "PlaceOnReefL1"
+            "name": "PlaceOnReefL4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "5LL4ToLeftSource"
+            "pathName": "2RL4ToRightSource"
           }
         },
         {
@@ -31,7 +31,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftSideSourceTo5RL4"
+            "pathName": "RightSideSourceTo3RL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceOnReefL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3RL4ToRightSource"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CoralStationPickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightSideSourceTo3LL4"
           }
         },
         {
@@ -50,6 +74,6 @@
     }
   },
   "resetOdom": false,
-  "folder": "LeftSideStart",
+  "folder": "RightSideStart",
   "choreoAuto": false
 }

@@ -38,8 +38,11 @@ private:
     units::degree_t elbow_goal;
     ArmIO::WristPosition wrist_goal;
 
+    // units::second_t wrist_start_time;
+
     bool move_arm_forward;
     bool move_arm_backward;
     bool move_elevator_down;
+    bool delay_for_wrist;
     bool final_move;
 };

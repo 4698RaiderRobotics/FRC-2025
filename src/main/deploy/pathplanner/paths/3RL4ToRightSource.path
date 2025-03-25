@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Reef To CS",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.1976190476190475,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

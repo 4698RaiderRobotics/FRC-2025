@@ -65,8 +65,9 @@ frc2::CommandPtr IntakeCommands::CoralStationPickup( Arm *arm, Intake *intake, E
 frc2::CommandPtr IntakeCommands::CoralStationResume( Arm *arm, Intake *intake, Elevator *elevator, bool eject )
 {
     return frc2::cmd::Sequence(
-        elevator->ChangeHeight( elevator::kHeightCoralStation ),
-        arm->ChangeElbowAngle( arm::kElbowCoralStation ),
+        MoveMechanism( arm, elevator, elevator::kHeightCoralStation, arm::kElbowCoralStation, ArmIO::WristHorizontal ).ToPtr(),
+        // elevator->ChangeHeight( elevator::kHeightCoralStation ),
+        // arm->ChangeElbowAngle( arm::kElbowCoralStation ),
         frc2::cmd::Either( 
             frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
             intake->IntakeCoral(),
@@ -78,11 +79,12 @@ frc2::CommandPtr IntakeCommands::CoralStationResume( Arm *arm, Intake *intake, E
 frc2::CommandPtr IntakeCommands::GroundPickup( Arm *arm, Intake *intake, Elevator *elevator )
 {
     return frc2::cmd::Sequence(
-        arm->ChangeWristPosition( ArmIO::WristHorizontal ),  
-        frc2::cmd::Parallel(
-            elevator->ChangeHeight( elevator::kHeightGroundPickup ),
-            arm->ChangeElbowAngle( arm::kElbowGroundPickup )
-        ),
+        MoveMechanism( arm, elevator, elevator::kHeightGroundPickup, arm::kElbowGroundPickup, ArmIO::WristHorizontal ).ToPtr(),
+        // arm->ChangeWristPosition( ArmIO::WristHorizontal ),  
+        // frc2::cmd::Parallel(
+        //     elevator->ChangeHeight( elevator::kHeightGroundPickup ),
+        //     arm->ChangeElbowAngle( arm::kElbowGroundPickup )
+        // ),
         intake->IntakeCoral(),
         RestPosition( arm, intake, elevator )
     ).WithName( "Ground Pickup" );
@@ -91,8 +93,9 @@ frc2::CommandPtr IntakeCommands::GroundPickup( Arm *arm, Intake *intake, Elevato
 frc2::CommandPtr IntakeCommands::GroundResume( Arm *arm, Intake *intake, Elevator *elevator, bool eject )
 {
     return frc2::cmd::Sequence(
-        elevator->ChangeHeight( elevator::kHeightGroundPickup ),
-        arm->ChangeElbowAngle( arm::kElbowGroundPickup ),
+        MoveMechanism( arm, elevator, elevator::kHeightGroundPickup, arm::kElbowGroundPickup, ArmIO::WristHorizontal ).ToPtr(),
+        // elevator->ChangeHeight( elevator::kHeightGroundPickup ),
+        // arm->ChangeElbowAngle( arm::kElbowGroundPickup ),
         frc2::cmd::Either( 
             frc2::cmd::RunOnce( [intake] { intake->SpinOut(); }),
             intake->IntakeCoral(),
@@ -103,8 +106,9 @@ frc2::CommandPtr IntakeCommands::GroundResume( Arm *arm, Intake *intake, Elevato
 
 frc2::CommandPtr IntakeCommands::ElevatorRaise( Arm *arm, Elevator *elevator )
 {
-    return frc2::cmd::Sequence( 
-        arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
-        elevator->ChangeHeight( elevator::kHeightDislogAlgae )
-    );
+    return // frc2::cmd::Sequence( 
+        MoveMechanism( arm, elevator, elevator::kHeightDislogAlgae, arm::kElbowForwardRaiseAngle, ArmIO::WristHorizontal ).ToPtr();
+        // arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
+        // elevator->ChangeHeight( elevator::kHeightDislogAlgae )
+    // );
 }       

@@ -44,5 +44,6 @@ private:
     bool move_arm_backward;
     bool move_elevator_down;
     bool delay_for_wrist;
+    bool delay_for_elbow;
     bool final_move;
 };

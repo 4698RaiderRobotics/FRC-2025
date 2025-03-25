@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.188135732150978,
-        "y": 5.344744557824405
+        "x": 3.395804794520548,
+        "y": 5.602696917808219
       },
       "isLocked": true,
       "linkedName": "FrontAwayRightL4"
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Reef To CS",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.12857142857142867,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

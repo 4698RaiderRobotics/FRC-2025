@@ -55,7 +55,10 @@ void Robot::AutonomousInit()
     m_autonomousCommand = m_container.GetAutonomousCommand();
 
     if (m_autonomousCommand != nullptr) {
+        fmt::print( " Scheduling Autonomous Command {} ....\n", m_autonomousCommand->GetName() );
         m_autonomousCommand->Schedule();
+    } else {
+        fmt::print( " Autonomous Command is NULL !!!!!!!!!!!!!!!!!\n" );
     }
 }
 

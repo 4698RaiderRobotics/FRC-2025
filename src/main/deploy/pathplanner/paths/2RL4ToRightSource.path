@@ -8,11 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.4076736795194,
-        "y": 1.8299488632282268
+        "x": 5.364169520547945,
+        "y": 2.2219178082191786
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "BackProcessorRightL4"
+    },
+    {
+      "anchor": {
+        "x": 4.597859589041096,
+        "y": 1.771147260273973
+      },
+      "prevControl": {
+        "x": 4.975863343712613,
+        "y": 1.9391856166629458
+      },
+      "nextControl": {
+        "x": 4.219855834369577,
+        "y": 1.6031089038849995
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,11 +36,11 @@
         "y": 0.5035191218828584
       },
       "prevControl": {
-        "x": 3.20595882530701,
-        "y": 0.9846046481986481
+        "x": 2.4792380136986303,
+        "y": 1.3354023972602738
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "RightSource"
     }
   ],
@@ -34,7 +50,7 @@
   "eventMarkers": [
     {
       "name": "Reef To CS",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.1952380952380954,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

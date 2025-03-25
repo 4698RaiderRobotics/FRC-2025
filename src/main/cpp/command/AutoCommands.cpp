@@ -63,9 +63,10 @@ frc2::CommandPtr AutoCommands::CoralStationPickup( Arm *arm, Intake *intake, Ele
 {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
-            elevator->ChangeHeight( elevator::kHeightCoralStation ),
-            frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > 2_in;} )
-                .AndThen( arm->ChangeElbowAngle( arm::kElbowCoralStation ) ),
+            MoveMechanism( arm, elevator, elevator::kHeightCoralStation, arm::kElbowCoralStation, ArmIO::WristHorizontal ).ToPtr(),
+            // elevator->ChangeHeight( elevator::kHeightCoralStation ),
+            // frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > 2_in;} )
+            //     .AndThen( arm->ChangeElbowAngle( arm::kElbowCoralStation ) ),
             intake->IntakeCoralNoIndex( 1.5_s )
         ),
         intake->IndexCoral()

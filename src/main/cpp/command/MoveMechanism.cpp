@@ -23,6 +23,7 @@ void MoveMechanism::Init()
 {
     final_move = false;
     delay_for_wrist = false;
+    delay_for_elbow = false;
 
     if( units::math::abs( elbow_goal - arm::kElbowRestAngle ) < 0.1_deg ) {
         elbow_goal = m_arm->GetElbowRest();
@@ -35,6 +36,9 @@ void MoveMechanism::Init()
             // We want to go back with the arm
             move_arm_forward = false;
             move_elevator_down = false;
+            if( elbow_goal > arm::kElbowRestAngle ) {
+                delay_for_elbow = true;
+            }
         } else {
             // We want to go forward with the arm
             move_arm_forward = true;
@@ -98,7 +102,19 @@ void MoveMechanism::Execute()
         if( (move_arm_backward || move_arm_forward ) && delay_for_wrist && !m_arm->WristAtGoal() ) {
             return;
         }
-        m_arm->SetElbowGoal( elbow_goal );
+        if( !delay_for_elbow ) {
+            if( elbow_goal > arm::kElbowRestAngle && move_arm_backward ) {
+                delay_for_elbow = true;
+                m_arm->SetElbowGoal( arm::kElbowRestAngle );
+            } else {
+                m_arm->SetElbowGoal( elbow_goal );
+            }
+        } else if( !move_arm_backward && !move_arm_forward ) {
+            m_elevator->SetGoal( height_goal );
+            if( m_elevator->GetHeight() > 5_in ) {
+                delay_for_elbow = false;
+            }
+        }
         if( move_arm_backward ) {
             if( m_arm->GetElbowAngle() > 90_deg ) {
                 move_arm_backward = false;
@@ -109,8 +125,9 @@ void MoveMechanism::Execute()
             }
         } else {
             // Arm has moved to a place where the elevator can move where it needs to go
-            if( !final_move ) {
+            if( !final_move && !delay_for_elbow ) {
                 m_elevator->SetGoal( height_goal );
+                m_arm->SetElbowGoal( elbow_goal );
                 if( wrist_goal == ArmIO::WristVertical ) {
                     if( m_arm->GetElbowAngle() < 50_deg || m_elevator->GetHeight() > 21_in ) {
                         m_arm->SetWristGoal( wrist_goal );
@@ -128,5 +145,9 @@ void MoveMechanism::Execute()
 // Returns true when the command should end.
 bool MoveMechanism::IsFinished() 
 {
-    return final_move && m_arm->AllAtGoal() && m_elevator->AtGoal();
+    bool isFinished = final_move && m_arm->AllAtGoal() && m_elevator->AtGoal();
+
+    DataLogger::Log( "MoveMechanism/IsFinished", isFinished );
+
+    return isFinished;
 }

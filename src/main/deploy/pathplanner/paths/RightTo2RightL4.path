@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Prepare For L4",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.10476190476190483,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

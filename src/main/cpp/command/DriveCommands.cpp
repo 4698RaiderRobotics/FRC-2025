@@ -81,9 +81,9 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
     ).WithName( "Joystick Drive" );
 }
 
-frc2::CommandPtr DriveCommands::DriveToPosePP_NOTGOOD( Drive *d, std::function<frc::Pose2d()> poseFunc )
+frc2::CommandPtr DriveCommands::DriveToPosePP( Drive *d, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed )
 {
-    return frc2::cmd::Defer( [d, poseFunc] {
+    return frc2::cmd::Defer( [d, poseFunc, fractionFullSpeed] {
         frc::Pose2d targetPose = poseFunc();
 
         frc::Pose2d currentPose = d->GetPose();
@@ -96,7 +96,12 @@ frc2::CommandPtr DriveCommands::DriveToPosePP_NOTGOOD( Drive *d, std::function<f
 
         std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
 
-        pathplanner::PathConstraints constraints(3.0_mps, 3.0_mps_sq, 360_deg_per_s, 720_deg_per_s_sq);
+        pathplanner::PathConstraints constraints(
+            3.0_mps * fractionFullSpeed, 
+            3.0_mps_sq * fractionFullSpeed, 
+            360_deg_per_s * fractionFullSpeed, 
+            720_deg_per_s_sq * fractionFullSpeed
+        );
 
         auto path = std::make_shared<pathplanner::PathPlannerPath>(
             waypoints,

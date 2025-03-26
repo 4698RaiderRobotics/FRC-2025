@@ -33,7 +33,7 @@ Elevator::Elevator()
         // Stop and Reset Routine
         [this] { 
             io->SetOpenLoop(0.0); 
-            io->ResetPosition( 0_in ); 
+            io->ResetPosition( -0.125_in ); 
             SetGoal( 0_in ); 
             DataLogger::Log( "Elevator/homingDone", true );
         },

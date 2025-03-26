@@ -177,17 +177,16 @@ frc2::CommandPtr Intake::EjectCoralL1()
 frc2::CommandPtr Intake::EjectCoralL2_4_Fast()
 {
     return frc2::cmd::Sequence(
-        Run( [this] { ShiftDown(); }).Until( [this] { return isEndBroken(); }).WithTimeout(0.5_s),
-        frc2::cmd::Wait( 0.2_s)
+        // Run( [this] { ShiftDown(); }).Until( [this] { return isEndBroken(); }).WithTimeout(0.5_s),
+        Run( [this] { ShiftDown(); }).WithTimeout(0.3_s)
+        // frc2::cmd::Wait( 0.2_s)
     );
 }
 
 frc2::CommandPtr Intake::StopCmd()
 {
     return RunOnce( [this] { Stop(); });
-
 }
-
 
 void IntakeIO::Metrics::Log( const std::string &key ) 
 {

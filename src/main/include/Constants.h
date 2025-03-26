@@ -56,7 +56,7 @@ namespace arm {
      constexpr units::degree_t kElbowCoralL4 = 20_deg;
 
     // Elbow Positions for Coral Station and Ground Pickup
-     constexpr units::degree_t kElbowCoralStation = 145_deg;
+     constexpr units::degree_t kElbowCoralStation = 143_deg;
      constexpr units::degree_t kElbowGroundPickup = -35_deg;
 
     // Elbow Position for Removing Algae

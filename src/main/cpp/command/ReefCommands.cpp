@@ -24,7 +24,6 @@ using namespace physical;
 
 void WritePathPlannerJSONFile( std::string fname, std::vector<frc::Pose2d> &PP_poses, std::vector<std::string> &PP_names );
 
-
 ReefPlacingPoses ReefCommands::reefPoses = ReefPlacingPoses();
 
 ReefPlacingPoses::ReefPlacingPoses() 
@@ -242,7 +241,7 @@ frc2::CommandPtr ReefCommands::PrepareToPlaceOnReef( Arm *arm, Elevator *elevato
 
 frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide, std::function<ReefPlacement ()> place_func )
 {
-    return DriveToPoseTrap( d, [d, onRightSide, place_func] {
+    return DriveCommands::DriveToPosePP( d, [d, onRightSide, place_func] {
         frc::Transform2d delta;
 
         switch( place_func() ) {
@@ -266,7 +265,7 @@ frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide, std:
         frc::Pose2d reefPose = ReefCommands::reefPoses.GetClosestReefPose( d->GetPose(), onRightSide );
         return  reefPose.TransformBy( delta );
     },
-    0.5
+    0.75
     ).WithName("DriveToReefPose");
 }
 

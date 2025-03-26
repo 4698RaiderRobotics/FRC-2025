@@ -108,7 +108,7 @@ void RobotContainer::ConfigureBindings()
     (driverCtrlr.LeftBumper() && driverCtrlr.RightBumper()).Debounce( 100_ms )
         .OnTrue( frc2::cmd::RunOnce( [this] { m_drive->ResetGyro(); }, {m_drive} ));
 
-    driverCtrlr.Button( ctrl::cancel_button ).OnTrue( 
+    driverCtrlr.Button( ctrl::cancel_button ).OnTrue(
         IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
     );
 

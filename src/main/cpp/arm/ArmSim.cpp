@@ -9,9 +9,13 @@
 #include <frc/simulation/DCMotorSim.h>
 #include <frc/system/plant/LinearSystemId.h>
 
+const MotionConfig<units::turns> simElbowMotion = { {0.2, 0.0, 0.0, 0.0, 0.0, 0.08, 0.0 }, device::arm::kElbowMotionConfig.mp };
+const MotionConfig<units::turns> simWristMotion = { {0.2, 0.0, 0.0, 0.0, 0.0, 0.08, 0.0 }, device::arm::kWristMotionConfig.mp };
+
+
 ArmSim::ArmSim()
-: elbowSim{ device::arm::kElbowGearRatio, 1.0 },
-wristSim{ device::arm::kWristGearRatio, 0.5 }
+: elbowSim{ device::arm::kElbowGearRatio, 1.0, simElbowMotion },
+wristSim{ device::arm::kWristGearRatio, 0.5, simWristMotion }
 {
     // Somewhere to home from...
     wristSim.SetPosition( 10_deg );

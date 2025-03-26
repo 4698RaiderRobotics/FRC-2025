@@ -7,7 +7,7 @@
 #include <frc/simulation/DCMotorSim.h>
 #include <frc/system/plant/LinearSystemId.h>
 
-const MotionConfig<units::inch> simMotion = { {0.02, 0.0, 0.0, 0.0, 0.0, 0.12, 0.0 }, {8_fps, 35_fps_sq, 0_fps_cu}};
+const MotionConfig<units::inch> simMotion = { {0.2, 0.0, 0.0, 0.0, 0.0, 0.08, 0.0 }, device::elevator::kMotionConfig.mp };
 
 ElevatorSim::ElevatorSim()
 : motorSim{ device::elevator::kDistancePerMotorRev, 1.0, simMotion }

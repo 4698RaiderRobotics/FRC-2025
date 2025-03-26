@@ -74,6 +74,7 @@ void LinearSim::Update()
     m_motor.Update( 20_ms );
 
     if( frc::DriverStation::IsDisabled() ) {
+        m_Setpoint = m_Goal;
         return;
     }
 

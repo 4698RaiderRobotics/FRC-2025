@@ -9,7 +9,6 @@
 
 #include "swerve/SwerveConstants.h"
 #include "swerve/ModuleIOSim.h"
-#include "swerve/ModuleIOSim.h"
 
 ModuleIOSim::ModuleIOSim( const ModuleConfigs& configs ) :
     index{ configs.index },
@@ -28,10 +27,19 @@ ModuleIOSim::ModuleIOSim( const ModuleConfigs& configs ) :
     std::srand(std::time(nullptr));
     double random_number = std::rand() / (1.0 * RAND_MAX );  // [0 - 1.0] range
     turnAbsoluteInitPosition = units::radian_t( random_number * 2.0 * std::numbers::pi );
+
+    position_Setpt = 0_rad;
+    velocity_Setpt = 0_rad_per_s;
 }
 
 void ModuleIOSim::UpdateInputs(Inputs& inputs) 
 {
+    driveSim.SetInputVoltage( m_driveFF->Calculate( velocity_Setpt ) 
+        + m_drivePIDController.Calculate( driveSim.GetAngularVelocity().value(), velocity_Setpt.value() ) * 12_V );
+
+    units::radian_t currentAngle = turnSim.GetAngularPosition() + turnAbsoluteInitPosition;
+    turnSim.SetInputVoltage( m_turnPIDController.Calculate( currentAngle.value(), position_Setpt.value() ) * 12_V );
+
     driveSim.Update( 20_ms );
     turnSim.Update( 20_ms );
 
@@ -76,12 +84,14 @@ void ModuleIOSim::SetTurnOpenLoop( double percent )
 
 void ModuleIOSim::SetDriveWheelVelocity( units::radians_per_second_t velocity )
 {
-    driveSim.SetInputVoltage( m_driveFF->Calculate( velocity ) 
-        + m_drivePIDController.Calculate( driveSim.GetAngularVelocity().value(), velocity.value() ) * 12_V );
+    velocity_Setpt = velocity;
+    // driveSim.SetInputVoltage( m_driveFF->Calculate( velocity ) 
+    //     + m_drivePIDController.Calculate( driveSim.GetAngularVelocity().value(), velocity.value() ) * 12_V );
 }
 
 void ModuleIOSim::SetTurnPosition( units::radian_t position )
 {
-    units::radian_t currentAngle = turnSim.GetAngularPosition() + turnAbsoluteInitPosition;
-    turnSim.SetInputVoltage( m_turnPIDController.Calculate( currentAngle.value(), position.value() ) * 12_V );
+    position_Setpt = position;
+    // units::radian_t currentAngle = turnSim.GetAngularPosition() + turnAbsoluteInitPosition;
+    // turnSim.SetInputVoltage( m_turnPIDController.Calculate( currentAngle.value(), position.value() ) * 12_V );
 }

@@ -116,7 +116,8 @@ void RobotContainer::ConfigureBindings()
 
     driverCtrlr.Button( ctrl::manual_eject ).OnTrue( m_intake->EjectCoralL1() );
 
-    driverCtrlr.POV( ctrl::raise_climber ).OnTrue( ReefCommands::PrepareToClimb( m_arm, m_climber ) );
+    driverCtrlr.LeftStick().OnTrue( ReefCommands::DeployClimberFoot( m_arm, m_climber ) );
+    driverCtrlr.POV( ctrl::raise_climber ).OnTrue( ReefCommands::LockClimberToCage( m_climber ) );
     driverCtrlr.POV( ctrl::start_climb ).OnTrue( m_climber->DoClimb() );
 
     // driverCtrlr.POV( 0 ).OnTrue( DriveToPose( m_drive, [] { return frc::Pose2d{ 610_in, 158.50_in, 180_deg}; } ).ToPtr() );

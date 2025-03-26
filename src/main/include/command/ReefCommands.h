@@ -66,7 +66,8 @@ public:
 
     static frc2::CommandPtr RemoveAlgae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator );
 
-    static frc2::CommandPtr PrepareToClimb( Arm *arm, Climber *climber );
+    static frc2::CommandPtr DeployClimberFoot( Arm *arm, Climber *climber );
+    static frc2::CommandPtr LockClimberToCage( Climber *climber );
 
 private:
     ReefCommands() = default;

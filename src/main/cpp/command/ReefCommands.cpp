@@ -447,13 +447,21 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
     );
 }
 
-frc2::CommandPtr ReefCommands::PrepareToClimb( Arm *arm, Climber *climber )
+frc2::CommandPtr ReefCommands::DeployClimberFoot( Arm *arm, Climber *climber )
 {
-    return frc2::cmd::Parallel( 
-        DriveCommands::SetDriveSpeed( true ),
-        arm->ChangeElbowAngle( arm::kElbowGroundPickup ),
-        climber->RaiseClimber()
+    return frc2::cmd::Sequence(
+        frc2::cmd::Parallel( 
+            DriveCommands::SetDriveSpeed( true ),
+            arm->ChangeElbowAngle( arm::kElbowGroundPickup ),
+            climber->RaiseClimber()
+        ),
+        frc2::cmd::RunOnce( [climber] { climber->SetGoal( 0.0_in ); }, {climber} )
     );
+}
+
+frc2::CommandPtr ReefCommands::LockClimberToCage( Climber *climber )
+{
+    return climber->RaiseClimber();
 }
 
 frc::Pose2d ReefPlacingPoses::GetClosestReefPose( frc::Pose2d currentPose, bool onRightSide ) 

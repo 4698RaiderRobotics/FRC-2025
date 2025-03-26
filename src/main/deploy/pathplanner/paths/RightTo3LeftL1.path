@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Prepare For L1",
-      "waypointRelativePos": 0.12380952380952394,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -60,7 +60,7 @@
   "folder": "RightStart",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 178.80651057601798
+    "rotation": 126.96428928946516
   },
   "useDefaultConstraints": true
 }

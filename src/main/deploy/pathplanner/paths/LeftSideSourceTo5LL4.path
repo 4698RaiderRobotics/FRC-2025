@@ -16,15 +16,15 @@
     },
     {
       "anchor": {
-        "x": 4.08988679416481,
-        "y": 5.0480024525612475
+        "x": 4.039,
+        "y": 5.136
       },
       "prevControl": {
-        "x": 3.080265410958904,
-        "y": 6.684546232876712
+        "x": 3.0293786167940935,
+        "y": 6.7725437803154644
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "FrontAwayLeftL4"
     }
   ],

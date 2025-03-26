@@ -16,6 +16,8 @@ public:
     void SetGoal( units::inch_t goal );
     void Nudge( units::inch_t nudge );
     bool AtGoal();
+    bool isHomingDone() { return homer.isHomingDone(); }
+
     units::inch_t GetHeight() {return metrics.height;}
 
     frc2::CommandPtr ChangeHeight( units::inch_t goal );

@@ -16,23 +16,34 @@
 #include "intake/Intake.h"
 #include "elevator/Elevator.h"
 
+#include "util/DataLogger.h"
+
 #include "Constants.h"
 
 using namespace physical;
 
+frc2::CommandPtr AutoCommands::WaitForHoming( Arm *arm, Elevator *elevator )
+{
+    return frc2::cmd::WaitUntil( [arm,elevator] { return arm->isHomingDone() && elevator->isHomingDone(); } ).WithTimeout( 1_s );
+}
 
 frc2::CommandPtr AutoCommands::PrepareToPlaceOnReef( Arm *arm, Elevator *elevator, ReefPlacement p )
 {
-    return frc2::cmd::Select<ReefPlacement>( 
-        [p] { return p; }, 
-        std::pair{ ReefPlacement::PLACING_L1, 
-            MoveMechanism( arm, elevator, elevator::kHeightCoralL1, arm::kElbowCoralL1, ArmIO::WristHorizontal ).ToPtr() },
-        std::pair{ ReefPlacement::PLACING_L2, 
-            MoveMechanism( arm, elevator, elevator::kHeightCoralL2 + 4_in, arm::kElbowCoralL2 - 14_deg, ArmIO::WristVertical ).ToPtr() },
-        std::pair{ ReefPlacement::PLACING_L3, 
-            MoveMechanism( arm, elevator, elevator::kHeightCoralL3 + 4_in, arm::kElbowCoralL3 - 14_deg, ArmIO::WristVertical ).ToPtr() },
-        std::pair{ ReefPlacement::PLACING_L4, 
-            MoveMechanism( arm, elevator, elevator::kHeightCoralL4, arm::kElbowCoralL4, ArmIO::WristVertical ).ToPtr() }
+    return frc2::cmd::Sequence( 
+        frc2::cmd::RunOnce( [] { DataLogger::Log( "AutoCommands/PrepareToPlaceOnReef", "Starting waiting for homing."); } ),
+        WaitForHoming( arm, elevator ),
+        frc2::cmd::RunOnce( [] { DataLogger::Log( "AutoCommands/PrepareToPlaceOnReef", "Done waiting for homing."); } ),
+        frc2::cmd::Select<ReefPlacement>( 
+            [p] { return p; }, 
+            std::pair{ ReefPlacement::PLACING_L1, 
+                MoveMechanism( arm, elevator, elevator::kHeightCoralL1, arm::kElbowCoralL1, ArmIO::WristHorizontal ).ToPtr() },
+            std::pair{ ReefPlacement::PLACING_L2, 
+                MoveMechanism( arm, elevator, elevator::kHeightCoralL2 + 4_in, arm::kElbowCoralL2 - 14_deg, ArmIO::WristVertical ).ToPtr() },
+            std::pair{ ReefPlacement::PLACING_L3, 
+                MoveMechanism( arm, elevator, elevator::kHeightCoralL3 + 4_in, arm::kElbowCoralL3 - 14_deg, ArmIO::WristVertical ).ToPtr() },
+            std::pair{ ReefPlacement::PLACING_L4, 
+                MoveMechanism( arm, elevator, elevator::kHeightCoralL4, arm::kElbowCoralL4, ArmIO::WristVertical ).ToPtr() }
+        )
     );
 }
 
@@ -68,8 +79,8 @@ frc2::CommandPtr AutoCommands::CoralStationPickup( Arm *arm, Intake *intake, Ele
             // frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() > 2_in;} )
             //     .AndThen( arm->ChangeElbowAngle( arm::kElbowCoralStation ) ),
             intake->IntakeCoralNoIndex( 1.5_s )
-        ),
-        intake->IndexCoral()
+        )
+        // intake->IndexCoral()
     ).WithName( "CoralStationPickup" );
 }
 

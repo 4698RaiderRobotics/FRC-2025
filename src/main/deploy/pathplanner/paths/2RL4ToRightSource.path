@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.888759205835189,
-        "y": 3.0037975474387526
+        "x": 4.938605489496434,
+        "y": 2.90539290462528
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.364169520547945,
-        "y": 2.2219178082191786
+        "x": 5.545619301897564,
+        "y": 1.9070725345053408
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "BackProcessorRightL4"
     },
     {
       "anchor": {
-        "x": 4.597859589041096,
-        "y": 1.771147260273973
+        "x": 1.192470686803579,
+        "y": 0.4042876264446932
       },
       "prevControl": {
-        "x": 4.975863343712613,
-        "y": 1.9391856166629458
-      },
-      "nextControl": {
-        "x": 4.219855834369577,
-        "y": 1.6031089038849995
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.4836726410964847,
-        "y": 0.5035191218828584
-      },
-      "prevControl": {
-        "x": 2.4792380136986303,
-        "y": 1.3354023972602738
+        "x": 2.188036059405725,
+        "y": 1.2361709018221085
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RightSource"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -50,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Reef To CS",
-      "waypointRelativePos": 0.1952380952380954,
+      "waypointRelativePos": 0.1547619047619047,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

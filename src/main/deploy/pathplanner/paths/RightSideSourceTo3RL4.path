@@ -3,28 +3,28 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4836726410964847,
-        "y": 0.5035191218828584
+        "x": 1.1298917601296012,
+        "y": 0.47930670067323033
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.219742779592064,
-        "y": 1.2366334427925962
+        "x": 1.8659618986251794,
+        "y": 1.2124210215829687
       },
-      "isLocked": true,
-      "linkedName": "RightSource"
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.08988679416481,
-        "y": 3.003797547438752
+        "x": 4.036689401506314,
+        "y": 2.9176256930550606
       },
       "prevControl": {
-        "x": 3.395804794520548,
-        "y": 1.696018835616438
+        "x": 3.342616321150523,
+        "y": 1.6098422475063598
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "FrontProcessorRightL4"
     }
   ],

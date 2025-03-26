@@ -20,7 +20,6 @@ public:
         units::ampere_t lowerCurrent = 0_A;
         bool centerBeamBroken = false;
         bool endBeamBroken = false;
-        bool pipeSwitchTripped = false;
 
         void Log( const std::string &key );
     };
@@ -33,11 +32,6 @@ public:
     virtual void Update( Metrics &m ) =0;
 
     virtual void SpinMotors( const SpinSpeed &s ) = 0;
-
-    // This is only for simulation so it can know when to
-    // simulate the pipe switch being tripped. Otherwise it 
-    // does nothing
-    virtual void PollingPipeSwitch() {};
 
     static const SpinSpeed hold_in, spin_in, spin_out, spin_out_fast, shift_up, shift_up_slow, shift_down, spin_stop;
 };

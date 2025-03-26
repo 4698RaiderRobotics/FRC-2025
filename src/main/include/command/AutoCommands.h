@@ -15,6 +15,7 @@ class Elevator;
 class AutoCommands {
 public:
 
+    static frc2::CommandPtr WaitForHoming( Arm *arm, Elevator *elevator );
     static frc2::CommandPtr PrepareToPlaceOnReef( Arm *arm, Elevator *elevator, ReefPlacement p );
     static frc2::CommandPtr ReefToCoralStation( Arm *arm, Intake *intake, Elevator *elevator );
     static frc2::CommandPtr CoralStationPickup( Arm *arm, Intake *intake, Elevator *elevator );

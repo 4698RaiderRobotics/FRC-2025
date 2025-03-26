@@ -27,7 +27,6 @@ void IntakeSim::Update( Metrics &m )
 
     m.centerBeamBroken = centerBeamBlocked;
     m.endBeamBroken = endBeamBlocked;
-    m.pipeSwitchTripped = pipeSwitchTripped;
 }
 
 void IntakeSim::SpinMotors( const SpinSpeed &s )
@@ -92,7 +91,6 @@ void IntakeSim::CheckIntakeEjectState()
         // We have been spinning the intake out for 0.5 seconds... unTrip the beam break
         centerBeamBlocked = false;
         endBeamBlocked = false;
-        pipeSwitchTripped = false;
         polling_pipe = false;
     } else if( shifting_up && frc::Timer::GetFPGATimestamp() - start_time > 0.5_s ) {
         // We have been shifting the coral up for 0.5 seconds... Trip the end beam break
@@ -100,23 +98,9 @@ void IntakeSim::CheckIntakeEjectState()
     } else if( shifting_down && frc::Timer::GetFPGATimestamp() - start_time > 0.2_s ) {
         // We have been shifting the coral up for 0.2 seconds... Trip the end beam break
         endBeamBlocked = false;
-        pipeSwitchTripped = false;
         polling_pipe = false;
         if( frc::Timer::GetFPGATimestamp() - start_time > 0.4_s ) {
             centerBeamBlocked = false;
         }
-    }
-
-}
-
-void IntakeSim::PollingPipeSwitch()
-{
-    if( !polling_pipe ) {
-        start_time = frc::Timer::GetFPGATimestamp();
-        polling_pipe = true;
-    }
-
-    if( frc::Timer::GetFPGATimestamp() - start_time > 0.75_s ) {
-        pipeSwitchTripped = true;
     }
 }

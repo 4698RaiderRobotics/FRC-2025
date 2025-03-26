@@ -43,10 +43,11 @@ public:
     void Reset( ) 
     {
         homing_is_done = false;
+        homing_is_active = false;
     }
 
-    bool isHomingActive( ) { return homing_is_active; }
-    bool isHomingDone( ) { return homing_is_done; }
+    bool isHomingActive() { return homing_is_active; }
+    bool isHomingDone() { return homing_is_done; }
     
 private:
     std::function<void()> startFunc;

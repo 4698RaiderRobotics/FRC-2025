@@ -266,7 +266,7 @@ frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide, std:
         frc::Pose2d reefPose = ReefCommands::reefPoses.GetClosestReefPose( d->GetPose(), onRightSide );
         return  reefPose.TransformBy( delta );
     },
-    1.0
+    0.5
     ).WithName("DriveToReefPose");
 }
 

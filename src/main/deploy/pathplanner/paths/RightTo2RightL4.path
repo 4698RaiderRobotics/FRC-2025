@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.0019691780821915,
-        "y": 1.3203767123287673
+        "x": 6.8795230263157885,
+        "y": 1.359786184210526
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.0205547043979815,
-        "y": 1.9650313175919236
+        "x": 5.898108552631578,
+        "y": 2.0044407894736826
       },
-      "isLocked": true,
-      "linkedName": null
+      "isLocked": false,
+      "linkedName": "RightStart"
     },
     {
       "anchor": {
-        "x": 4.888759205835189,
-        "y": 3.0037975474387526
+        "x": 4.938605489496434,
+        "y": 2.90539290462528
       },
       "prevControl": {
-        "x": 5.529452054794521,
-        "y": 1.7561215753424653
+        "x": 5.579298338455766,
+        "y": 1.6577169325289927
       },
       "nextControl": null,
       "isLocked": true,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Prepare For L4",
-      "waypointRelativePos": 0.10476190476190483,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -60,7 +60,7 @@
   "folder": "RightStart",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 132.13759477388822
+    "rotation": 126.96428928946516
   },
   "useDefaultConstraints": true
 }

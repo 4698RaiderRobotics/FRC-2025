@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 4.888759205835189,
-        "y": 5.0480024525612475
+        "x": 4.94,
+        "y": 5.136
       },
       "prevControl": {
-        "x": 5.589554794520548,
-        "y": 6.50423801369863
+        "x": 5.640795588685359,
+        "y": 6.592235561137382
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Prepare For L4",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

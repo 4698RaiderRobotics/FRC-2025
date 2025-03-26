@@ -10,14 +10,12 @@ public:
     void Update( Metrics &m ) override;
 
     void SpinMotors( const SpinSpeed &s ) override;
-    void PollingPipeSwitch() override;
 private:
     AngularSim upperRoller;
     AngularSim lowerRoller;
 
     bool centerBeamBlocked = false;
     bool endBeamBlocked = false;
-    bool pipeSwitchTripped = false;
 
     units::second_t start_time;
     bool spinning_in{false};

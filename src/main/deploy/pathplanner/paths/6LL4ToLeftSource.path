@@ -3,32 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.888759205835189,
-        "y": 5.0480024525612475
+        "x": 4.94,
+        "y": 5.136
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.138784246573555,
-        "y": 5.572645547951895
+        "x": 5.6082001106535,
+        "y": 6.366498130670235
       },
       "isLocked": false,
       "linkedName": "BackAwayLeftL4"
-    },
-    {
-      "anchor": {
-        "x": 4.402525684929719,
-        "y": 5.873159246582032
-      },
-      "prevControl": {
-        "x": 4.73309075342287,
-        "y": 5.69285102740395
-      },
-      "nextControl": {
-        "x": 4.065637113535086,
-        "y": 6.0569166491609225
-      },
-      "isLocked": false,
-      "linkedName": null
     },
     {
       "anchor": {
@@ -50,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Reef To CS",
-      "waypointRelativePos": 0.20000000000000012,
+      "waypointRelativePos": 0.1,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

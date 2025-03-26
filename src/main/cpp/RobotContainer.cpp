@@ -112,7 +112,7 @@ void RobotContainer::ConfigureBindings()
         IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
     );
 
-    driverCtrlr.Button( ctrl::manual_spin_down ).OnTrue( m_intake->EjectCoralL2_4( false ) );
+    driverCtrlr.Button( ctrl::manual_spin_down ).OnTrue( m_intake->EjectCoralL2_4_Fast() );
 
     driverCtrlr.Button( ctrl::manual_eject ).OnTrue( m_intake->EjectCoralL1() );
 
@@ -236,38 +236,6 @@ void RobotContainer::ConfigureAutos()
         "PlaceOnReefL4", 
         AutoCommands::AutoPlaceCoralL4( m_arm, m_intake, m_elevator )
     );
-    // pathplanner::NamedCommands::registerCommand(
-    //     "PlaceOnReefRightL1", 
-    //     AutoCommands::AutoPlaceCoralL1( m_drive, m_arm, m_intake, m_elevator, true )
-    // );
-    // pathplanner::NamedCommands::registerCommand(
-    //     "PlaceOnReefRightL2", 
-    //     AutoCommands::AutoPlaceCoralL2( m_drive, m_arm, m_intake, m_elevator, true )
-    // );
-    // pathplanner::NamedCommands::registerCommand(
-    //     "PlaceOnReefRightL3", 
-    //     AutoCommands::AutoPlaceCoralL3( m_drive, m_arm, m_intake, m_elevator, true )
-    // );
-    // pathplanner::NamedCommands::registerCommand(
-    //     "PlaceOnReefRightL4", 
-    //     AutoCommands::AutoPlaceCoralL4( m_drive, m_arm, m_intake, m_elevator, true )
-    // );
-    // pathplanner::NamedCommands::registerCommand(
-    //     "PlaceOnReefLeftL1", 
-    //     AutoCommands::AutoPlaceCoralL1( m_drive, m_arm, m_intake, m_elevator, false )
-    // );
-    // pathplanner::NamedCommands::registerCommand(
-    //     "PlaceOnReefLeftL2", 
-    //     AutoCommands::AutoPlaceCoralL2( m_drive, m_arm, m_intake, m_elevator, false )
-    // );
-    // pathplanner::NamedCommands::registerCommand(
-    //     "PlaceOnReefLeftL3", 
-    //     AutoCommands::AutoPlaceCoralL3( m_drive, m_arm, m_intake, m_elevator, false )
-    // );
-    // pathplanner::NamedCommands::registerCommand(
-    //     "PlaceOnReefLeftL4", 
-    //     AutoCommands::AutoPlaceCoralL4( m_drive, m_arm, m_intake, m_elevator, false )
-    // );
     pathplanner::NamedCommands::registerCommand(
         "ReefToCoralStation",
         AutoCommands::ReefToCoralStation( m_arm, m_intake, m_elevator )
@@ -325,12 +293,8 @@ void RobotContainer::ConfigureAutos()
         // {"Right Three Piece L4", "RightThreePieceL4"}
     };
 
-    // std::vector<AutoNameMap> choreoAutos = { 
-    //     {"Test Choreo", "TestPath"}
-    // };
-
     AutoCommands.push_back( DriveCommands::DriveDeltaPose( m_drive, {1.5_m, 0_m, 0_deg}, true, 0.5 ));
-    m_chooser.AddOption( "Leave ONLY", 0 );
+    m_chooser.SetDefaultOption( "Leave ONLY", 0 );
 
     for( unsigned int i=0; i<autos.size(); ++i ) {
         try {
@@ -344,17 +308,6 @@ void RobotContainer::ConfigureAutos()
             m_chooser.AddOption( fmt::format("<LOAD FAILED> {}", autos[i].Description), i );
         }
     }
-    m_chooser.SetDefaultOption( "Leave ONLY", 0 );
-
-    // for( unsigned int i=0; i<choreoAutos.size(); ++i ) {
-    //     m_chooser.AddOption( choreoAutos[i].Description, i + autos.size() );
-
-    //     AutoCommands.push_back( 
-    //         pathplanner::AutoBuilder::followPath( 
-    //             pathplanner::PathPlannerPath::fromChoreoTrajectory(choreoAutos[i].AutoName)
-    //         ).WithName(choreoAutos[i].AutoName) 
-    //     );
-    // }
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() 

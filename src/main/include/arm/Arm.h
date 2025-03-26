@@ -26,7 +26,7 @@ public:
     units::degree_t GetElbowRest();
 
     bool isArmBackward();
-    void AdjustToHoming( bool isClimberHoming );
+    bool isHomingDone()  { return wristHomer.isHomingDone(); }
 
     frc2::CommandPtr ChangeElbowAngle( units::degree_t goal );
     frc2::CommandPtr ChangeWristPosition(ArmIO::WristPosition pos );
@@ -37,7 +37,7 @@ private:
     std::unique_ptr<ArmIO> io;
     ArmIO::Metrics metrics;
 
-    util::MotorHomer elbowHomer;
+    util::MotorHomer wristHomer;
 
     units::degree_t back_rest_angle;
     const units::degree_t ELBOW_GOAL_TOLERANCE = 4_deg;

@@ -46,8 +46,8 @@ namespace arm {
     constexpr units::degree_t kElbowHomingRestAngle = 115_deg;
 
     // Elevator Raise / Lower Position
-    constexpr units::degree_t kElbowForwardRaiseAngle = 60_deg;
-    constexpr units::degree_t kElbowBackwardRaiseAngle = 125_deg;
+    constexpr units::degree_t kElbowForwardRaiseAngle = 50_deg;
+    constexpr units::degree_t kElbowBackwardRaiseAngle = 115_deg;
 
     // Elbow Positions for Each Reef Height
      constexpr units::degree_t kElbowCoralL1 = 28_deg;
@@ -139,7 +139,7 @@ namespace reef {
     constexpr units::inch_t place_L1 = 21_in;
     constexpr units::inch_t place_L2 = 18_in;
     constexpr units::inch_t place_L3 = 14.5_in;
-    constexpr units::inch_t place_L4 = 10_in;
+    constexpr units::inch_t place_L4 = 14_in;
     constexpr units::inch_t remove_algae = 16_in;
 
     // const units::inch_t place_L1_shift_in = 0_in;

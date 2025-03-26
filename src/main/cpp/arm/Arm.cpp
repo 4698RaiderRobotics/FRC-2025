@@ -27,14 +27,21 @@ Arm::Arm()
         io = std::unique_ptr<ArmIO> (new ArmSim());
     }
 
-    elbowHomer = util::MotorHomer(
+    DataLogger::Log( "Arm/homingDone", false );
+
+    wristHomer = util::MotorHomer(
         // Start routine
         [this] { io->SetWristOpenLoop(-0.05); },
         // Stop and Reset Routine
-        [this] { io->SetWristOpenLoop(0.0); io->ResetWristAngle( 0_deg ); SetWristGoal(ArmIO::WristHorizontal); },
+        [this] { 
+            io->SetWristOpenLoop(0.0); 
+            io->ResetWristAngle( 0_deg ); 
+            SetWristGoal(ArmIO::WristHorizontal);
+            DataLogger::Log( "Arm/homingDone", true );
+        },
         // Home Condition
         [this] { return units::math::abs( metrics.wristVelocity ) < 0.1_rpm; },
-        300_ms
+        200_ms
     );
 
 }
@@ -50,11 +57,12 @@ void Arm::Periodic()
     wrist_lig2->SetLength( (2 + 6 * units::math::sin(metrics.wristPosition))/39.0 );
 
     if( frc::DriverStation::IsDisabled() ) {
-        SetElbowGoal( metrics.elbowPosition );
+        units::degree_t goal = util::clamp( metrics.elbowPosition, kElbowMinAngle, kElbowHomingRestAngle );
+        SetElbowGoal( goal );
         return;
     }
 
-    elbowHomer.Home();
+    wristHomer.Home();
 }
 
 void Arm::SetElbowGoal( units::degree_t goal ) 
@@ -78,6 +86,10 @@ ArmIO::WristPosition Arm::GetWristGoal()
 
 void Arm::SetWristGoal( ArmIO::WristPosition pos )
 {
+    if( !wristHomer.isHomingDone() ) {
+        return;
+    }
+
     switch( pos ) {
     case ArmIO::WristHorizontal:
         metrics.wristGoal = kWristHorizontal;
@@ -108,18 +120,6 @@ bool Arm::WristAtGoal()
 bool Arm::isArmBackward()
 {
     return metrics.elbowPosition > 90_deg;
-}
-
-void Arm::AdjustToHoming( bool isClimberHoming )
-{
-    if( isClimberHoming ) {
-        back_rest_angle = kElbowHomingRestAngle;
-        if( metrics.elbowPosition > back_rest_angle ) {
-            SetElbowGoal( back_rest_angle );
-        }
-    } else {
-        back_rest_angle = kElbowRestAngle;
-    }
 }
 
 frc2::CommandPtr Arm::ChangeElbowAngle( units::degree_t goal ) 
@@ -154,7 +154,16 @@ units::degree_t Arm::GetElbowRest()
 
 frc2::CommandPtr Arm::SetClimberHoming( bool isClimberHoming )
 {
-    return RunOnce( [this, isClimberHoming] { AdjustToHoming( isClimberHoming ); });
+    // Do not make this command have the Arm subsystem as a requirement as that 
+    // will break the Autonomous commands by interrupting them with this command.
+    // Use frc2::cmd::RunOnce() without requirments.
+    return frc2::cmd::RunOnce( [this, isClimberHoming] { 
+        if( isClimberHoming ) {
+            back_rest_angle = kElbowHomingRestAngle;
+        } else {
+            back_rest_angle = kElbowRestAngle;
+        }
+    });
 }
 
 void ArmIO::Metrics::Log( const std::string &key ) 

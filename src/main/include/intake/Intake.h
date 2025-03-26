@@ -19,14 +19,13 @@ public:
     void Stop();
     bool isCenterBroken();
     bool isEndBroken();
-    bool isPipeTripped();
 
     frc2::CommandPtr IntakeAlgae();
     frc2::CommandPtr IntakeCoral();
     frc2::CommandPtr IntakeCoralNoIndex( units::second_t timeout );
     frc2::CommandPtr IndexCoral();
     frc2::CommandPtr EjectCoralL1();
-    frc2::CommandPtr EjectCoralL2_4( bool waitForPipeSwitch );
+    // frc2::CommandPtr EjectCoralL2_4( bool waitForPipeSwitch );
     frc2::CommandPtr EjectCoralL2_4_Fast();
     frc2::CommandPtr StopCmd();
 

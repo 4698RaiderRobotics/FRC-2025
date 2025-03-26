@@ -101,14 +101,6 @@ bool Intake::isEndBroken()
     return metrics.endBeamBroken;
 }
 
-bool Intake::isPipeTripped()
-{
-    // This is just for simulation and does nothing
-    // on the real robot.
-    io->PollingPipeSwitch();
-    
-    return metrics.pipeSwitchTripped;
-}
 frc2::CommandPtr Intake::IntakeAlgae()
 {
     return frc2::cmd::Sequence( 
@@ -163,24 +155,24 @@ frc2::CommandPtr Intake::EjectCoralL1()
     ).WithTimeout( 0.25_s ).WithName( "Eject Coral L1");
 }
 
-frc2::CommandPtr Intake::EjectCoralL2_4( bool waitForPipeSwitch )
-{
-    return frc2::cmd::Sequence( 
-        frc2::cmd::WaitUntil( [this, waitForPipeSwitch] {return isPipeTripped() || !waitForPipeSwitch;} ).WithTimeout( 1.5_s ),
-        frc2::cmd::Either( 
-            // If Pipe Switch tripped (instead of timed out) then Eject coral.
-            frc2::cmd::Sequence( 
-                RunOnce( [this] { ShiftDown(); }),
-                frc2::cmd::Wait( 0.5_s ),
-                RunOnce( [this] { Stop(); })
-            ), 
-            // If Pipe Switch not tripped tripped
-            frc2::cmd::None(),
-            [this, waitForPipeSwitch] {return isPipeTripped() || !waitForPipeSwitch; }
-        )
-    ).WithName( "Eject Coral L2-4");
+// frc2::CommandPtr Intake::EjectCoralL2_4( bool waitForPipeSwitch )
+// {
+//     return frc2::cmd::Sequence( 
+//         frc2::cmd::WaitUntil( [this, waitForPipeSwitch] {return !waitForPipeSwitch;} ).WithTimeout( 1.5_s ),
+//         frc2::cmd::Either( 
+//             // If Pipe Switch tripped (instead of timed out) then Eject coral.
+//             frc2::cmd::Sequence( 
+//                 RunOnce( [this] { ShiftDown(); }),
+//                 frc2::cmd::Wait( 0.5_s ),
+//                 RunOnce( [this] { Stop(); })
+//             ), 
+//             // If Pipe Switch not tripped tripped
+//             frc2::cmd::None(),
+//             [this, waitForPipeSwitch] {return !waitForPipeSwitch; }
+//         )
+//     ).WithName( "Eject Coral L2-4");
 
-}
+// }
 
 frc2::CommandPtr Intake::EjectCoralL2_4_Fast()
 {
@@ -209,6 +201,5 @@ void IntakeIO::Metrics::Log( const std::string &key )
     AUTOLOG( key, lowerCurrent );
     AUTOLOG( key, centerBeamBroken );
     AUTOLOG( key, endBeamBroken );
-    AUTOLOG( key, pipeSwitchTripped );
 }
 

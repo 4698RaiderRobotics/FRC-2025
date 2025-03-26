@@ -25,13 +25,21 @@ Elevator::Elevator()
         io = std::unique_ptr<ElevatorIO> (new ElevatorSim());
     }
 
+    DataLogger::Log( "Elevator/homingDone", false );
+
     homer = util::MotorHomer(
         // Start routine
         [this] { io->SetOpenLoop(-0.01); },
         // Stop and Reset Routine
-        [this] { io->SetOpenLoop(0.0); io->ResetPosition( 0_in ); SetGoal( 0_in ); },
+        [this] { 
+            io->SetOpenLoop(0.0); 
+            io->ResetPosition( 0_in ); 
+            SetGoal( 0_in ); 
+            DataLogger::Log( "Elevator/homingDone", true );
+        },
         // Home Condition
-        [this] { return units::math::abs( metrics.velocity ) < 0.05_fps; }
+        [this] { return units::math::abs( metrics.velocity ) < 0.05_fps; },
+        100_ms
     );
 }
 
@@ -54,6 +62,10 @@ void Elevator::Periodic()
 
 void Elevator::SetGoal( units::inch_t goal ) 
 {
+    if( !homer.isHomingDone() ) {
+        return;
+    }
+
     metrics.goal = util::clamp( goal, kElevatorMinHeight, kElevatorMaxHeight );
     io->SetGoal( metrics.goal );
 }

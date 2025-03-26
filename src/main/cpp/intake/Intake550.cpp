@@ -43,7 +43,6 @@ void Intake550::Update( Metrics &m )
 
     m.centerBeamBroken = !centerBeamBreak.Get();
     m.endBeamBroken = !endBeamBreak.Get();
-    // m.pipeSwitchTripped = !pipeSwitch.Get();
 }
 
 void Intake550::SpinMotors( const SpinSpeed &s )

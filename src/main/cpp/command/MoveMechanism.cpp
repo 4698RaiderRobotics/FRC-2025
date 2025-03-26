@@ -93,7 +93,7 @@ void MoveMechanism::Execute()
             m_arm->SetWristGoal( wrist_goal );
         }
         m_elevator->SetGoal( elevator::kElevatorMinHeight );
-        if( m_elevator->GetHeight() < 3_in ) {
+        if( m_elevator->GetHeight() < 5_in ) {
             move_elevator_down = false;
         }
     } else {

@@ -22,6 +22,7 @@ public:
     static frc2::CommandPtr DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotRelative, double fractionFullSpeed );
 
     static frc2::CommandPtr SetDriveSpeed( bool useSlowSpeed );
+    static void SetDriveSpeedFunc( bool useSlowSpeed );
 
 private:
     DriveCommands() = default;

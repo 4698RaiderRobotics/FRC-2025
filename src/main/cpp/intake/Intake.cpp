@@ -13,7 +13,7 @@
 
 using namespace physical::intake;
 
-const IntakeIO::SpinSpeed IntakeIO::hold_in{ -0.05, -0.05 };
+const IntakeIO::SpinSpeed IntakeIO::hold_in{ -0.1, -0.1 };
 const IntakeIO::SpinSpeed IntakeIO::spin_in{ -kIntakeInSpeed, -kIntakeInSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_out{ kIntakeOutSpeed, kIntakeOutSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_out_fast{ kIntakeShiftFastSpeed, kIntakeShiftFastSpeed };
@@ -115,13 +115,13 @@ frc2::CommandPtr Intake::IntakeCoral()
 {
     return frc2::cmd::Sequence(
         IntakeCoralNoIndex( 10_s ),
-        frc2::cmd::Either( 
+        // frc2::cmd::Either( 
             // If Coral is in intake.  Need to shift it up to the end.
-            IndexCoral(), 
+            IndexCoral()
             // If No Coral in the intake
-            frc2::cmd::None(),
-            [this] {return isCenterBroken(); }
-        )
+            // frc2::cmd::None(),
+            // [this] {return isCenterBroken(); }
+        // )
     );
 }
 
@@ -129,8 +129,8 @@ frc2::CommandPtr Intake::IntakeCoralNoIndex( units::second_t timeout )
 {
     return frc2::cmd::Sequence( 
         RunOnce( [this] { SpinIn(); }),
-        frc2::cmd::WaitUntil( [this] { return isCenterBroken() || isEndBroken();} ).WithTimeout( timeout ),
-        RunOnce( [this] { Stop(); })
+        frc2::cmd::WaitUntil( [this] { return isCenterBroken() || isEndBroken();} ).WithTimeout( timeout )
+        // RunOnce( [this] { Stop(); })
     );
 }
 
@@ -139,7 +139,7 @@ frc2::CommandPtr Intake::IndexCoral()
     return frc2::cmd::Sequence( 
         RunOnce( [this] { ShiftUp(); }),
         // frc2::cmd::WaitUntil( [this] { return isEndBroken();} ).WithTimeout( 1.5_s ),
-        frc2::cmd::Wait( 1_s ),
+        frc2::cmd::Wait( 1.5_s ),
         RunOnce( [this] { Stop(); })
     );
 }

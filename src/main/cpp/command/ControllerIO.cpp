@@ -1,4 +1,6 @@
 
+#include <frc/DriverStation.h>
+
 #include <frc2/command/Commands.h>
 
 #include "command/ControllerIO.h"
@@ -32,12 +34,16 @@ frc2::CommandPtr ControllerIO::JoystickDrive( )
 
 frc2::CommandPtr ControllerIO::CoralRumble( )
 {
-    return frc2::cmd::Sequence(
-        frc2::cmd::RunOnce( [] { singleton->operatorCtrlr->SetRumble( frc::GenericHID::kBothRumble, 0.9 ); } ),
-        frc2::cmd::RunOnce( [] { singleton->driverCtrlr->SetRumble( frc::GenericHID::kBothRumble, 0.9 ); } ),
-        frc2::cmd::Wait( 0.5_s ),
-        frc2::cmd::RunOnce( [] { singleton->operatorCtrlr->SetRumble( frc::GenericHID::kBothRumble, 0 ); } ),
-        frc2::cmd::RunOnce( [] { singleton->driverCtrlr->SetRumble( frc::GenericHID::kBothRumble, 0 ); } )
+    return frc2::cmd::Either(
+        frc2::cmd::Sequence(
+            frc2::cmd::RunOnce( [] { singleton->operatorCtrlr->SetRumble( frc::GenericHID::kBothRumble, 0.9 ); } ),
+            frc2::cmd::RunOnce( [] { singleton->driverCtrlr->SetRumble( frc::GenericHID::kBothRumble, 0.9 ); } ),
+            frc2::cmd::Wait( 0.5_s ),
+            frc2::cmd::RunOnce( [] { singleton->operatorCtrlr->SetRumble( frc::GenericHID::kBothRumble, 0 ); } ),
+            frc2::cmd::RunOnce( [] { singleton->driverCtrlr->SetRumble( frc::GenericHID::kBothRumble, 0 ); } )
+        ),
+        frc2::cmd::None(),
+        [] { return frc::DriverStation::IsTeleopEnabled(); }
     );
 }
 

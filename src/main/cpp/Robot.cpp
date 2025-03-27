@@ -10,6 +10,8 @@
 
 #include "util/EncOffsets.h"
 
+#include "command/DriveCommands.h"
+
     // Global variables of mech2d
 frc::MechanismLigament2d* elevator_lig;
 frc::MechanismLigament2d* elbow_lig;
@@ -41,6 +43,12 @@ void Robot::RobotPeriodic()
 {
     LoggedRobot::RobotPeriodic();
     frc2::CommandScheduler::GetInstance().Run();
+}
+
+void Robot::DisabledInit()
+{
+    // Set fast drive speed
+    DriveCommands::SetDriveSpeedFunc( false );
 }
 
 void Robot::DisabledPeriodic() 

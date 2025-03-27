@@ -18,6 +18,16 @@ const double DEADBAND = 0.1;
 units::revolutions_per_minute_t DriveCommands::currentTurnSpeedLimit = swerve::physical::kTurnSpeedLimit;
 units::meters_per_second_t DriveCommands::currentDriveSpeedLimit = swerve::physical::kDriveSpeedLimit;
 
+void DriveCommands::SetDriveSpeedFunc( bool useSlowSpeed )
+{
+    if( useSlowSpeed ) {
+        currentTurnSpeedLimit = swerve::physical::kTurnSpeedLimit * 0.15;
+        currentDriveSpeedLimit = swerve::physical::kDriveSpeedLimit * 0.15;
+    } else {
+        currentTurnSpeedLimit = swerve::physical::kTurnSpeedLimit;
+        currentDriveSpeedLimit = swerve::physical::kDriveSpeedLimit;
+    }
+}
 
 frc2::CommandPtr DriveCommands::SetDriveSpeed( bool useSlowSpeed )
 {

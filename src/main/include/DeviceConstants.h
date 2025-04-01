@@ -80,7 +80,7 @@ namespace climber {
     constexpr units::inch_t kSpoolDiameter = 0.75_in;
 
         // Gear Ratio
-    constexpr double kGearRatio = 25 * 42.0 / 38.0;
+    constexpr double kGearRatio = 45 * 38.0 / 34.0;
 
         // The number of inches traveled per rotation of the motor
         // wheel circumference / gear ratio

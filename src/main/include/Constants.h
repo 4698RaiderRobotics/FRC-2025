@@ -42,8 +42,8 @@ namespace arm {
     constexpr units::degree_t kElbowMinAngle = -38_deg;
 
     // Elevator Rest Position
-    constexpr units::degree_t kElbowRestAngle = 120_deg;
-    constexpr units::degree_t kElbowHomingRestAngle = 115_deg;
+    constexpr units::degree_t kElbowRestAngle = 90_deg;
+    constexpr units::degree_t kElbowHomingRestAngle = 90_deg;
 
     // Elevator Raise / Lower Position
     constexpr units::degree_t kElbowForwardRaiseAngle = 50_deg;

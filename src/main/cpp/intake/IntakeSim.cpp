@@ -87,8 +87,8 @@ void IntakeSim::CheckIntakeEjectState()
     if( spinning_in && frc::Timer::GetFPGATimestamp() - start_time > 1.5_s ) {
         // We have been spinning the intake in for 1.5 seconds... Trip the beam break
         centerBeamBlocked = true;
-    } else if( spinning_out && frc::Timer::GetFPGATimestamp() - start_time > 0.5_s ) {
-        // We have been spinning the intake out for 0.5 seconds... unTrip the beam break
+    } else if( spinning_out && frc::Timer::GetFPGATimestamp() - start_time > 0.2_s ) {
+        // We have been spinning the intake out for 0.2 seconds... unTrip the beam break
         centerBeamBlocked = false;
         endBeamBlocked = false;
         polling_pipe = false;

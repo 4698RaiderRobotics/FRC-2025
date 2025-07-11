@@ -47,10 +47,10 @@ private:
     Intake *m_intake;
     Climber *m_climber;
     Elevator *m_elevator;
-    Vision *m_vision;
+    // Vision *m_vision;
 
-    frc2::CommandXboxController driverCtrlr{0};
-    frc2::CommandXboxController operatorCtrlr{1};
+    frc2::CommandXboxController demoCtrlr{0};
+    // frc2::CommandXboxController operatorCtrlr{1};
     ControllerAxis elevator_nudge_axis;
     ControllerAxis elbow_nudge_axis;
     ControllerAxis climber_nudge_axis;

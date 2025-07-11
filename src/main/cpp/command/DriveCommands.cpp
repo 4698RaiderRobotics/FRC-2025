@@ -93,37 +93,40 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
 
 frc2::CommandPtr DriveCommands::DriveToPosePP( Drive *d, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed )
 {
-    return frc2::cmd::Defer( [d, poseFunc, fractionFullSpeed] {
-        frc::Pose2d targetPose = poseFunc();
+    // return frc2::cmd::Defer( [d, poseFunc, fractionFullSpeed] {
+    //     frc::Pose2d targetPose = poseFunc();
 
-        frc::Pose2d currentPose = d->GetPose();
+    //     frc::Pose2d currentPose = d->GetPose();
 
-        if( (currentPose - targetPose).Translation().Norm() < 0.04_m ) {
-            return frc2::cmd::None();
-        }
+    //     if( (currentPose - targetPose).Translation().Norm() < 0.04_m ) {
+    //         return frc2::cmd::None();
+    //     }
 
-        std::vector<frc::Pose2d> poses{ currentPose, targetPose };
+    //     std::vector<frc::Pose2d> poses{ currentPose, targetPose };
 
-        std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
+    //     std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
 
-        pathplanner::PathConstraints constraints(
-            3.0_mps * fractionFullSpeed, 
-            3.0_mps_sq * fractionFullSpeed, 
-            360_deg_per_s * fractionFullSpeed, 
-            720_deg_per_s_sq * fractionFullSpeed
-        );
+    //     pathplanner::PathConstraints constraints(
+    //         3.0_mps * fractionFullSpeed, 
+    //         3.0_mps_sq * fractionFullSpeed, 
+    //         360_deg_per_s * fractionFullSpeed, 
+    //         720_deg_per_s_sq * fractionFullSpeed
+    //     );
 
-        auto path = std::make_shared<pathplanner::PathPlannerPath>(
-            waypoints,
-            constraints,
-            std::nullopt, // The ideal starting state, this is only relevant for pre-planned paths, so can be nullopt for on-the-fly paths.
-            pathplanner::GoalEndState(0.0_mps, targetPose.Rotation()) // Goal end state. You can set a holonomic rotation here.
-        );
+    //     auto path = std::make_shared<pathplanner::PathPlannerPath>(
+    //         waypoints,
+    //         constraints,
+    //         std::nullopt, // The ideal starting state, this is only relevant for pre-planned paths, so can be nullopt for on-the-fly paths.
+    //         pathplanner::GoalEndState(0.0_mps, targetPose.Rotation()) // Goal end state. You can set a holonomic rotation here.
+    //     );
 
-        path->preventFlipping = true;
+    //     path->preventFlipping = true;
 
-        return pathplanner::AutoBuilder::followPath(path).WithName( "AutoBuilder-pathfindToPose");
-    }, {d} );
+    //     return pathplanner::AutoBuilder::followPath(path).WithName( "AutoBuilder-pathfindToPose");
+    // }, {d} );
+
+    // DEMO MODE
+    return frc2::cmd::None();
 }
 
 frc2::CommandPtr DriveCommands::DriveOpenLoop( Drive *d, frc::ChassisSpeeds speed, bool robotRelative )
@@ -138,22 +141,25 @@ frc2::CommandPtr DriveCommands::DriveOpenLoop( Drive *d, frc::ChassisSpeeds spee
 
 frc2::CommandPtr DriveCommands::DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotRelative, double fractionFullSpeed )
 {
-    return DriveToPoseTrap( d, [d, move, robotRelative, fractionFullSpeed] {
-        frc::Pose2d newPose;
-        frc::Pose2d currentPose = d->GetPose();
+    // return DriveToPoseTrap( d, [d, move, robotRelative, fractionFullSpeed] {
+    //     frc::Pose2d newPose;
+    //     frc::Pose2d currentPose = d->GetPose();
 
-        if( robotRelative ) {
-            // Move the current pose in the Robot Pose coordinate system.
-            // The robot coordinate system is X-forward and Y-left.
-            newPose = currentPose.TransformBy( move );
-        } else {
-            // Move the current pose in the field coordinate system.
-            newPose = {currentPose.Translation() + move.Translation(), move.Rotation() };
-        }
+    //     if( robotRelative ) {
+    //         // Move the current pose in the Robot Pose coordinate system.
+    //         // The robot coordinate system is X-forward and Y-left.
+    //         newPose = currentPose.TransformBy( move );
+    //     } else {
+    //         // Move the current pose in the field coordinate system.
+    //         newPose = {currentPose.Translation() + move.Translation(), move.Rotation() };
+    //     }
 
-        return newPose;
-    },
-    fractionFullSpeed
-    ).WithName("DriveDeltaPose");
+    //     return newPose;
+    // },
+    // fractionFullSpeed
+    // ).WithName("DriveDeltaPose");
+
+    // DEMO MODE
+    return frc2::cmd::None();
 }
 

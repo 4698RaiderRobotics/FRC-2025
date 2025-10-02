@@ -17,7 +17,7 @@ public:
         std::function<double()> ySupplier, 
         std::function<double()> omegaSupplier);
 
-    static frc2::CommandPtr DriveToPosePP( Drive *d, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed );
+    static frc2::CommandPtr DriveToPosePP( Drive *d, std::function<std::vector<frc::Pose2d>()> poseFunc, double fractionFullSpeed );
     static frc2::CommandPtr DriveOpenLoop( Drive *d, frc::ChassisSpeeds speed, bool robotRelative );
     static frc2::CommandPtr DriveDeltaPose( Drive *d, frc::Transform2d move, bool robotRelative, double fractionFullSpeed );
 

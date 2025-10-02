@@ -242,7 +242,7 @@ frc2::CommandPtr ReefCommands::PrepareToPlaceOnReef( Arm *arm, Elevator *elevato
 frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide, std::function<ReefPlacement ()> place_func )
 {
     return DriveCommands::DriveToPosePP( d, [d, onRightSide, place_func] {
-        frc::Transform2d delta;
+        frc::Transform2d delta, mid_delta;
 
         switch( place_func() ) {
         case ReefPlacement::PLACING_L1:
@@ -258,12 +258,13 @@ frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide, std:
             delta = {reef::place_L4_shift_in, 0_in, 0_deg};
             break;
         default:
-            delta = {};
+            delta = {0_in, 0_in, 0_deg};
             break;
         }
 
+        mid_delta = {delta.X() - 16_in, 0_in, 0_deg};
         frc::Pose2d reefPose = ReefCommands::reefPoses.GetClosestReefPose( d->GetPose(), onRightSide );
-        return  reefPose.TransformBy( delta );
+        return std::vector<frc::Pose2d> {reefPose.TransformBy( delta ), reefPose.TransformBy( mid_delta )};
     },
     0.75
     ).WithName("DriveToReefPose");

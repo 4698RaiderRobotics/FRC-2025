@@ -49,7 +49,7 @@ void Climber::Periodic() {
         return;
     }
 
-    climbHomer.Home();
+    // climbHomer.Home();
 }
 
 void Climber::SetGoal( units::inch_t goal ) 

@@ -22,10 +22,12 @@ namespace vision {
     static const CameraLayoutInfo cameraInfo[kNumberOfCameras] = {
         // Front Left Camera
         "Front_Left",
-        {frc::Translation3d{10.8079_in, 7.48097_in, 7.89409_in}, frc::Rotation3d{3.10403_deg, -14.84949_deg, -46.8458_deg}},
+        // {frc::Translation3d{10.8079_in, 7.48097_in, 7.89409_in}, frc::Rotation3d{3.10403_deg, -14.84949_deg, -46.8458_deg}},
+        { frc::Translation3d{12.6850181_in, 11.9340367_in, 8.17935338_in}, frc::Rotation3d{-0.483946556_deg, -23.4951297_deg, -0.362283408_deg} },
         // Front Right Camera
         "Front_Right",
-        {frc::Translation3d(10.33464_in, -6.32108_in, 8.60338_in), frc::Rotation3d(0.274182_deg, -14.47084_deg, 44.39811_deg)},
+        // {frc::Translation3d(10.33464_in, -6.32108_in, 8.60338_in), frc::Rotation3d(0.274182_deg, -14.47084_deg, 44.39811_deg)},
+        { frc::Translation3d(12.7645852_in, -11.689974_in, 8.11366514_in), frc::Rotation3d(1.21045498_deg, -23.4920369_deg, -0.168526218_deg) },
         // Back Right Camera
         // "CameraB_2MP",
         // {frc::Translation3d{-3.3483_in, -10.3919_in, 26.2791_in}, frc::Rotation3d{9.487_deg, -14.549_deg, 148.395_deg}}
@@ -47,7 +49,7 @@ namespace arm {
 
     // Elevator Raise / Lower Position
     constexpr units::degree_t kElbowForwardRaiseAngle = 50_deg;
-    constexpr units::degree_t kElbowBackwardRaiseAngle = 115_deg;
+    constexpr units::degree_t kElbowBackwardRaiseAngle = 120_deg;
 
     // Elbow Positions for Each Reef Height
      constexpr units::degree_t kElbowCoralL1 = 28_deg;
@@ -56,7 +58,7 @@ namespace arm {
      constexpr units::degree_t kElbowCoralL4 = 20_deg;
 
     // Elbow Positions for Coral Station and Ground Pickup
-     constexpr units::degree_t kElbowCoralStation = 134.5_deg;
+     constexpr units::degree_t kElbowCoralStation = 138_deg;
      constexpr units::degree_t kElbowGroundPickup = -35_deg;
 
     // Elbow Position for Removing Algae
@@ -87,7 +89,7 @@ namespace intake {
 namespace elevator {
 
     // Maximum height for the elevator position
-    constexpr units::inch_t kElevatorMaxHeight = 57_in;
+    constexpr units::inch_t kElevatorMaxHeight = 57.9_in;
     // Minimum height for the elevator position
     constexpr units::inch_t kElevatorMinHeight = 0_in;
 
@@ -95,10 +97,10 @@ namespace elevator {
     constexpr units::inch_t kHeightCoralL1 = 0_in;
     constexpr units::inch_t kHeightCoralL2 = 9_in;
     constexpr units::inch_t kHeightCoralL3 = 25.25_in;
-    constexpr units::inch_t kHeightCoralL4 = 56_in;
+    constexpr units::inch_t kHeightCoralL4 = 57.75_in;
 
     // Heights for the elevator for Coral Station and Ground Pickup
-     constexpr units::inch_t kHeightCoralStation = 10.5_in;
+     constexpr units::inch_t kHeightCoralStation = 7.5_in;
      constexpr units::inch_t kHeightGroundPickup = 0_in;
 
     // Heights for removing Algae

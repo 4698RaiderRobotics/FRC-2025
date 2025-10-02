@@ -82,18 +82,18 @@ void MoveMechanism::Execute()
         if( move_arm_forward ) {
             // Arm is back and needs to come down and forward
             m_arm->SetElbowGoal( arm::kElbowBackwardRaiseAngle );
+            if( wrist_goal == ArmIO::WristHorizontal ) {
+                m_arm->SetWristGoal( wrist_goal );
+            }
         } else {
             // Arm is forward and needs to come down and back
             m_arm->SetElbowGoal( arm::kElbowForwardRaiseAngle );
-        }
-        if( wrist_goal == ArmIO::WristHorizontal ) {
-            // if( delay_for_wrist ) {
-            //     wrist_start_time = frc::Timer::GetFPGATimestamp();
-            // }
-            m_arm->SetWristGoal( wrist_goal );
+            if( wrist_goal == ArmIO::WristHorizontal && m_arm->GetElbowAngle() > arm::kElbowForwardRaiseAngle - 15_deg ) {
+                m_arm->SetWristGoal( wrist_goal );
+            }
         }
         m_elevator->SetGoal( elevator::kElevatorMinHeight );
-        if( m_elevator->GetHeight() < 5_in ) {
+        if( m_elevator->GetHeight() < 4_in ) {
             move_elevator_down = false;
         }
     } else {

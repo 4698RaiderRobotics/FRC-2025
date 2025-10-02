@@ -47,21 +47,29 @@ namespace arm {
 namespace elevator {
 
         // Pulley diameter HTD 24T
-    constexpr units::inch_t kGearDiameter = 1.504_in;
+    // constexpr units::inch_t kGearDiameter = 1.504_in;
+
+   //  2" ABS Pipe diameter is 2.375in.  // 1.025 correction factor.
+    constexpr units::inch_t kGearDiameter = 2.375_in * 1.025;
 
         // Gear Ratio
     constexpr double kGearRatio = 5;
 
         // The number of inches traveled per rotation of the motor
-        // wheel circumference / gear ratio
-    constexpr inches_per_rev_t kDistancePerMotorRev = std::numbers::pi * kGearDiameter * 2.0 / ( kGearRatio *  1_tr );
+        // wheel circumference / gear ratio.  Multiply by two for cascade elevator.
+    // constexpr inches_per_rev_t kDistancePerMotorRev = std::numbers::pi * kGearDiameter * 2.0 / ( kGearRatio *  1_tr );
 
+        // The number of inches traveled per rotation of the motor
+        // wheel circumference / gear ratio. Continuous rigging so no 2x multiplier.
+    constexpr inches_per_rev_t kDistancePerMotorRev = std::numbers::pi * kGearDiameter / ( kGearRatio *  1_tr );
+
+  
         // PIDSGVA and Motion Profile settings
     constexpr MotionConfig<units::inches> kMotionConfig = {
         // { 8.0, 0.0, 0.0, 0.175, 0.375, 0.122, 0.0 },
         { 7.5, 0.0, 0.0, 0.175, 0.375, 0.125, 0.0 },
-        // { 2_mps, 3_mps_sq, 30_mps_cu }
-        { 4.4_mps, 8_mps_sq, 60_mps_cu }
+        { 3_mps, 5_mps_sq, 40_mps_cu }
+        // { 4.4_mps, 8_mps_sq, 60_mps_cu }
     };
 }
 

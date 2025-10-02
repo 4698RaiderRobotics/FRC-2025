@@ -91,18 +91,18 @@ frc2::CommandPtr DriveCommands::JoystickDrive(
     ).WithName( "Joystick Drive" );
 }
 
-frc2::CommandPtr DriveCommands::DriveToPosePP( Drive *d, std::function<frc::Pose2d()> poseFunc, double fractionFullSpeed )
+frc2::CommandPtr DriveCommands::DriveToPosePP( Drive *d, std::function<std::vector<frc::Pose2d>()> poseFunc, double fractionFullSpeed )
 {
     return frc2::cmd::Defer( [d, poseFunc, fractionFullSpeed] {
-        frc::Pose2d targetPose = poseFunc();
+        std::vector<frc::Pose2d> targetPoses = poseFunc();
 
         frc::Pose2d currentPose = d->GetPose();
 
-        if( (currentPose - targetPose).Translation().Norm() < 0.04_m ) {
+        if( (currentPose - targetPoses[0]).Translation().Norm() < 0.04_m ) {
             return frc2::cmd::None();
         }
 
-        std::vector<frc::Pose2d> poses{ currentPose, targetPose };
+        std::vector<frc::Pose2d> poses{ currentPose, targetPoses[1], targetPoses[0] };
 
         std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
 
@@ -113,16 +113,21 @@ frc2::CommandPtr DriveCommands::DriveToPosePP( Drive *d, std::function<frc::Pose
             720_deg_per_s_sq * fractionFullSpeed
         );
 
-        auto path = std::make_shared<pathplanner::PathPlannerPath>(
-            waypoints,
-            constraints,
-            std::nullopt, // The ideal starting state, this is only relevant for pre-planned paths, so can be nullopt for on-the-fly paths.
-            pathplanner::GoalEndState(0.0_mps, targetPose.Rotation()) // Goal end state. You can set a holonomic rotation here.
-        );
+        try {
+            auto path = std::make_shared<pathplanner::PathPlannerPath>(
+                waypoints,
+                constraints,
+                std::nullopt, // The ideal starting state, this is only relevant for pre-planned paths, so can be nullopt for on-the-fly paths.
+                pathplanner::GoalEndState(0.0_mps, targetPoses[0].Rotation()) // Goal end state. You can set a holonomic rotation here.
+            );
 
-        path->preventFlipping = true;
+            path->preventFlipping = true;
+            return pathplanner::AutoBuilder::followPath(path).WithName( "AutoBuilder-pathfindToPose");
+        } catch(const std::exception& e) {
+            fmt::print( "\n\n================> DriveToPosePP -- PathPlanner path creation failed <==================\n" );
+            return frc2::cmd::None();
+        }
 
-        return pathplanner::AutoBuilder::followPath(path).WithName( "AutoBuilder-pathfindToPose");
     }, {d} );
 }
 

@@ -176,6 +176,18 @@ void WritePathPlannerJSONFile( std::string fname, std::vector<frc::Pose2d> &PP_p
     fclose( fp );
 }
 
+frc2::CommandPtr ReefCommands::CancelAll( Arm *arm, Intake *intake, Elevator *elevator, Climber *climber )
+{
+    return frc2::cmd::Sequence(
+        frc2::cmd::Either( 
+            frc2::cmd::None(),
+            IntakeCommands::RestPosition( arm, intake, elevator ),
+            [climber] { return climber->DoingSequence(); }
+        ),
+        climber->StopClimber()
+    ).WithName("Cancel All");
+}
+
 frc2::CommandPtr ReefCommands::PlaceOnReef( 
     Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide, std::function<ReefPlacement ()> place_func )
 {
@@ -447,21 +459,29 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
     );
 }
 
-frc2::CommandPtr ReefCommands::DeployClimberFoot( Arm *arm, Climber *climber )
+// frc2::CommandPtr ReefCommands::DeployClimberFoot( Arm *arm, Climber *climber )
+// {
+//     return frc2::cmd::Sequence(
+//         frc2::cmd::Parallel( 
+//             DriveCommands::SetDriveSpeed( true ),
+//             arm->ChangeElbowAngle( arm::kElbowGroundPickup ),
+//             climber->RaiseClimber()
+//         ),
+//         frc2::cmd::RunOnce( [climber] { climber->SetGoal( 0.0_in ); }, {climber} )
+//     );
+// }
+
+frc2::CommandPtr ReefCommands::LockClimberToCage( Arm *arm, Climber *climber )
 {
-    return frc2::cmd::Sequence(
+    return frc2::cmd::Sequence( 
         frc2::cmd::Parallel( 
-            DriveCommands::SetDriveSpeed( true ),
+            // DriveCommands::SetDriveSpeed( true ),
             arm->ChangeElbowAngle( arm::kElbowGroundPickup ),
             climber->RaiseClimber()
         ),
-        frc2::cmd::RunOnce( [climber] { climber->SetGoal( 0.0_in ); }, {climber} )
+        frc2::cmd::WaitUntil( [climber] { return climber->CageLockedIn(); } ),
+        climber->DoClimb()
     );
-}
-
-frc2::CommandPtr ReefCommands::LockClimberToCage( Climber *climber )
-{
-    return climber->RaiseClimber();
 }
 
 frc::Pose2d ReefPlacingPoses::GetClosestReefPose( frc::Pose2d currentPose, bool onRightSide ) 

@@ -27,13 +27,14 @@ Climber::Climber()
 
     climbHomer = util::MotorHomer(
         // Start routine
-        [this] { io->SetOpenLoop(-0.05); },
+        [this] { io->SetOpenLoop(-0.1); },
         // Stop and Reset Routine
         [this] { io->SetOpenLoop(0.0); io->ResetHeight(); SetGoal(kClimberRestHeight); },
         // Home Condition
         [this] { return metrics.homeSwitchTripped; },
         100_ms
     );
+    
 }
 
 void Climber::Periodic() {
@@ -49,7 +50,10 @@ void Climber::Periodic() {
         return;
     }
 
-    // climbHomer.Home();
+    if( rollersEnabled && metrics.cageSwitchTripped ) {
+        SetCageIntake( false );
+    }
+    climbHomer.Home();
 }
 
 void Climber::SetGoal( units::inch_t goal ) 
@@ -60,8 +64,15 @@ void Climber::SetGoal( units::inch_t goal )
 
 void Climber::Nudge( units::inch_t nudge ) 
 {
+    metrics.doingClimbSequence = false;
     metrics.goal += nudge;
     io->SetGoal( metrics.goal );
+}
+
+void Climber::SetCageIntake( bool enable_rollers )
+{
+    rollersEnabled = enable_rollers;
+    io->SetRollers( enable_rollers );
 }
 
 bool Climber::AtGoal() 
@@ -69,10 +80,24 @@ bool Climber::AtGoal()
     return units::math::abs( metrics.height - metrics.goal ) < AT_GOAL_TOLERANCE;
 }
 
+bool Climber::CageLockedIn()
+{
+    return metrics.cageSwitchTripped;
+}
+
+bool Climber::DoingSequence() 
+{
+    return metrics.doingClimbSequence;
+}
+
 frc2::CommandPtr Climber::RaiseClimber( )
 {
     return frc2::cmd::Sequence(
-        RunOnce( [this] { SetGoal( kClimberRaiseHeight ); }),
+        RunOnce( [this] { 
+            metrics.doingClimbSequence = true;
+            SetGoal( kClimberRaiseHeight ); 
+            SetCageIntake( true ); 
+        }),
         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
     );
 }
@@ -80,9 +105,21 @@ frc2::CommandPtr Climber::RaiseClimber( )
 frc2::CommandPtr Climber::DoClimb( )
 {
     return frc2::cmd::Sequence(
-        RunOnce( [this] { SetGoal( kClimberClimbHeight ); }),
+        RunOnce( [this] { 
+            SetGoal( kClimberClimbHeight );
+            SetCageIntake( false );
+        }),
         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
     );
+}
+
+frc2::CommandPtr Climber::StopClimber( )
+{
+    return RunOnce( [this] { 
+        metrics.doingClimbSequence = false;
+        SetCageIntake( false );
+        io->SetOpenLoop( 0.0 );
+    });
 }
 
 frc2::Trigger Climber::isHoming()
@@ -98,5 +135,10 @@ void ClimberIO::Metrics::Log( const std::string &key )
     AUTOLOG( key, velocity );
     AUTOLOG( key, appliedVolts );
     AUTOLOG( key, current );
+    AUTOLOG( key, rollerVelocity );
+    AUTOLOG( key, rollerAppliedVolts );
+    AUTOLOG( key, rollerCurrent );
     AUTOLOG( key, homeSwitchTripped );
+    AUTOLOG( key, cageSwitchTripped );
+    AUTOLOG( key, doingClimbSequence );
 }

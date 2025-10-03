@@ -48,3 +48,8 @@ void ClimberSim::ResetHeight( )
 {
    motorSim.SetPosition( 0_in );
 }
+
+void ClimberSim::SetRollers( bool enable )
+{
+    // TODO
+}

@@ -109,22 +109,22 @@ void RobotContainer::ConfigureBindings()
         .OnTrue( frc2::cmd::RunOnce( [this] { m_drive->SetPose( {0_m, 0_m, 0_deg} ); }, {m_drive} ));
 
     driverCtrlr.Button( ctrl::cancel_button ).OnTrue(
-        IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
+        ReefCommands::CancelAll( m_arm, m_intake, m_elevator, m_climber )
     );
 
     driverCtrlr.Button( ctrl::manual_spin_down ).OnTrue( m_intake->EjectCoralL2_4_Fast() );
 
     driverCtrlr.Button( ctrl::manual_eject ).OnTrue( m_intake->EjectCoralL1() );
 
-    driverCtrlr.LeftStick().OnTrue( ReefCommands::DeployClimberFoot( m_arm, m_climber ) );
-    driverCtrlr.POV( ctrl::raise_climber ).OnTrue( ReefCommands::LockClimberToCage( m_climber ) );
-    driverCtrlr.POV( ctrl::start_climb ).OnTrue( m_climber->DoClimb() );
+    // driverCtrlr.LeftStick().OnTrue( ReefCommands::DeployClimberFoot( m_arm, m_climber ) );
+    driverCtrlr.Button( ctrl::raise_climber ).OnTrue( ReefCommands::LockClimberToCage( m_arm, m_climber ) );
+    driverCtrlr.Button( ctrl::start_climb ).OnTrue( m_climber->DoClimb() );
 
     // driverCtrlr.POV( 0 ).OnTrue( DriveToPose( m_drive, [] { return frc::Pose2d{ 610_in, 158.50_in, 180_deg}; } ).ToPtr() );
 
     /**************************          OPERATOR           ********************* */
     operatorCtrlr.Button( ctrl::cancel_button ).OnTrue( 
-        IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
+        ReefCommands::CancelAll( m_arm, m_intake, m_elevator, m_climber )
     );
 
     (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L1_level ))

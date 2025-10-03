@@ -44,12 +44,12 @@ namespace arm {
     constexpr units::degree_t kElbowMinAngle = -38_deg;
 
     // Elevator Rest Position
-    constexpr units::degree_t kElbowRestAngle = 120_deg;
-    constexpr units::degree_t kElbowHomingRestAngle = 115_deg;
+    constexpr units::degree_t kElbowRestAngle = 125_deg;
+    constexpr units::degree_t kElbowHomingRestAngle = 120_deg;
 
     // Elevator Raise / Lower Position
     constexpr units::degree_t kElbowForwardRaiseAngle = 50_deg;
-    constexpr units::degree_t kElbowBackwardRaiseAngle = 120_deg;
+    constexpr units::degree_t kElbowBackwardRaiseAngle = 125_deg;
 
     // Elbow Positions for Each Reef Height
      constexpr units::degree_t kElbowCoralL1 = 28_deg;
@@ -63,8 +63,8 @@ namespace arm {
 
     // Elbow Position for Removing Algae
      constexpr units::degree_t kElbowRemoveAlgaeLow = 60_deg;
-     constexpr units::degree_t kElbowRemoveAlgaeHigh = 53_deg;
-     constexpr units::degree_t kElbowAlgaeHoldingPos = 51_deg;
+     constexpr units::degree_t kElbowRemoveAlgaeHigh = 60_deg;
+     constexpr units::degree_t kElbowAlgaeHoldingPos = 60_deg;
 
     // Wrist setpoint Positions 
      constexpr units::degree_t kWristHorizontal = -5_deg;
@@ -94,7 +94,7 @@ namespace elevator {
     constexpr units::inch_t kElevatorMinHeight = 0_in;
 
     // Heights for the elevator to place on Reef
-    constexpr units::inch_t kHeightCoralL1 = 0_in;
+    constexpr units::inch_t kHeightCoralL1 = 1.5_in;
     constexpr units::inch_t kHeightCoralL2 = 9_in;
     constexpr units::inch_t kHeightCoralL3 = 25.25_in;
     constexpr units::inch_t kHeightCoralL4 = 57.75_in;
@@ -105,7 +105,7 @@ namespace elevator {
 
     // Heights for removing Algae
     constexpr units::inch_t kHeightRemoveAlgaeLow = 0_in;
-    constexpr units::inch_t kHeightRemoveAlgaeHigh = 18_in;
+    constexpr units::inch_t kHeightRemoveAlgaeHigh = 16_in;
 
     constexpr units::inch_t kHeightDislogAlgae = 39_in;
 }
@@ -114,16 +114,16 @@ namespace elevator {
 namespace climber {
 
     // Maximum height for the climber position
-    constexpr units::inch_t kClimberMaxHeight = 5_in;
+    constexpr units::inch_t kClimberMaxHeight = 12_in;
     // Minimum height for the climber position
-    constexpr units::inch_t kClimberMinHeight = -6.5_in;
+    constexpr units::inch_t kClimberMinHeight = 0_in;
     // Resting height for the climber 
-    constexpr units::inch_t kClimberRestHeight = 0_in;
+    constexpr units::inch_t kClimberRestHeight = 2.5_in;
 
     // Raising height for the climber 
-    constexpr units::inch_t kClimberRaiseHeight = 4.75_in;
+    constexpr units::inch_t kClimberRaiseHeight = 11.25_in;
     // Climb height for the climber 
-    constexpr units::inch_t kClimberClimbHeight = -5.75_in;
+    constexpr units::inch_t kClimberClimbHeight = 1.75_in;
 }
 
     // *****************     REEF PLACEMENT      **********************

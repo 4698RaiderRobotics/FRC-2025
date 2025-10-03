@@ -16,11 +16,15 @@ public:
 
     void SetGoal( units::inch_t goal );
     void Nudge( units::inch_t nudge );
+    void SetCageIntake( bool enable_rollers );
     bool AtGoal();
+    bool CageLockedIn();
+    bool DoingSequence();
 
     // frc2::CommandPtr ChangeHeight( units::inch_t goal );
     frc2::CommandPtr RaiseClimber( );
     frc2::CommandPtr DoClimb( );
+    frc2::CommandPtr StopClimber( );
 
     frc2::Trigger isHoming();
 
@@ -29,6 +33,8 @@ private:
     ClimberIO::Metrics metrics;
 
     util::MotorHomer climbHomer;
+
+    bool rollersEnabled{ false };
 
     const units::inch_t AT_GOAL_TOLERANCE = 1_in;
 };

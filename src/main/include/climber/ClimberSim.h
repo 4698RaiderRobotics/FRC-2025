@@ -14,6 +14,7 @@ public:
     void SetGoal( units::inch_t goal ) override;
     void SetOpenLoop( double percent ) override;
     void ResetHeight( ) override;
+    void SetRollers( bool enable ) override;
 
 private:
     LinearSim motorSim;

@@ -45,6 +45,7 @@ private:
 class ReefCommands {
 public:
 
+    static frc2::CommandPtr CancelAll( Arm *arm, Intake *intake, Elevator *elevator, Climber *climber );
     static frc2::CommandPtr PlaceOnReef( 
         Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide, std::function<ReefPlacement ()> place_func );
     static frc2::CommandPtr PrepareToPlaceOnReef( Arm *arm, Elevator *elevator, std::function<ReefPlacement ()> place_func );
@@ -66,8 +67,8 @@ public:
 
     static frc2::CommandPtr RemoveAlgae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator );
 
-    static frc2::CommandPtr DeployClimberFoot( Arm *arm, Climber *climber );
-    static frc2::CommandPtr LockClimberToCage( Climber *climber );
+    // static frc2::CommandPtr DeployClimberFoot( Arm *arm, Climber *climber );
+    static frc2::CommandPtr LockClimberToCage( Arm *arm, Climber *climber );
 
 private:
     ReefCommands() = default;

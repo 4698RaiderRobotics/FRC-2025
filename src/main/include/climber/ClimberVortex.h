@@ -9,6 +9,7 @@
 #include <frc/trajectory/TrapezoidProfile.h>
 
 #include <rev/SparkFlex.h>
+#include <ctre/phoenix6/TalonFX.hpp>
 
 class ClimberVortex : public ClimberIO {
 public:
@@ -19,11 +20,13 @@ public:
     void SetGoal( units::inch_t goal ) override;
     void SetOpenLoop( double percent ) override;
     void ResetHeight( ) override;
+    void SetRollers( bool enable ) override;
 
 private:
     rev::spark::SparkFlex flex;
 
     frc::DigitalInput climberHome;
+    frc::DigitalInput cageEngaged;
 
     frc::PIDController m_PID;
     frc::SimpleMotorFeedforward<units::meters> m_simpleFF;
@@ -33,4 +36,11 @@ private:
     frc::TrapezoidProfile<units::meters>::State m_Setpoint;
 
     bool isOpenLoop;
+
+    ctre::phoenix6::hardware::TalonFX rollerTalon;
+
+    ctre::phoenix6::StatusSignal<units::turns_per_second_t> rollerVelocity = rollerTalon.GetVelocity();
+    ctre::phoenix6::StatusSignal<units::volt_t> rollerAppliedVolts = rollerTalon.GetMotorVoltage();
+    ctre::phoenix6::StatusSignal<units::ampere_t> rollerCurrent = rollerTalon.GetSupplyCurrent();
+
 };

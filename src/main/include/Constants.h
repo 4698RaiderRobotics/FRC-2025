@@ -62,9 +62,10 @@ namespace arm {
      constexpr units::degree_t kElbowGroundPickup = -35_deg;
 
     // Elbow Position for Removing Algae
-     constexpr units::degree_t kElbowRemoveAlgaeLow = 60_deg;
-     constexpr units::degree_t kElbowRemoveAlgaeHigh = 60_deg;
-     constexpr units::degree_t kElbowAlgaeHoldingPos = 60_deg;
+     constexpr units::degree_t kElbowRemoveAlgaeLow = 28_deg;
+     constexpr units::degree_t kElbowRemoveAlgaeHigh = 28_deg;
+     constexpr units::degree_t kElbowAlgaeHoldingPos = 28_deg;
+     constexpr units::degree_t kElbowAlgaeRemoveEnd = 90_deg;
 
     // Wrist setpoint Positions 
      constexpr units::degree_t kWristHorizontal = -5_deg;
@@ -95,7 +96,7 @@ namespace elevator {
 
     // Heights for the elevator to place on Reef
     constexpr units::inch_t kHeightCoralL1 = 1.5_in;
-    constexpr units::inch_t kHeightCoralL2 = 9_in;
+    constexpr units::inch_t kHeightCoralL2 = 9.5_in;
     constexpr units::inch_t kHeightCoralL3 = 25.25_in;
     constexpr units::inch_t kHeightCoralL4 = 57.75_in;
 
@@ -104,8 +105,8 @@ namespace elevator {
      constexpr units::inch_t kHeightGroundPickup = 0_in;
 
     // Heights for removing Algae
-    constexpr units::inch_t kHeightRemoveAlgaeLow = 0_in;
-    constexpr units::inch_t kHeightRemoveAlgaeHigh = 16_in;
+    constexpr units::inch_t kHeightRemoveAlgaeLow = 1.6_in;
+    constexpr units::inch_t kHeightRemoveAlgaeHigh = 17.2_in;
 
     constexpr units::inch_t kHeightDislogAlgae = 39_in;
 }
@@ -135,14 +136,14 @@ namespace reef {
         // See ReefPlacingPoses::OutputPathPlannerJSON()
     constexpr units::inch_t pose_shift_out = 23_in;
     constexpr units::inch_t pose_shift_lateral = 6.5_in;
-    constexpr units::inch_t algae_remove_pose_shift_out = 21_in;
+    constexpr units::inch_t algae_remove_pose_shift_out = 31_in;
 
     // Position away from April Tag to place/remove.
     constexpr units::inch_t place_L1 = 21_in;
     constexpr units::inch_t place_L2 = 18_in;
     constexpr units::inch_t place_L3 = 14.5_in;
     constexpr units::inch_t place_L4 = 14_in;
-    constexpr units::inch_t remove_algae = 16_in;
+    constexpr units::inch_t remove_algae = 13_in;
 
     // const units::inch_t place_L1_shift_in = 0_in;
     // const units::inch_t place_L2_shift_in = 6_in;

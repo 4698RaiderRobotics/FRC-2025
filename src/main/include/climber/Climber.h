@@ -21,7 +21,7 @@ public:
     bool CageLockedIn();
     bool DoingSequence();
 
-    // frc2::CommandPtr ChangeHeight( units::inch_t goal );
+    frc2::CommandPtr ChangeHeight( units::inch_t goal );
     frc2::CommandPtr RaiseClimber( );
     frc2::CommandPtr DoClimb( );
     frc2::CommandPtr StopClimber( );

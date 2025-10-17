@@ -50,7 +50,7 @@ namespace elevator {
     // constexpr units::inch_t kGearDiameter = 1.504_in;
 
    //  2" ABS Pipe diameter is 2.375in.  // 1.025 correction factor.
-    constexpr units::inch_t kGearDiameter = 2.375_in * 1.025;
+    constexpr units::inch_t kGearDiameter = 2.0_in * 0.9865;
 
         // Gear Ratio
     constexpr double kGearRatio = 5;

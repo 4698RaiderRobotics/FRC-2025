@@ -33,7 +33,7 @@ Climber::Climber()
         // Home Condition
         [this] { return metrics.homeSwitchTripped; },
         100_ms
-    );
+    ); 
     
 }
 
@@ -53,8 +53,8 @@ void Climber::Periodic() {
     if( rollersEnabled && metrics.cageSwitchTripped ) {
         SetCageIntake( false );
     }
-    climbHomer.Home();
-}
+    //climbHomer.Home();
+} 
 
 void Climber::SetGoal( units::inch_t goal ) 
 {

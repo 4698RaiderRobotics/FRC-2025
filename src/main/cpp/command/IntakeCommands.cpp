@@ -55,9 +55,22 @@ frc2::CommandPtr IntakeCommands::GroundPickup( Arm *arm, Intake *intake, Elevato
         //     arm->ChangeElbowAngle( arm::kElbowGroundPickup )
         // ),
         intake->IntakeCoral(),
-        frc2::cmd::Race(
-            MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kElbowRestAngle, ArmIO::WristHorizontal ).ToPtr(),
-            intake->IndexCoral()
+        frc2::cmd::Sequence(
+            MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kElbowForwardRaiseAngle + 30_deg, ArmIO::WristHorizontal ).ToPtr(),
+            frc2::cmd::Either(
+                frc2::cmd::Sequence(
+                    // Has Coral
+                    intake->IntakeCoralNoIndex(0.5_s),
+                    MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kElbowRestAngle, ArmIO::WristHorizontal ).ToPtr()
+                ),
+                frc2::cmd::Sequence(
+                    // Doesn't Have Coral
+                    intake->EjectCoralL1(),
+                    intake->IntakeCoral(),
+                    MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kElbowRestAngle, ArmIO::WristHorizontal ).ToPtr()
+                ),
+                [intake] {return intake->isCenterBroken();}
+            )
         ),
         intake->StopCmd()
     ).WithName( "Ground Pickup" );

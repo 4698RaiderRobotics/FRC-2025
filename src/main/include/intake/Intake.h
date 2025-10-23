@@ -2,6 +2,7 @@
 
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/button/Trigger.h>
+#include <frc/filter/Debouncer.h>
 
 #include "IntakeIO.h"
 
@@ -30,10 +31,12 @@ public:
     frc2::CommandPtr StopCmd();
 
     frc2::Trigger HasCoralTrigger() {return frc2::Trigger( [this] { return metrics.centerBeamBroken; } ); }
+    
 
 private:
     std::unique_ptr<IntakeIO> io;
     IntakeIO::Metrics metrics;
+    frc::Debouncer endBeamBreakDebouce{200_ms};
 
     bool isStopped{true};
 };

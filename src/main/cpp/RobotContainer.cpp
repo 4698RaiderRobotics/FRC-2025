@@ -120,6 +120,10 @@ void RobotContainer::ConfigureBindings()
     driverCtrlr.Button( ctrl::raise_climber ).OnTrue( ReefCommands::LockClimberToCage( m_arm, m_climber ) );
     driverCtrlr.Button( ctrl::start_climb ).OnTrue( m_climber->DoClimb() );
 
+    driverCtrlr.AxisGreaterThan( ctrl::manual_index, 0.75).WhileTrue(
+        m_intake->IndexCoral()
+    );
+
     // driverCtrlr.POV( 0 ).OnTrue( DriveToPose( m_drive, [] { return frc::Pose2d{ 610_in, 158.50_in, 180_deg}; } ).ToPtr() );
 
     /**************************          OPERATOR           ********************* */

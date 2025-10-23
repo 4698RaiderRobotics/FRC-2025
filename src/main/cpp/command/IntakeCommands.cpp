@@ -69,7 +69,7 @@ frc2::CommandPtr IntakeCommands::GroundPickup( Arm *arm, Intake *intake, Elevato
                     intake->IntakeCoral(),
                     MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kElbowRestAngle, ArmIO::WristHorizontal ).ToPtr()
                 ),
-                [intake] {return intake->isCenterBroken();}
+            [intake] {return intake->isCenterBroken();}
             )
         ),
         intake->StopCmd()

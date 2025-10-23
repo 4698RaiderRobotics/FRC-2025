@@ -443,8 +443,9 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
                 ),
                 // High Algae Start
                 frc2::cmd::Parallel(
-                    MoveMechanism( arm, elevator, elevator::kHeightRemoveAlgaeHigh, arm::kElbowRemoveAlgaeHigh + 5_deg, ArmIO::WristVertical ).ToPtr(),
-                    DriveCommands::DriveDeltaPose( d, {reef::algae_shift_in + 4_in , 0_in, 0_deg}, true, 0.5 )
+                    elevator->ChangeHeight( elevator::kHeightRemoveAlgaeHigh ),
+                    arm->ChangeElbowAngle( arm::kElbowRemoveAlgaeHigh ),
+                    DriveCommands::DriveDeltaPose( d, {reef::algae_shift_in , 0_in, 0_deg}, true, 0.5 )
                 ),
                 /*frc2::cmd::Parallel(
                     elevator->ChangeHeight( elevator::kHeightRemoveAlgaeHigh ),
@@ -455,39 +456,53 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
             ),
             // Doesn't Have Coral
             frc2::cmd::Either(
-                // Low Algae Start
                 frc2::cmd::Parallel(
-                    elevator->ChangeHeight( elevator::kHeightRemoveAlgaeLow + 0.25_in ),
+                    elevator->ChangeHeight( elevator::kHeightRemoveAlgaeLow + 0.5_in),
                     arm->ChangeElbowAngle( arm::kElbowRemoveAlgaeLow ),
+                    intake->EjectCoralL1(),
                     DriveCommands::DriveDeltaPose( d, {reef::algae_shift_in , 0_in, 0_deg}, true, 0.5 )
                 ),
                 // High Algae Start
                 frc2::cmd::Parallel(
-                    MoveMechanism( arm, elevator, elevator::kHeightRemoveAlgaeHigh, arm::kElbowRemoveAlgaeHigh, ArmIO::WristVertical ).ToPtr(),
+                    elevator->ChangeHeight( elevator::kHeightRemoveAlgaeHigh + 0.5_in),
+                    arm->ChangeElbowAngle( arm::kElbowRemoveAlgaeHigh ),
+                    intake->EjectCoralL1(),
                     DriveCommands::DriveDeltaPose( d, {reef::algae_shift_in , 0_in, 0_deg}, true, 0.5 )
                 ),
                 [d] { return ReefCommands::reefPoses.isAlgaeLow( d->GetPose() ); }
             ),
             [intake] {return intake->isCenterBroken();}
         ),
-            frc2::cmd::Either(
-                // Low Algae End
-                frc2::cmd::Sequence(
-                    elevator->ChangeHeight( elevator::kElevatorMinHeight),
-                    arm->ChangeElbowAngle( arm::kElbowAlgaeRemoveEnd ),
-                    DriveCommands::DriveDeltaPose( d, {-reef::algae_remove_pose_shift_out + 18_in, 0_in, 90_deg}, true, 0.7 )
+        frc2::cmd::Either(
+            // Low Algae End
+            frc2::cmd::Sequence(
+                frc2::cmd::Parallel(
+                elevator->ChangeHeight( elevator::kElevatorMinHeight),
+                arm->ChangeElbowAngle( arm::kElbowAlgaeRemoveEnd )
+                ),
+                DriveCommands::DriveDeltaPose( d, {-reef::algae_remove_pose_shift_out + 18_in, 0_in, 0_deg}, true, 0.7 )
 
-                ),
-                // High Algae End
-                frc2::cmd::Sequence(
-                    MoveMechanism( arm, elevator, elevator::kHeightRemoveAlgaeHigh + 3_in, arm::kElbowAlgaeRemoveEnd, ArmIO::WristVertical ).ToPtr(),
-                    DriveCommands::DriveDeltaPose( d, {-reef::algae_remove_pose_shift_out + 12_in, 0_in, 0_deg}, true, 0.7 )
-                ),
+            ),
+            // High Algae End
+            frc2::cmd::Sequence(
+                MoveMechanism(arm, elevator, elevator::kHeightRemoveAlgaeHigh, arm::kElbowAlgaeRemoveEnd, ArmIO::WristHorizontal).ToPtr(),
+                DriveCommands::DriveDeltaPose( d, {-reef::algae_remove_pose_shift_out + 18_in, 0_in, 0_deg}, true, 0.7 )
+            ),
             [d] { return ReefCommands::reefPoses.isAlgaeLow( d->GetPose() ); }
             
         ),
-        //place L1
-        MoveMechanism( arm, elevator, elevator::kHeightRemoveAlgaeLow + 5_in, arm::kElbowAlgaeHoldingPos - 10_deg, ArmIO::WristHorizontal ).ToPtr()
+        frc2::cmd::Either(
+            // Has Coral -> (Removed) Place L1
+            frc2::cmd::Sequence(
+                MoveMechanism( arm, elevator, elevator::kHeightRemoveAlgaeLow, arm::kElbowAlgaeHoldingPos , ArmIO::WristHorizontal ).ToPtr()
+                //intake->EjectCoralL1().WithTimeout(0.25_s)
+            ),
+            // Doesn't Have Coral
+            frc2::cmd::Sequence(
+                IntakeCommands::RestPosition( arm, intake, elevator )
+            ),
+            [intake] {return intake->isCenterBroken();}
+        )
     );
 }
 

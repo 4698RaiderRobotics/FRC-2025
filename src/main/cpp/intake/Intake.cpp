@@ -117,13 +117,13 @@ frc2::CommandPtr Intake::IntakeCoral()
 {
     return frc2::cmd::Sequence(
         IntakeCoralNoIndex( 10_s ),
-        // frc2::cmd::Either( 
+        frc2::cmd::Either( 
             // If Coral is in intake.  Need to shift it up to the end.
-            IndexCoral()
+            IndexCoral(),
             // If No Coral in the intake
-            // frc2::cmd::None(),
-            // [this] {return isCenterBroken(); }
-        // )
+        frc2::cmd::None(),
+        [this] {return isCenterBroken(); }
+        )
     );
 }
 

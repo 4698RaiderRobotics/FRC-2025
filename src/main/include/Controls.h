@@ -23,7 +23,7 @@ namespace ctrl {
     constexpr int manual_eject = frc::XboxController::Button::kY;
     constexpr int manual_intake_coral = frc::XboxController::Button::kX;
     constexpr int manual_intake_algae = frc::XboxController::Button::kB;
-    constexpr int manual_index = frc::XboxController::Axis::kRightTrigger;
+    constexpr int manual_index = frc::XboxController::Axis::kLeftTrigger;
 
     constexpr int raise_climber = frc::XboxController::Button::kStart;
     constexpr int start_climb = frc::XboxController::Button::kBack;

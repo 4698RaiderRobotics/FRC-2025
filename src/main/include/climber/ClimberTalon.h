@@ -10,9 +10,9 @@ public:
 
     void Update( Metrics &m ) override;
 
-    void SetGoal( units::inch_t goal ) override;
+    void SetGoal( units::degree_t goal ) override;
     void SetOpenLoop( double percent ) override;
-    void ResetHeight( ) override;
+    void ResetAngle( ) override;
 
 private:
     ctre::phoenix6::hardware::TalonFX talon;

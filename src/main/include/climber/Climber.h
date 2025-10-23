@@ -4,6 +4,7 @@
 
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/button/Trigger.h>
+#include <frc/filter/Debouncer.h>
 
 #include "util/Utility.h"
 
@@ -14,19 +15,17 @@ public:
     Climber();
     void Periodic() override;
 
-    void SetGoal( units::inch_t goal );
-    void Nudge( units::inch_t nudge );
+    void SetGoal( units::degree_t goal );
+    void Nudge( units::degree_t nudge );
     void SetCageIntake( bool enable_rollers );
     bool AtGoal();
     bool CageLockedIn();
     bool DoingSequence();
 
-    frc2::CommandPtr ChangeHeight( units::inch_t goal );
+    frc2::CommandPtr ChangeHeight( units::degree_t goal );
     frc2::CommandPtr RaiseClimber( );
     frc2::CommandPtr DoClimb( );
     frc2::CommandPtr StopClimber( );
-
-    frc2::Trigger isHoming();
 
 private:
     std::unique_ptr<ClimberIO> io;
@@ -36,5 +35,7 @@ private:
 
     bool rollersEnabled{ false };
 
-    const units::inch_t AT_GOAL_TOLERANCE = 1_in;
+    frc::Debouncer cageDeboucer{ 300_ms };
+
+    const units::degree_t AT_GOAL_TOLERANCE = 3_deg;
 };

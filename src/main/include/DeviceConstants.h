@@ -63,7 +63,7 @@ namespace elevator {
         // wheel circumference / gear ratio. Continuous rigging so no 2x multiplier.
     constexpr inches_per_rev_t kDistancePerMotorRev = std::numbers::pi * kGearDiameter / ( kGearRatio *  1_tr );
 
-  
+
         // PIDSGVA and Motion Profile settings
     constexpr MotionConfig<units::inches> kMotionConfig = {
         // { 8.0, 0.0, 0.0, 0.175, 0.375, 0.122, 0.0 },
@@ -92,14 +92,14 @@ namespace climber {
 
         // The number of inches traveled per rotation of the motor
         // wheel circumference / gear ratio
-    constexpr inches_per_rev_t kDistancePerMotorRev = std::numbers::pi * kSpoolDiameter / ( kGearRatio *  1_tr );
+    // constexpr inches_per_rev_t kDistancePerMotorRev = std::numbers::pi * kSpoolDiameter / ( kGearRatio *  1_tr );
 
     const double kRollerGearRatio = 6;
 
         // PIDSGVA and Motion Profile settings
-    constexpr MotionConfig<units::meters> kMotionConfig = {
-        { 12.0, 0.0, 0, 0.0, 0.0, 80.0, 0.0 },
-        { 0.1_mps, 3_mps_sq, 0_mps_cu }
+    constexpr MotionConfig<units::turns> kMotionConfig = {
+        { 1.0, 0.0, 0, 0.0, 0.0, 4.0, 0.0 },
+        { 0.75_tps, 3_tr_per_s_sq, 0_tr_per_s_cu }
         // { 8.0, 0.0, 1.0, 0.0, 0.0, 40.0, 0.0 },
         // { 0.15_mps, 3_mps_sq, 0_mps_cu }
     };
@@ -116,6 +116,7 @@ namespace deviceIDs {
 
     constexpr int kClimberID = 24;
     constexpr int kClimberRollerID = 28;
+    constexpr int kClimberEncoderID = 29;
 
     constexpr int kIntakeUpperMotorID = 23;
     constexpr int kIntakeLowerMotorID = 22;
@@ -124,7 +125,6 @@ namespace deviceIDs {
     constexpr int kIntakeEndSensorPort = 1;
     constexpr int kIntakePipeSwitchPort = 99;
 
-    constexpr int kClimberHomeSwitchPort = 2;
-    constexpr int kClimberCageSwitchPort = 3;
+    constexpr int kClimberCageSwitchPort = 2;
 }
 

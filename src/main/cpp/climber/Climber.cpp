@@ -25,16 +25,18 @@ Climber::Climber()
         io = std::unique_ptr<ClimberIO> (new ClimberSim());
     }
 
-    climbHomer = util::MotorHomer(
+        // This "homer" just moves the climber to the rest angle.
+        // We use the homer routine so it only happens on initial
+        // startup
+   climbHomer = util::MotorHomer(
         // Start routine
-        [this] { io->SetOpenLoop(-0.1); },
+        [this] { /* do nothing */; },
         // Stop and Reset Routine
-        [this] { io->SetOpenLoop(0.0); io->ResetHeight(); SetGoal(kClimberRestHeight); },
+        [this] { SetGoal(kClimberRestAngle); },
         // Home Condition
-        [this] { return metrics.homeSwitchTripped; },
+        [this] { return true; },
         100_ms
     ); 
-    
 }
 
 void Climber::Periodic() {
@@ -43,26 +45,27 @@ void Climber::Periodic() {
 
     // Update the mechanism2d
     // Angle is related to height approximately by height=bar_length*theta
-    climber_lig->SetAngle( 10_deg + ( metrics.height / 11_in )*1_rad );
+    climber_lig->SetAngle( metrics.angle );
 
     if( frc::DriverStation::IsDisabled() ) {
-        SetGoal( metrics.height );
+        SetGoal( metrics.angle );
         return;
     }
 
     if( rollersEnabled && metrics.cageSwitchTripped ) {
         SetCageIntake( false );
     }
-    //climbHomer.Home();
+
+    climbHomer.Home();
 } 
 
-void Climber::SetGoal( units::inch_t goal ) 
+void Climber::SetGoal( units::degree_t goal ) 
 {
-    metrics.goal = util::clamp( goal, kClimberMinHeight, kClimberMaxHeight );
+    metrics.goal = util::clamp( goal, kClimberMinAngle, kClimberMaxAngle );
     io->SetGoal( metrics.goal );
 }
 
-void Climber::Nudge( units::inch_t nudge ) 
+void Climber::Nudge( units::degree_t nudge ) 
 {
     metrics.doingClimbSequence = false;
     metrics.goal += nudge;
@@ -77,12 +80,12 @@ void Climber::SetCageIntake( bool enable_rollers )
 
 bool Climber::AtGoal() 
 {
-    return units::math::abs( metrics.height - metrics.goal ) < AT_GOAL_TOLERANCE;
+    return units::math::abs( metrics.angle - metrics.goal ) < AT_GOAL_TOLERANCE;
 }
 
 bool Climber::CageLockedIn()
 {
-    return metrics.cageSwitchTripped;
+    return cageDeboucer.Calculate( metrics.cageSwitchTripped );
 }
 
 bool Climber::DoingSequence() 
@@ -95,7 +98,7 @@ frc2::CommandPtr Climber::RaiseClimber( )
     return frc2::cmd::Sequence(
         RunOnce( [this] { 
             metrics.doingClimbSequence = true;
-            SetGoal( kClimberRaiseHeight ); 
+            SetGoal( kClimberRaiseAngle ); 
             SetCageIntake( true ); 
         }),
         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
@@ -106,7 +109,7 @@ frc2::CommandPtr Climber::DoClimb( )
 {
     return frc2::cmd::Sequence(
         RunOnce( [this] { 
-            SetGoal( kClimberClimbHeight );
+            SetGoal( kClimberClimbAngle );
             SetCageIntake( false );
         }),
         frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
@@ -122,15 +125,9 @@ frc2::CommandPtr Climber::StopClimber( )
     });
 }
 
-frc2::Trigger Climber::isHoming()
-{
-    return frc2::Trigger( [this] { return climbHomer.isHomingActive(); } );
-}
-
-
 void ClimberIO::Metrics::Log( const std::string &key )
 {
-    AUTOLOG( key, height );
+    AUTOLOG( key, angle );
     AUTOLOG( key, goal );
     AUTOLOG( key, velocity );
     AUTOLOG( key, appliedVolts );
@@ -138,7 +135,6 @@ void ClimberIO::Metrics::Log( const std::string &key )
     AUTOLOG( key, rollerVelocity );
     AUTOLOG( key, rollerAppliedVolts );
     AUTOLOG( key, rollerCurrent );
-    AUTOLOG( key, homeSwitchTripped );
     AUTOLOG( key, cageSwitchTripped );
     AUTOLOG( key, doingClimbSequence );
 }

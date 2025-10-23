@@ -86,7 +86,7 @@ void RobotContainer::ConfigureDefaults()
     m_climber->SetDefaultCommand(
         frc2::cmd::Run( [this] {
             if( nudge_hold_button.Get() ) {
-                m_climber->Nudge(climber_nudge_axis.GetAxis() * -0.1_in);
+                m_climber->Nudge(climber_nudge_axis.GetAxis() * -0.5_deg);
             }
         },
         { m_climber }
@@ -177,9 +177,9 @@ void RobotContainer::ConfigureBindings()
         )
     );
 
-    m_climber->isHoming()
-        .OnTrue( m_arm->SetClimberHoming( true )) 
-        .OnFalse( m_arm->SetClimberHoming( false ));
+    // m_climber->isHoming()
+    //     .OnTrue( m_arm->SetClimberHoming( true )) 
+    //     .OnFalse( m_arm->SetClimberHoming( false ));
 
 
     /**************************          DEBUG MODE          ********************* */

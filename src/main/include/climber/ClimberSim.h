@@ -2,7 +2,7 @@
 
 #include "ClimberIO.h"
 
-#include "util/LinearSim.h"
+#include "util/AngularSim.h"
 
 
 class ClimberSim : public ClimberIO {
@@ -11,13 +11,13 @@ public:
 
     void Update( Metrics &m ) override;
 
-    void SetGoal( units::inch_t goal ) override;
+    void SetGoal( units::degree_t goal ) override;
     void SetOpenLoop( double percent ) override;
-    void ResetHeight( ) override;
+    void ResetAngle( ) override;
     void SetRollers( bool enable ) override;
 
 private:
-    LinearSim motorSim;
+    AngularSim motorSim;
     bool isHomed{false};
 };
 

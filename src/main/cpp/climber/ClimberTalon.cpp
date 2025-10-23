@@ -20,9 +20,9 @@ ClimberTalon::ClimberTalon( )
     
     SET_PIDSVGA( talonConfigs.Slot0, kMotionConfig.tuner )
  
-    talonConfigs.MotionMagic.MotionMagicCruiseVelocity = kMotionConfig.mp.MaxVelocity / kDistancePerMotorRev;
-    talonConfigs.MotionMagic.MotionMagicAcceleration = kMotionConfig.mp.MaxAcceleration / kDistancePerMotorRev;
-    talonConfigs.MotionMagic.MotionMagicJerk = kMotionConfig.mp.MaxJerk / kDistancePerMotorRev;
+    talonConfigs.MotionMagic.MotionMagicCruiseVelocity = kMotionConfig.mp.MaxVelocity;
+    talonConfigs.MotionMagic.MotionMagicAcceleration = kMotionConfig.mp.MaxAcceleration;
+    talonConfigs.MotionMagic.MotionMagicJerk = kMotionConfig.mp.MaxJerk;
 
     talon.GetConfigurator().Apply(talonConfigs);
 
@@ -42,16 +42,15 @@ void ClimberTalon::Update( Metrics &m )
 
     ctre::phoenix6::BaseStatusSignal::RefreshAll( talonPosition, talonVelocity, talonAppliedVolts, talonCurrent );
 
-    m.height = talonPosition.GetValue() * kDistancePerMotorRev;
-    m.velocity = talonVelocity.GetValue() * kDistancePerMotorRev;
+    m.angle = talonPosition.GetValue();
+    m.velocity = talonVelocity.GetValue();
     m.appliedVolts = talonAppliedVolts.GetValue();
     m.current = talonCurrent.GetValue();
 }
 
-void ClimberTalon::SetGoal( units::inch_t goal ) 
+void ClimberTalon::SetGoal( units::degree_t goal ) 
 {
-    units::turn_t turn_goal = goal / kDistancePerMotorRev;
-    talon.SetControl( ctre::phoenix6::controls::MotionMagicDutyCycle{ turn_goal } );
+    talon.SetControl( ctre::phoenix6::controls::MotionMagicDutyCycle{ goal } );
 }
 
 void ClimberTalon::SetOpenLoop( double percent )
@@ -59,7 +58,7 @@ void ClimberTalon::SetOpenLoop( double percent )
     talon.Set( percent );
 }
 
-void ClimberTalon::ResetHeight( )
+void ClimberTalon::ResetAngle( )
 {
    talon.SetPosition( 0_tr );
 }

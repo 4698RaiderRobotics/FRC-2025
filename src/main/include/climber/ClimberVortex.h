@@ -2,6 +2,8 @@
 
 #include "ClimberIO.h"
 
+#include "util/TrapezoidPIDFF.h"
+
 #include <frc/DigitalInput.h>
 
 #include <frc/controller/PIDController.h>
@@ -11,29 +13,35 @@
 #include <rev/SparkFlex.h>
 #include <ctre/phoenix6/TalonFX.hpp>
 
+#include <ctre/phoenix6/CANcoder.hpp>
+
+
 class ClimberVortex : public ClimberIO {
 public:
     ClimberVortex( );
 
     void Update( Metrics &m ) override;
-
-    void SetGoal( units::inch_t goal ) override;
+    void SetGoal( units::degree_t goal ) override;
     void SetOpenLoop( double percent ) override;
-    void ResetHeight( ) override;
+    void ResetAngle( ) override;
     void SetRollers( bool enable ) override;
+
+    void UpdateClimberOffset();
 
 private:
     rev::spark::SparkFlex flex;
 
-    frc::DigitalInput climberHome;
+    ctre::phoenix6::hardware::CANcoder climberEncoder;
+
     frc::DigitalInput cageEngaged;
 
-    frc::PIDController m_PID;
-    frc::SimpleMotorFeedforward<units::meters> m_simpleFF;
+    TrapezoidPIDFF profileFF;
+    // frc::PIDController m_PID;
+    // frc::SimpleMotorFeedforward<units::turns> m_simpleFF;
 
-    frc::TrapezoidProfile<units::meters> m_Profile;
-    frc::TrapezoidProfile<units::meters>::State m_Goal;
-    frc::TrapezoidProfile<units::meters>::State m_Setpoint;
+    // frc::TrapezoidProfile<units::turns> m_Profile;
+    // frc::TrapezoidProfile<units::turns>::State m_Goal;
+    // frc::TrapezoidProfile<units::turns>::State m_Setpoint;
 
     bool isOpenLoop;
 

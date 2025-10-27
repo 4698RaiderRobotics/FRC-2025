@@ -42,9 +42,14 @@ void Intake::Periodic()
         Stop();
     } else if( metrics.centerBeamBroken && isStopped && !metrics.endBeamBroken ) {
         io->SpinMotors( IntakeIO::hold_in );
-    } else if( metrics.centerBeamBroken && metrics.endBeamBroken) {
+    } else if( metrics.centerBeamBroken && isStopped && metrics.endBeamBroken ) {
         io->SpinMotors( IntakeIO::spin_stop );
     }
+}
+void Intake::enableRetention( bool enable) 
+{
+    isStopped = enable;
+
 }
 
 void Intake::SpinIn()

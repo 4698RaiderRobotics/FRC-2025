@@ -132,23 +132,23 @@ void RobotContainer::ConfigureBindings()
     );
 
     (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L1_level ))
-        .OnTrue( SetReefPlacement( m_arm, m_elevator, ReefPlacement::PLACING_L1 ) );
+        .OnTrue( SetReefPlacement( m_arm, m_elevator, m_intake, ReefPlacement::PLACING_L1 ) );
     (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L2_level ))
-        .OnTrue( SetReefPlacement( m_arm, m_elevator, ReefPlacement::PLACING_L2 ) );
+        .OnTrue( SetReefPlacement( m_arm, m_elevator, m_intake, ReefPlacement::PLACING_L2 ) );
     (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L3_level ))
-        .OnTrue( SetReefPlacement( m_arm, m_elevator, ReefPlacement::PLACING_L3 ) );
+        .OnTrue( SetReefPlacement( m_arm, m_elevator, m_intake, ReefPlacement::PLACING_L3 ) );
     (!nudge_hold_button && operatorCtrlr.Button( ctrl::pick_L4_level ))
-        .OnTrue( SetReefPlacement( m_arm, m_elevator, ReefPlacement::PLACING_L4 ) );
+        .OnTrue( SetReefPlacement( m_arm, m_elevator, m_intake, ReefPlacement::PLACING_L4 ) );
 
     operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_left, 0.75 )
         .OnTrue( frc2::cmd::Sequence( 
             ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, false, [] { return next_reef_place; } ),
-            SetReefPlacement( m_arm, m_elevator, ReefPlacement::NONE )
+            SetReefPlacement( m_arm, m_elevator, m_intake, ReefPlacement::NONE )
         ));
     operatorCtrlr.AxisGreaterThan( ctrl::place_on_reef_right, 0.75 )
         .OnTrue( frc2::cmd::Sequence( 
             ReefCommands::PlaceOnReef( m_drive, m_arm, m_intake, m_elevator, true, [] { return next_reef_place; } ),
-            SetReefPlacement( m_arm, m_elevator, ReefPlacement::NONE )
+            SetReefPlacement( m_arm, m_elevator, m_intake, ReefPlacement::NONE )
         ));
 
     (operatorCtrlr.POV( ctrl::intake_ground ) && !operatorCtrlr.Start())
@@ -320,9 +320,10 @@ frc2::Command* RobotContainer::GetAutonomousCommand()
     return AutoCommands[ m_chooser.GetSelected() ].get();
 }
 
-frc2::CommandPtr RobotContainer::SetReefPlacement( Arm* arm, Elevator *elevator, ReefPlacement p )
+frc2::CommandPtr RobotContainer::SetReefPlacement( Arm* arm, Elevator *elevator, Intake *intake, ReefPlacement p )
 {
     return frc2::cmd::Sequence(
+        frc2::cmd::RunOnce( [intake] {intake->enableRetention(false);}),
         frc2::cmd::RunOnce( [p] { next_reef_place = p; LogReefPlacement( p ); } ),
         frc2::cmd::Either(
             ReefCommands::PrepareToPlaceOnReef( arm, elevator, [p] { return p;} ),

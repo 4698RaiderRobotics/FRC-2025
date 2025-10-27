@@ -194,7 +194,8 @@ frc2::CommandPtr ReefCommands::PlaceOnReef(
     return frc2::cmd::Sequence(
         frc2::cmd::Either( 
             frc2::cmd::Sequence(
-                frc2::cmd::RunOnce( [intake] {intake->ShiftUpSlow();}, {intake}),
+                //frc2::cmd::RunOnce( [intake] {intake->ShiftUpSlow();}, {intake}),
+                frc2::cmd::RunOnce( [intake] {intake->enableRetention(false);}),
                 frc2::cmd::Select<ReefPlacement>( 
                     [place_func] { return place_func(); }, 
                     std::pair{ ReefPlacement::PLACING_L1, frc2::cmd::Parallel(
@@ -228,7 +229,8 @@ frc2::CommandPtr ReefCommands::PlaceOnReef(
                         frc2::cmd::WaitUntil( [elevator] { return elevator->GetHeight() < 36_in; }),
                         ControllerIO::JoystickDrive()
                     )
-                )
+                ),
+                frc2::cmd::RunOnce( [intake] {intake->enableRetention(true);})
             ),
             PlaceCoralNone(),
             [place_func] { return place_func() != ReefPlacement::NONE; }
@@ -426,9 +428,52 @@ frc2::CommandPtr ReefCommands::PlaceCoralL4( Drive *d, Arm *arm, Intake *intake,
     ).WithName( "Place Coral in L4" );
 }
 
+frc2::CommandPtr ReefCommands::L4Algae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide)
+{
+
+}
+
 frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator )
 {
     return frc2::cmd::Sequence( 
+        DriveToAlgaePose( d ),
+        frc2::cmd::Either( 
+            frc2::cmd::Sequence(
+                // Low Algae
+                frc2::cmd::Parallel(
+                    arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
+                    frc2::cmd::RunOnce( [intake] {intake->ShiftDown();}, {intake} )
+                    ),
+                elevator->ChangeHeight( elevator::kHeightRemoveAlgaeLow ),
+                arm->ChangeElbowAngle( arm::kElbowRemoveAlgaeLow )
+            ),
+            // High Algae
+            frc2::cmd::Sequence(
+                frc2::cmd::Parallel(
+                    arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
+                    frc2::cmd::RunOnce( [intake] {intake->ShiftDown();}, {intake} )
+                ),  
+                elevator->ChangeHeight( elevator::kHeightRemoveAlgaeHigh ),
+                arm->ChangeElbowAngle( arm::kElbowRemoveAlgaeHigh )
+            ),
+            [d] { return ReefCommands::reefPoses.isAlgaeLow( d->GetPose() ); }
+        ),
+        DriveCommands::DriveDeltaPose( d, {reef::algae_shift_in, 0_in, 0_deg}, true, 0.5 ),
+        frc2::cmd::Either( 
+            elevator->ChangeHeight( elevator::kHeightRemoveAlgaeLow + 4_in ),
+            elevator->ChangeHeight( elevator::kHeightRemoveAlgaeHigh + 4_in ),
+            [d] { return ReefCommands::reefPoses.isAlgaeLow( d->GetPose() ); }
+        ),
+        frc2::cmd::Wait( 0.8_s ),
+        frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} ),
+        frc2::cmd::Parallel(
+            DriveCommands::DriveDeltaPose( d, {-reef::algae_shift_in, 0_in, 0_deg}, true, 0.5 ),
+            arm->ChangeElbowAngle( arm::kElbowAlgaeHoldingPos ),
+            elevator->ChangeHeight( elevator::kHeightRemoveAlgaeLow + 4_in )
+        )
+    );
+}
+    /*return frc2::cmd::Sequence( 
         DriveToAlgaePose( d ),
         arm->ChangeElbowAngle( arm::kElbowForwardRaiseAngle ),
 
@@ -447,11 +492,6 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
                     arm->ChangeElbowAngle( arm::kElbowRemoveAlgaeHigh ),
                     DriveCommands::DriveDeltaPose( d, {reef::algae_shift_in , 0_in, 0_deg}, true, 0.5 )
                 ),
-                /*frc2::cmd::Parallel(
-                    elevator->ChangeHeight( elevator::kHeightRemoveAlgaeHigh ),
-                    arm->ChangeElbowAngle( arm::kElbowRemoveAlgaeHigh ),
-                    DriveCommands::DriveDeltaPose( d, {reef::algae_shift_in , 0_in, 0_deg}, true, 0.5 )
-                ),*/
                 [d] { return ReefCommands::reefPoses.isAlgaeLow( d->GetPose() ); }
             ),
             // Doesn't Have Coral
@@ -504,7 +544,7 @@ frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, 
             [intake] {return intake->isCenterBroken();}
         )
     );
-}
+} */
 
 // frc2::CommandPtr ReefCommands::DeployClimberFoot( Arm *arm, Climber *climber )
 // {

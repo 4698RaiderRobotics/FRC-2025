@@ -30,7 +30,7 @@ namespace arm {
 
         // PIDSGVA and Motion Profile settings
     constexpr MotionConfig<units::turns> kElbowMotionConfig = {
-        { 20.0, 0.0, 5.0, 0.05, 0.47, 4.5, 0.0 },
+        { 22.0, 0.0, 5.0, 0.05, 0.47, 4.5, 0.0 },
         // { 2_tps, 5_tr_per_s_sq, 30_tr_per_s_cu }
         // { 2_tps, 3_tr_per_s_sq, 10_tr_per_s_cu }
         { 2_tps, 5_tr_per_s_sq, 20_tr_per_s_cu }

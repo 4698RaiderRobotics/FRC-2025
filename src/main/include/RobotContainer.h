@@ -58,7 +58,7 @@ private:
     frc2::Trigger nudge_hold_button;
 
     static ReefPlacement next_reef_place;
-    static frc2::CommandPtr SetReefPlacement(  Arm* arm, Elevator *elevator, ReefPlacement );
+    static frc2::CommandPtr SetReefPlacement(  Arm* arm, Elevator *elevator, Intake *intake, ReefPlacement );
     static void LogReefPlacement( ReefPlacement );
 
 };

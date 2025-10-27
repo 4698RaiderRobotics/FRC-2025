@@ -20,6 +20,7 @@ public:
     void Stop();
     bool isCenterBroken();
     bool isEndBroken();
+    void enableRetention( bool enable);
 
     frc2::CommandPtr IntakeAlgae();
     frc2::CommandPtr IntakeCoral();

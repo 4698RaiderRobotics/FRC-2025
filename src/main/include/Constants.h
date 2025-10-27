@@ -62,9 +62,9 @@ namespace arm {
      constexpr units::degree_t kElbowGroundPickup = -35_deg;
 
     // Elbow Position for Removing Algae
-     constexpr units::degree_t kElbowRemoveAlgaeLow = 28_deg;
-     constexpr units::degree_t kElbowRemoveAlgaeHigh = 28_deg;
-     constexpr units::degree_t kElbowAlgaeHoldingPos = 28_deg;
+     constexpr units::degree_t kElbowRemoveAlgaeLow = 60_deg;
+     constexpr units::degree_t kElbowRemoveAlgaeHigh = 60_deg;
+     constexpr units::degree_t kElbowAlgaeHoldingPos = 30_deg;
      constexpr units::degree_t kElbowAlgaeRemoveEnd = 85_deg;
 
     // Wrist setpoint Positions 
@@ -105,8 +105,8 @@ namespace elevator {
      constexpr units::inch_t kHeightGroundPickup = 0_in;
 
     // Heights for removing Algae
-    constexpr units::inch_t kHeightRemoveAlgaeLow = 1.7_in;
-    constexpr units::inch_t kHeightRemoveAlgaeHigh = 17.2_in;
+    constexpr units::inch_t kHeightRemoveAlgaeLow = 0_in;
+    constexpr units::inch_t kHeightRemoveAlgaeHigh = 16_in;
 
     constexpr units::inch_t kHeightDislogAlgae = 39_in;
 }

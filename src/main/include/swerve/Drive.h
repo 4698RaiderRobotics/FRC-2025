@@ -36,6 +36,7 @@ public:
 
     wpi::array<frc::SwerveModuleState,4U>& GetModuleStates();
     frc::ChassisSpeeds GetChassisSpeeds();
+    frc::ChassisSpeeds GetFieldRelativeChassisSpeeds();
 
     void SetWheelAngles( std::vector<units::radian_t> );
     void SetDriveVelocity( units::meters_per_second_t );

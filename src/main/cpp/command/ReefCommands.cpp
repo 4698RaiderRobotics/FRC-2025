@@ -291,7 +291,7 @@ frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide, std:
         
         return std::vector<frc::Pose2d> {reefPose.TransformBy( delta ), reefPose.TransformBy( mid_delta )};
     },
-    0.75
+    place_func
     ).WithName("DriveToReefPose");
 }
 

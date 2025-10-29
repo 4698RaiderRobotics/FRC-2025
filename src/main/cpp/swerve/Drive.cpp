@@ -251,6 +251,10 @@ frc::ChassisSpeeds Drive::GetChassisSpeeds()
     return m_kinematics.ToChassisSpeeds( GetModuleStates() );
 }
 
+frc::ChassisSpeeds Drive::GetFieldRelativeChassisSpeeds()
+{
+    return frc::ChassisSpeeds::FromRobotRelativeSpeeds( m_kinematics.ToChassisSpeeds( GetModuleStates() ), GetPose().Rotation() );
+}
 
 // Resets the gyro to an angle
 void Drive::ResetGyro() {

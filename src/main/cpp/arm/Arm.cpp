@@ -12,7 +12,7 @@
 
 #include "arm/Arm.h"
 #include "arm/ArmSim.h"
-#include "arm/ArmTalon550.h"
+#include "arm/ArmTalonMinion.h"
 
 using namespace physical::arm;
 
@@ -22,7 +22,7 @@ Arm::Arm()
     SetName( "Arm" );
 
     if( frc::RobotBase::IsReal() ) {
-        io = std::unique_ptr<ArmIO> (new ArmTalon550());
+        io = std::unique_ptr<ArmIO> (new ArmTalonMinion());
     } else {
         io = std::unique_ptr<ArmIO> (new ArmSim());
     }

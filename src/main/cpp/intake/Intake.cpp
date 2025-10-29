@@ -9,7 +9,7 @@
 
 #include "intake/Intake.h"
 #include "intake/IntakeSim.h"
-#include "intake/Intake550.h"
+#include "intake/IntakeMinion.h"
 
 using namespace physical::intake;
 
@@ -27,9 +27,9 @@ Intake::Intake()
     SetName( "Intake" );
 
     if( frc::RobotBase::IsReal() ) {
-        io = std::unique_ptr<Intake550> (new Intake550());
+        io = std::unique_ptr<IntakeIO> (new IntakeMinion());
     } else {
-        io = std::unique_ptr<IntakeSim> (new IntakeSim());
+        io = std::unique_ptr<IntakeIO> (new IntakeSim());
     }
 }
 

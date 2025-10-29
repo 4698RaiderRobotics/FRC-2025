@@ -13,6 +13,8 @@
 #include "swerve/Drive.h"
 #include "swerve/SwerveConstants.h"
 
+#include "util/DataLogger.h"
+
 const double DEADBAND = 0.1;
 
 units::revolutions_per_minute_t DriveCommands::currentTurnSpeedLimit = swerve::physical::kTurnSpeedLimit;
@@ -97,36 +99,77 @@ frc2::CommandPtr DriveCommands::DriveToPosePP( Drive *d, std::function<std::vect
         std::vector<frc::Pose2d> targetPoses = poseFunc();
 
         frc::Pose2d currentPose = d->GetPose();
+        frc::ChassisSpeeds speed = d->GetChassisSpeeds();
+        frc::Pose2d lookAheadPose = currentPose.Exp( speed.ToTwist2d( 100_ms ) );
+        double vel_mag = std::hypot( speed.vx.value(), speed.vy.value() );
+        if( fabs( vel_mag ) < 0.25 ) {
+            // Point toward the mip-point even if the robot isn't
+            frc::Rotation2d direction = (targetPoses[1].Translation() - lookAheadPose.Translation()).Angle(); 
+            lookAheadPose = { lookAheadPose.Translation(), direction };
+        }
 
-        if( (currentPose - targetPoses[0]).Translation().Norm() < 0.04_m ) {
+            // If we are really close to the goal point then do nothing
+        units::inch_t dist_to_end_goal = (lookAheadPose - targetPoses[0]).Translation().Norm();
+        DataLogger::Log( "DriveToPosePP/dist_to_end_goal", dist_to_end_goal );
+        if( dist_to_end_goal < 1.5_in ) {
             return frc2::cmd::None();
         }
 
-        std::vector<frc::Pose2d> poses{ currentPose, targetPoses[1], targetPoses[0] };
+        std::vector<frc::Pose2d> poses;
+        std::vector<pathplanner::RotationTarget> rotTarget = { { 0.5, targetPoses[0].Rotation() } };
+            // If we are really close to the mid-point then omit the mid-point.
+        units::inch_t dist_to_mid_pt = (lookAheadPose - targetPoses[1]).Translation().Norm();
+        if( dist_to_mid_pt < 1.5_in ) {
+            poses = { lookAheadPose, targetPoses[0] };
+        } else {
+            poses = { lookAheadPose, targetPoses[1], targetPoses[0] };
+        }
+
+        double linear_accel_factor = 1.0;
+            // If we are really far off to the side then reduce the linear acceleration.
+        units::inch_t y_offset_dist = units::math::abs((lookAheadPose - targetPoses[0]).Translation().Y());
+        if( y_offset_dist > 12_in ) {
+            linear_accel_factor = 0.5;
+        }
+
+        DataLogger::Log( "DriveToPosePP/poses", poses );
+        DataLogger::Log( "DriveToPosePP/start_speed", vel_mag );
+        DataLogger::Log( "DriveToPosePP/dist_to_mid_pt", dist_to_mid_pt );
+        DataLogger::Log( "DriveToPosePP/y_offset_dist", y_offset_dist );
+        DataLogger::Log( "DriveToPosePP/linear_accel_factor", linear_accel_factor );
 
         std::vector<pathplanner::Waypoint> waypoints = pathplanner::PathPlannerPath::waypointsFromPoses(poses);
 
+
         pathplanner::PathConstraints constraints(
             3.0_mps * fractionFullSpeed, 
-            3.0_mps_sq * fractionFullSpeed, 
+            3.0_mps_sq * fractionFullSpeed * linear_accel_factor, 
             360_deg_per_s * fractionFullSpeed, 
             720_deg_per_s_sq * fractionFullSpeed
         );
 
         try {
             auto path = std::make_shared<pathplanner::PathPlannerPath>(
-                waypoints,
+                waypoints, 
+                rotTarget,
+			    std::vector<pathplanner::PointTowardsZone>(), 
+                std::vector<pathplanner::ConstraintsZone>(),
+			    std::vector<pathplanner::EventMarker>(),
                 constraints,
-                std::nullopt, // The ideal starting state, this is only relevant for pre-planned paths, so can be nullopt for on-the-fly paths.
-                pathplanner::GoalEndState(0.0_mps, targetPoses[0].Rotation()) // Goal end state. You can set a holonomic rotation here.
+                // pathplanner::IdealStartingState( vel_mag * 1_mps, direction ),
+                std::nullopt,
+                pathplanner::GoalEndState(0.0_mps, targetPoses[0].Rotation()), // Goal end state. You can set a holonomic rotation here.
+                false // reversed?
             );
 
             path->preventFlipping = true;
             return pathplanner::AutoBuilder::followPath(path).WithName( "AutoBuilder-pathfindToPose");
-        } catch(const std::exception& e) {
+        } catch( const std::exception& ) {
             fmt::print( "\n\n================> DriveToPosePP -- PathPlanner path creation failed <==================\n" );
+            DataLogger::Log( "DriveToPosePP/path_gen_failed", true );
             return frc2::cmd::None();
         }
+        DataLogger::Log( "DriveToPosePP/path_gen_failed", false );
 
     }, {d} );
 }

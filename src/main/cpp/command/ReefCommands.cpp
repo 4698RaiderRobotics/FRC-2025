@@ -18,6 +18,8 @@
 #include "elevator/Elevator.h"
 #include "climber/Climber.h"
 
+#include "util/DataLogger.h"
+
 #include "Constants.h"
 
 using namespace physical;
@@ -277,7 +279,16 @@ frc2::CommandPtr ReefCommands::DriveToReefPose( Drive *d, bool onRightSide, std:
         }
 
         mid_delta = {delta.X() - 18_in, 0_in, 0_deg};
-        frc::Pose2d reefPose = ReefCommands::reefPoses.GetClosestReefPose( d->GetPose(), onRightSide );
+
+        // Use the chassis speed to project the robots pose into the slight future
+        frc::Pose2d currentPose = d->GetPose();
+        frc::Pose2d lookAheadPose = currentPose.Exp( d->GetChassisSpeeds().ToTwist2d( 200_ms ) );
+        frc::Pose2d reefPose = ReefCommands::reefPoses.GetClosestReefPose( lookAheadPose, onRightSide );
+
+        DataLogger::Log( "DriveToReefPose/currentPose", currentPose );
+        DataLogger::Log( "DriveToReefPose/lookAheadPose", lookAheadPose );
+        DataLogger::Log( "DriveToReefPose/reefPose", reefPose );
+        
         return std::vector<frc::Pose2d> {reefPose.TransformBy( delta ), reefPose.TransformBy( mid_delta )};
     },
     0.75
@@ -428,10 +439,10 @@ frc2::CommandPtr ReefCommands::PlaceCoralL4( Drive *d, Arm *arm, Intake *intake,
     ).WithName( "Place Coral in L4" );
 }
 
-frc2::CommandPtr ReefCommands::L4Algae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide)
-{
+// frc2::CommandPtr ReefCommands::L4Algae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator, bool onRightSide)
+// {
 
-}
+// }
 
 frc2::CommandPtr ReefCommands::RemoveAlgae( Drive *d, Arm *arm, Intake *intake, Elevator *elevator )
 {

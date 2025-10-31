@@ -160,7 +160,8 @@ frc2::CommandPtr DriveCommands::DriveToPosePP( Drive *d, std::function<std::vect
         case ReefPlacement::PLACING_L4:
             fraction_full_speed = 0.75;
             if( y_offset_dist > 12_in ) {
-                linear_accel_factor = 0.7;
+                fraction_full_speed = 0.65;
+                linear_accel_factor = 0.6;
             }
             break;
         default:

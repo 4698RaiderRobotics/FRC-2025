@@ -12,8 +12,10 @@ IntakeMinion::IntakeMinion()
 {
     ctre::phoenix6::configs::TalonFXSConfiguration configs;
 
-    configs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
+    configs.Commutation.MotorArrangement = ctre::phoenix6::signals::MotorArrangementValue::Minion_JST;
+    configs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
     configs.CurrentLimits.SupplyCurrentLimit = 40_A;
+    configs.CurrentLimits.SupplyCurrentLowerLimit = 30_A;
     configs.CurrentLimits.SupplyCurrentLimitEnable = true;
     configs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
 

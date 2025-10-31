@@ -77,12 +77,14 @@ namespace arm {
 namespace intake {
 
     // Intaking and Ejecting Motor Speed
-    constexpr double kIntakeInSpeed = 0.30;
-    constexpr double kIntakeOutSpeed = 0.15;
+    // Multiply for minions 
+    constexpr double minion_mult = 2.0;
+    constexpr double kIntakeInSpeed = 0.30 * minion_mult;
+    constexpr double kIntakeOutSpeed = 0.15 * minion_mult;
 
     // Shift speed of the motors
-    constexpr double kIntakeShiftFastSpeed = 0.5;
-    constexpr double kIntakeShiftSlowSpeed = 0.35;
+    constexpr double kIntakeShiftFastSpeed = 0.5 * minion_mult;
+    constexpr double kIntakeShiftSlowSpeed = 0.35 * minion_mult;
 }
 
 

@@ -99,7 +99,7 @@ namespace climber {
         // PIDSGVA and Motion Profile settings
     constexpr MotionConfig<units::turns> kMotionConfig = {
         { 1.0, 0.0, 0, 0.0, 0.0, 4.0, 0.0 },
-        { 0.75_tps, 3_tr_per_s_sq, 0_tr_per_s_cu }
+        { 1.5_tps, 3_tr_per_s_sq, 0_tr_per_s_cu }
         // { 8.0, 0.0, 1.0, 0.0, 0.0, 40.0, 0.0 },
         // { 0.15_mps, 3_mps_sq, 0_mps_cu }
     };

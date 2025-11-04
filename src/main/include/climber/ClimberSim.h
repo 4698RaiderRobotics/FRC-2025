@@ -15,6 +15,7 @@ public:
     void SetOpenLoop( double percent ) override;
     void ResetAngle( ) override;
     void SetRollers( bool enable ) override;
+    void EngageRatchet( bool engage ) override;
 
 private:
     AngularSim motorSim;

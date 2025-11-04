@@ -53,3 +53,8 @@ void ClimberSim::SetRollers( bool enable )
 {
     // TODO
 }
+
+void ClimberSim::EngageRatchet( bool engage )
+{
+    // Do Nothing...
+}

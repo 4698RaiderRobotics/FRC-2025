@@ -49,6 +49,7 @@ void Climber::Periodic() {
 
     if( frc::DriverStation::IsDisabled() ) {
         SetGoal( metrics.angle );
+        io->EngageRatchet( false );
         return;
     }
 
@@ -101,7 +102,8 @@ frc2::CommandPtr Climber::RaiseClimber( )
             SetGoal( kClimberRaiseAngle ); 
             SetCageIntake( true ); 
         }),
-        frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s )
+        frc2::cmd::WaitUntil( [this] { return AtGoal(); } ).WithTimeout( 2_s ),
+        RunOnce( [this] { io->EngageRatchet( true ); } )
     );
 }
 

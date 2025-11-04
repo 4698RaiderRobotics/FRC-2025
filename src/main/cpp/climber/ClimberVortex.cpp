@@ -15,6 +15,7 @@ ClimberVortex::ClimberVortex( )
     : flex{ deviceIDs::kClimberID, rev::spark::SparkLowLevel::MotorType::kBrushless },
     climberEncoder{ deviceIDs::kClimberEncoderID, "" },
     cageEngaged{ deviceIDs::kClimberCageSwitchPort },
+    ratchetServo{ 0 },
     profileFF{ kMotionConfig },
     rollerTalon{ deviceIDs::kClimberRollerID, "" }
 {
@@ -41,6 +42,7 @@ ClimberVortex::ClimberVortex( )
 
     rollerTalon.GetConfigurator().Apply(talonConfigs);
 
+    EngageRatchet( false );
 }
 
 void ClimberVortex::Update( Metrics &m ) 
@@ -92,6 +94,17 @@ void ClimberVortex::SetRollers( bool enable )
         rollerTalon.Set( 0.75 );
     } else {
         rollerTalon.Set( 0.0 );
+    }
+}
+
+void ClimberVortex::EngageRatchet( bool engage  )
+{
+    if( engage ) {
+        // Move the servo such that the ratchet engages
+        ratchetServo.Set( 0.5 );
+    } else {
+        // Move the servo such that the ratchet lever is held up
+        ratchetServo.Set( 1.0 );
     }
 }
 

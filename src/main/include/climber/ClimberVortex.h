@@ -5,6 +5,7 @@
 #include "util/TrapezoidPIDFF.h"
 
 #include <frc/DigitalInput.h>
+#include <frc/Servo.h>
 
 #include <frc/controller/PIDController.h>
 #include <frc/controller/SimpleMotorFeedforward.h>
@@ -25,6 +26,7 @@ public:
     void SetOpenLoop( double percent ) override;
     void ResetAngle( ) override;
     void SetRollers( bool enable ) override;
+    void EngageRatchet( bool engage ) override;
 
     void UpdateClimberOffset();
 
@@ -34,6 +36,8 @@ private:
     ctre::phoenix6::hardware::CANcoder climberEncoder;
 
     frc::DigitalInput cageEngaged;
+
+    frc::Servo ratchetServo;
 
     TrapezoidPIDFF profileFF;
     // frc::PIDController m_PID;

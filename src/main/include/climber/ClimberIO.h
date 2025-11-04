@@ -33,4 +33,6 @@ public:
     virtual void SetOpenLoop( double percent ) =0;
     virtual void ResetAngle( ) =0;
     virtual void SetRollers( bool enable ) =0;
+    virtual void EngageRatchet( bool engage ) =0;
+
 };

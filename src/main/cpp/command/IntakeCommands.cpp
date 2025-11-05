@@ -22,6 +22,19 @@ frc2::CommandPtr IntakeCommands::RestPosition( Arm *arm, Intake *intake, Elevato
     );
 }
 
+frc2::CommandPtr IntakeCommands::CancleIndex( Intake *intake)
+{
+    return frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} );
+}
+
+frc2::CommandPtr IntakeCommands::CoralHoldPos( Arm *arm, Intake *intake, Elevator *elevator )
+{
+    return frc2::cmd::Sequence(
+        MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kCoralHoldPos, ArmIO::WristHorizontal ).ToPtr(),
+        frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} )
+    );
+}
+
 frc2::CommandPtr IntakeCommands::CoralStationPickup( Arm *arm, Intake *intake, Elevator *elevator )
 {
     return frc2::cmd::Sequence(

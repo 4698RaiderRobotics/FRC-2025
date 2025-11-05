@@ -13,13 +13,13 @@
 
 using namespace physical::intake;
 
-const IntakeIO::SpinSpeed IntakeIO::hold_in{ -0.1, -0.1 };
+const IntakeIO::SpinSpeed IntakeIO::hold_in{ -0.1, -0.05 };
 const IntakeIO::SpinSpeed IntakeIO::spin_in{ -kIntakeInSpeed, -kIntakeInSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_out{ kIntakeOutSpeed, kIntakeOutSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_out_fast{ kIntakeShiftFastSpeed, kIntakeShiftFastSpeed };
-const IntakeIO::SpinSpeed IntakeIO::shift_up{ kIntakeShiftSlowSpeed, -kIntakeShiftFastSpeed };
-const IntakeIO::SpinSpeed IntakeIO::shift_up_slow{ kIntakeShiftSlowSpeed * 0.5, -kIntakeShiftFastSpeed * 0.5 };
-const IntakeIO::SpinSpeed IntakeIO::shift_down{ -kIntakeShiftFastSpeed, kIntakeShiftSlowSpeed };
+const IntakeIO::SpinSpeed IntakeIO::shift_up{ -kIntakeShiftFastSpeed, kIntakeShiftSlowSpeed };
+const IntakeIO::SpinSpeed IntakeIO::shift_up_slow{ -kIntakeShiftFastSpeed * 0.5, kIntakeShiftSlowSpeed * 0.5 };
+const IntakeIO::SpinSpeed IntakeIO::shift_down{ kIntakeShiftSlowSpeed, -kIntakeShiftFastSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_stop{ 0.0, 0.0 };
 
 Intake::Intake() 

@@ -11,6 +11,7 @@ namespace ctrl {
     constexpr int intake_ground = 180;          // POV direction (down)
 
     constexpr int cancel_button = frc::XboxController::Button::kB;
+    constexpr int cancel_intake = frc::XboxController::Button::kX;
 
     constexpr int pick_L1_level = frc::XboxController::Button::kA;
     constexpr int pick_L2_level = frc::XboxController::Button::kX;

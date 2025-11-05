@@ -124,6 +124,10 @@ void RobotContainer::ConfigureBindings()
         m_intake->IndexCoral()
     );
 
+    driverCtrlr.Button( ctrl::cancel_intake).OnTrue(
+        IntakeCommands::CancleIndex( m_intake )
+    );
+
     // driverCtrlr.POV( 0 ).OnTrue( DriveToPose( m_drive, [] { return frc::Pose2d{ 610_in, 158.50_in, 180_deg}; } ).ToPtr() );
 
     /**************************          OPERATOR           ********************* */
@@ -153,11 +157,11 @@ void RobotContainer::ConfigureBindings()
 
     (operatorCtrlr.POV( ctrl::intake_ground ) && !operatorCtrlr.Start())
         .OnTrue( IntakeCommands::GroundPickup( m_arm, m_intake, m_elevator ) )
-        .OnFalse( IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ) );
+        .OnFalse( IntakeCommands::CoralHoldPos( m_arm, m_intake, m_elevator ) );
 
     (operatorCtrlr.POV( ctrl::intake_coral_station ) && !operatorCtrlr.Start())
         .OnTrue( IntakeCommands::CoralStationPickup( m_arm, m_intake, m_elevator ) )
-        .OnFalse( IntakeCommands::RestPosition( m_arm, m_intake, m_elevator ) );
+        .OnFalse( IntakeCommands::CoralHoldPos( m_arm, m_intake, m_elevator ) );
 
     (operatorCtrlr.POV( ctrl::intake_ground ) && operatorCtrlr.Start())
         .WhileTrue( IntakeCommands::GroundResume( m_arm, m_intake, m_elevator, true ))

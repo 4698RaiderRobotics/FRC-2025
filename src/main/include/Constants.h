@@ -46,6 +46,7 @@ namespace arm {
     // Elevator Rest Position
     constexpr units::degree_t kElbowRestAngle = 125_deg;
     constexpr units::degree_t kElbowHomingRestAngle = 120_deg;
+    constexpr units::degree_t kCoralHoldPos = 78_deg;
 
     // Elevator Raise / Lower Position
     constexpr units::degree_t kElbowForwardRaiseAngle = 50_deg;
@@ -55,7 +56,7 @@ namespace arm {
      constexpr units::degree_t kElbowCoralL1 = 28_deg;
      constexpr units::degree_t kElbowCoralL2 = 42_deg;
      constexpr units::degree_t kElbowCoralL3 = 42_deg;
-     constexpr units::degree_t kElbowCoralL4 = 20_deg;
+     constexpr units::degree_t kElbowCoralL4 = 23_deg;
 
     // Elbow Positions for Coral Station and Ground Pickup
      constexpr units::degree_t kElbowCoralStation = 138_deg;

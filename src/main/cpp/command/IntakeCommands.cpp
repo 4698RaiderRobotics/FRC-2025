@@ -22,16 +22,21 @@ frc2::CommandPtr IntakeCommands::RestPosition( Arm *arm, Intake *intake, Elevato
     );
 }
 
-frc2::CommandPtr IntakeCommands::CancleIndex( Intake *intake)
-{
-    return frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} );
-}
-
 frc2::CommandPtr IntakeCommands::CoralHoldPos( Arm *arm, Intake *intake, Elevator *elevator )
 {
-    return frc2::cmd::Sequence(
-        MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kCoralHoldPos, ArmIO::WristHorizontal ).ToPtr(),
-        frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} )
+    return frc2::cmd::Parallel(
+        frc2::cmd::Either(
+                // Has Coral, index it
+            intake->IndexCoral(),
+                // No Coral, eject any Coral partly in intake
+            frc2::cmd::Sequence(
+                intake->EjectCoralL1(),
+                frc2::cmd::Wait( 200_ms ),
+                intake->StopCmd()
+            ),
+            [intake] {return intake->isCenterBroken();}
+        ),
+        MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kCoralHoldPos, ArmIO::WristHorizontal ).ToPtr()
     );
 }
 
@@ -40,7 +45,7 @@ frc2::CommandPtr IntakeCommands::CoralStationPickup( Arm *arm, Intake *intake, E
     return frc2::cmd::Sequence(
         MoveMechanism( arm, elevator, elevator::kHeightCoralStation, arm::kElbowCoralStation, ArmIO::WristHorizontal ).ToPtr(),
         intake->IntakeCoral(),
-        RestPosition( arm, intake, elevator )
+        MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kCoralHoldPos, ArmIO::WristHorizontal ).ToPtr()
     ).WithName( "Coral Station Pickup" );
 }
 
@@ -62,27 +67,15 @@ frc2::CommandPtr IntakeCommands::GroundPickup( Arm *arm, Intake *intake, Elevato
 {
     return frc2::cmd::Sequence(
         MoveMechanism( arm, elevator, elevator::kHeightGroundPickup, arm::kElbowGroundPickup, ArmIO::WristHorizontal ).ToPtr(),
-        // arm->ChangeWristPosition( ArmIO::WristHorizontal ),  
-        // frc2::cmd::Parallel(
-        //     elevator->ChangeHeight( elevator::kHeightGroundPickup ),
-        //     arm->ChangeElbowAngle( arm::kElbowGroundPickup )
-        // ),
         intake->IntakeCoral(),
-        frc2::cmd::Sequence(
-            MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kElbowForwardRaiseAngle + 30_deg, ArmIO::WristHorizontal ).ToPtr(),
+        frc2::cmd::Parallel(
+            MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kCoralHoldPos, ArmIO::WristHorizontal ).ToPtr(),
             frc2::cmd::Either(
-                frc2::cmd::Sequence(
                     // Has Coral
-                    intake->IntakeCoralNoIndex(0.5_s),
-                    MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kElbowRestAngle, ArmIO::WristHorizontal ).ToPtr()
-                ),
-                frc2::cmd::Sequence(
-                    // Doesn't Have Coral
-                    intake->EjectCoralL1(),
-                    intake->IntakeCoral(),
-                    MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kElbowRestAngle, ArmIO::WristHorizontal ).ToPtr()
-                ),
-            [intake] {return intake->isCenterBroken();}
+                intake->IndexCoral(),
+                    // Doesn't Have Coral, eject if one is half in the intake
+                intake->EjectCoralL1(),
+                [intake] {return intake->isCenterBroken();}
             )
         ),
         intake->StopCmd()

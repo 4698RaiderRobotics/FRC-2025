@@ -33,5 +33,5 @@ public:
 
     virtual void SpinMotors( const SpinSpeed &s ) = 0;
 
-    static const SpinSpeed hold_in, spin_in, spin_out, spin_out_fast, shift_up, shift_up_slow, shift_down, spin_stop;
+    static const SpinSpeed hold_in, spin_in, spin_out, spin_out_fast, shift_up, stopping_up, shift_up_slow, shift_down, spin_stop;
 };

@@ -185,3 +185,11 @@ frc2::CommandPtr AutoCommands::AutoEndAtReef( Drive *d, Arm *arm, Intake *intake
         IntakeCommands::RestPosition( arm, intake, elevator )
     ).WithName("AutoEndAtReef");
 }
+
+frc2::CommandPtr AutoCommands::AutoRestPosition( Arm *arm, Intake *intake, Elevator *elevator )
+{
+    return frc2::cmd::Sequence(
+        MoveMechanism( arm, elevator, elevator::kElevatorMinHeight, arm::kElbowRestAngle, ArmIO::WristHorizontal ).ToPtr(),
+        frc2::cmd::RunOnce( [intake] {intake->Stop();}, {intake} )
+    );
+}

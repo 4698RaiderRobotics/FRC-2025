@@ -120,13 +120,11 @@ void RobotContainer::ConfigureBindings()
     driverCtrlr.Button( ctrl::raise_climber ).OnTrue( ReefCommands::LockClimberToCage( m_arm, m_climber ) );
     driverCtrlr.Button( ctrl::start_climb ).OnTrue( m_climber->DoClimb() );
 
-    driverCtrlr.AxisGreaterThan( ctrl::manual_index, 0.75).WhileTrue(
+    driverCtrlr.AxisGreaterThan( ctrl::manual_index, 0.75).OnTrue(
         m_intake->IndexCoral()
     );
 
-    driverCtrlr.Button( ctrl::cancel_intake).OnTrue(
-        IntakeCommands::CancleIndex( m_intake )
-    );
+    driverCtrlr.Button( ctrl::cancel_intake).OnTrue( m_intake->StopIndex() );
 
     // driverCtrlr.POV( 0 ).OnTrue( DriveToPose( m_drive, [] { return frc::Pose2d{ 610_in, 158.50_in, 180_deg}; } ).ToPtr() );
 
@@ -227,7 +225,7 @@ void RobotContainer::ConfigureAutos()
 {
     pathplanner::NamedCommands::registerCommand(
         "RestPosition", 
-        IntakeCommands::RestPosition( m_arm, m_intake, m_elevator )
+        AutoCommands::AutoRestPosition( m_arm, m_intake, m_elevator )
     );
     pathplanner::NamedCommands::registerCommand(
         "PlaceOnReefL1", 

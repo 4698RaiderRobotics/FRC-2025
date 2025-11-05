@@ -19,6 +19,7 @@ const IntakeIO::SpinSpeed IntakeIO::spin_out{ kIntakeOutSpeed, kIntakeOutSpeed }
 const IntakeIO::SpinSpeed IntakeIO::spin_out_fast{ kIntakeShiftFastSpeed, kIntakeShiftFastSpeed };
 const IntakeIO::SpinSpeed IntakeIO::shift_up{ -kIntakeShiftFastSpeed, kIntakeShiftSlowSpeed };
 const IntakeIO::SpinSpeed IntakeIO::shift_up_slow{ -kIntakeShiftFastSpeed * 0.5, kIntakeShiftSlowSpeed * 0.5 };
+const IntakeIO::SpinSpeed IntakeIO::stopping_up{ -kIntakeShiftSlowSpeed * 0.5, 0 };
 const IntakeIO::SpinSpeed IntakeIO::shift_down{ kIntakeShiftSlowSpeed, -kIntakeShiftFastSpeed };
 const IntakeIO::SpinSpeed IntakeIO::spin_stop{ 0.0, 0.0 };
 
@@ -40,7 +41,10 @@ void Intake::Periodic()
 
     if( frc::DriverStation::IsDisabled() ) {
         Stop();
-    } else if( metrics.centerBeamBroken && isStopped && !metrics.endBeamBroken ) {
+        return;
+    }
+    
+    if( metrics.centerBeamBroken && isStopped && !metrics.endBeamBroken ) {
         io->SpinMotors( IntakeIO::hold_in );
     } else if( metrics.centerBeamBroken && isStopped && metrics.endBeamBroken ) {
         io->SpinMotors( IntakeIO::spin_stop );
@@ -49,7 +53,6 @@ void Intake::Periodic()
 void Intake::enableRetention( bool enable) 
 {
     isStopped = enable;
-
 }
 
 void Intake::SpinIn()
@@ -91,11 +94,11 @@ void Intake::ShiftDown()
 void Intake::Stop()
 {
     isStopped = true;
-    if( metrics.centerBeamBroken ) {
-        io->SpinMotors( IntakeIO::hold_in );
-    } else {
+    // if( metrics.centerBeamBroken ) {
+    //     io->SpinMotors( IntakeIO::hold_in );
+    // } else {
         io->SpinMotors( IntakeIO::spin_stop );
-    }
+    // }
 }
 
 bool Intake::isCenterBroken()
@@ -121,7 +124,7 @@ frc2::CommandPtr Intake::IntakeAlgae()
 frc2::CommandPtr Intake::IntakeCoral()
 {
     return frc2::cmd::Sequence(
-        IntakeCoralNoIndex( 10_s ),
+        IntakeCoralNoIndex( 20_s ),
         frc2::cmd::Either( 
             // If Coral is in intake.  Need to shift it up to the end.
             IndexCoral(),
@@ -146,8 +149,20 @@ frc2::CommandPtr Intake::IndexCoral()
     return frc2::cmd::Sequence( 
         RunOnce( [this] { ShiftUp(); }),
         frc2::cmd::WaitUntil( [this] { return endBeamBreakDebouce.Calculate( isEndBroken() );} ).WithTimeout( 1.5_s ),
-        //frc2::cmd::Wait( 1.5_s ),
-        RunOnce( [this] { Stop(); })
+        StopIndex()
+    );
+}
+
+frc2::CommandPtr Intake::StopIndex()
+{
+    return frc2::cmd::Sequence( 
+            // Slowly ramp down the indexing speed to prevent the coral
+            // from bouncing away from the end beam break.
+        RunOnce( [this] { ShiftUpSlow(); } ),
+        frc2::cmd::Wait( 100_ms ),
+        RunOnce( [this] { io->SpinMotors( IntakeIO::stopping_up); } ),
+        frc2::cmd::Wait( 100_ms ),
+        StopCmd()
     );
 }
 
@@ -161,25 +176,6 @@ frc2::CommandPtr Intake::EjectCoralL1()
         // RunOnce( [this] { Stop(); })
     ).WithTimeout( 0.25_s ).WithName( "Eject Coral L1");
 }
-
-// frc2::CommandPtr Intake::EjectCoralL2_4( bool waitForPipeSwitch )
-// {
-//     return frc2::cmd::Sequence( 
-//         frc2::cmd::WaitUntil( [this, waitForPipeSwitch] {return !waitForPipeSwitch;} ).WithTimeout( 1.5_s ),
-//         frc2::cmd::Either( 
-//             // If Pipe Switch tripped (instead of timed out) then Eject coral.
-//             frc2::cmd::Sequence( 
-//                 RunOnce( [this] { ShiftDown(); }),
-//                 frc2::cmd::Wait( 0.5_s ),
-//                 RunOnce( [this] { Stop(); })
-//             ), 
-//             // If Pipe Switch not tripped tripped
-//             frc2::cmd::None(),
-//             [this, waitForPipeSwitch] {return !waitForPipeSwitch; }
-//         )
-//     ).WithName( "Eject Coral L2-4");
-
-// }
 
 frc2::CommandPtr Intake::EjectCoralL2_4_Fast()
 {

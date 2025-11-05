@@ -60,13 +60,14 @@ namespace arm {
 
     // Elbow Positions for Coral Station and Ground Pickup
      constexpr units::degree_t kElbowCoralStation = 138_deg;
-     constexpr units::degree_t kElbowGroundPickup = -35_deg;
+     constexpr units::degree_t kElbowGroundPickup = -30_deg;
 
     // Elbow Position for Removing Algae
      constexpr units::degree_t kElbowRemoveAlgaeLow = 60_deg;
-     constexpr units::degree_t kElbowRemoveAlgaeHigh = 60_deg;
+     constexpr units::degree_t kElbowRemoveAlgaeHigh = 40_deg;
      constexpr units::degree_t kElbowAlgaeHoldingPos = 30_deg;
      constexpr units::degree_t kElbowAlgaeRemoveEnd = 85_deg;
+     constexpr units::degree_t kElbowHighAlgaeEnd = 80_deg;
 
     // Wrist setpoint Positions 
      constexpr units::degree_t kWristHorizontal = -5_deg;
@@ -101,7 +102,7 @@ namespace elevator {
     constexpr units::inch_t kHeightCoralL1 = 1.5_in;
     constexpr units::inch_t kHeightCoralL2 = 10.5_in;
     constexpr units::inch_t kHeightCoralL3 = 25.75_in;
-    constexpr units::inch_t kHeightCoralL4 = 57.75_in;
+    constexpr units::inch_t kHeightCoralL4 = 56.5_in;
 
     // Heights for the elevator for Coral Station and Ground Pickup
      constexpr units::inch_t kHeightCoralStation = 7.5_in;
@@ -109,7 +110,8 @@ namespace elevator {
 
     // Heights for removing Algae
     constexpr units::inch_t kHeightRemoveAlgaeLow = 0_in;
-    constexpr units::inch_t kHeightRemoveAlgaeHigh = 16_in;
+    constexpr units::inch_t kHeightRemoveAlgaeHigh = 15_in;
+    constexpr units::inch_t kHeightRemoveHighAlgaeEnd = 17_in;
 
     constexpr units::inch_t kHeightDislogAlgae = 39_in;
 }

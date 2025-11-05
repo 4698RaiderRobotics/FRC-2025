@@ -25,6 +25,7 @@ public:
     static frc2::CommandPtr AutoPlaceCoralL3( Arm *arm, Intake *intake, Elevator *elevator );
     static frc2::CommandPtr AutoPlaceCoralL4( Arm *arm, Intake *intake, Elevator *elevator );
     static frc2::CommandPtr AutoEndAtReef( Drive *d, Arm *arm, Intake *intake, Elevator *elevator );
+    static frc2::CommandPtr AutoRestPosition( Arm *arm, Intake *intake, Elevator *elevator );
 
 
 private:

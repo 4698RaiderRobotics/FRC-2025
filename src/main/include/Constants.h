@@ -101,7 +101,7 @@ namespace elevator {
     // Heights for the elevator to place on Reef
     constexpr units::inch_t kHeightCoralL1 = 1.5_in;
     constexpr units::inch_t kHeightCoralL2 = 10.5_in;
-    constexpr units::inch_t kHeightCoralL3 = 25.75_in;
+    constexpr units::inch_t kHeightCoralL3 = 25.25_in;
     constexpr units::inch_t kHeightCoralL4 = 56.5_in;
 
     // Heights for the elevator for Coral Station and Ground Pickup

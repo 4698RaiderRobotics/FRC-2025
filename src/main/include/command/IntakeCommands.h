@@ -18,6 +18,8 @@ public:
     static frc2::CommandPtr GroundPickup( Arm *arm, Intake *intake, Elevator *elevator );
     static frc2::CommandPtr GroundResume( Arm *arm, Intake *intake, Elevator *elevator, bool eject );
     static frc2::CommandPtr ElevatorRaise( Arm *arm, Elevator *elevator );
+    static frc2::CommandPtr ManualPlace3( Arm *arm, Intake *intake, Elevator *elevator );
+    static frc2::CommandPtr ManualPlace2( Arm *arm, Intake *intake, Elevator *elevator );
 
 private:
     IntakeCommands() = default;

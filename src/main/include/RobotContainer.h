@@ -21,12 +21,15 @@ class Intake;
 class Climber;
 class Elevator;
 class Vision;
+class RobotState;
 
 class RobotContainer {
 public:
     RobotContainer();
 
     frc2::Command* GetAutonomousCommand();
+
+    RobotState* m_state;
     
 private:
     void ConfigureDefaults();

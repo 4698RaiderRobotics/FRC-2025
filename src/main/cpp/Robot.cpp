@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "Robot.h"
+#include "RobotState.h"
 
 #include <frc/DriverStation.h>
 #include <frc2/command/CommandScheduler.h>
@@ -30,6 +31,8 @@ Robot::Robot()
 
     frc::MechanismRoot2d* climber_root = robot_mech.GetRoot("climber_root", 14/39.0, 6/39.0);
     climber_lig = climber_root->Append<frc::MechanismLigament2d>("climber", 11/39.0, 15_deg, 6, frc::Color8Bit{frc::Color::kRed});
+
+    AddPeriodic( [this] { m_container.m_state->UpdateLoop(); }, 60_ms, 5_ms );
 }
 
 void Robot::RobotInit() 

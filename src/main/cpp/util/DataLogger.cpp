@@ -21,28 +21,32 @@
 
 DataLogger* DataLogger::singleton = nullptr;
 
-DataLogger& DataLogger::GetInstance() {
+DataLogger* DataLogger::GetInstance() {
     // If there is no instance of class
     // then we can create an instance.
     if (singleton == nullptr)  {
         singleton = new DataLogger();
-        singleton->log = &frc::DataLogManager::GetLog();
-        singleton->nt_table = nt::NetworkTableInstance::GetDefault().GetTable("");
-        singleton->isFMSAttached = frc::DriverStation::IsFMSAttached();
-        Log( "DataLogger/isFMSAttahed", singleton->isFMSAttached );
     }
         
-    return *singleton;
+    return singleton;
 }
 
-void DataLogger::Log( const std::string& s, const std::string& val ) 
+DataLogger::DataLogger()
 {
-    if( GetInstance().isFMSAttached ) { 
-        GetInstance().Send(s,val); 
-    } else { 
-        GetInstance().SendNT(s,val); 
-    }
- }
+    // log = &frc::DataLogManager::GetLog();
+    nt_table = nt::NetworkTableInstance::GetDefault().GetTable("");
+    // isFMSAttached = frc::DriverStation::IsFMSAttached();
+    // Log( "DataLogger/isFMSAttahed", isFMSAttached );
+}
+
+// void DataLogger::Log( const std::string& s, const std::string& val ) 
+// {
+//     if( GetInstance().isFMSAttached ) { 
+//         GetInstance().Send(s,val); 
+//     } else { 
+//         GetInstance().SendNT(s,val); 
+//     }
+//  }
 
 // Specialization for a std::optional<Pose2d>
 template<>
@@ -58,93 +62,107 @@ void DataLogger::Log( const std::string &s, const std::optional<frc::Pose2d>& op
 /**
  * Pass thru to the frc::DataLogManager::Log() command.
 */
-void DataLogger::Log( const std::string &s ) {
-    frc::DataLogManager::Log( s );
-}
+// void DataLogger::Log( const std::string &s ) {
+//     frc::DataLogManager::Log( s );
+// }
 
 
-void DataLogger::Send( const std::string& s, const double& val )
-{
-    wpi::log::DoubleLogEntry le{ *(log), s };
-    le.Append( val );
-}
+// void DataLogger::Send( const std::string& s, const double& val )
+// {
+//     wpi::log::DoubleLogEntry le{ *(log), s };
+//     le.Append( val );
+// }
 
-void DataLogger::Send( const std::string& s, const int64_t& val )
-{
-    wpi::log::IntegerLogEntry le{ *(log), s };
-    le.Append( val );
-}
+// void DataLogger::Send( const std::string& s, const int64_t& val )
+// {
+//     wpi::log::IntegerLogEntry le{ *(log), s };
+//     le.Append( val );
+// }
 
-void DataLogger::Send( const std::string& s, const bool& val )
-{
-    wpi::log::BooleanLogEntry le{ *(log), s };
-    le.Append( val );
-}
+// void DataLogger::Send( const std::string& s, const bool& val )
+// {
+//     wpi::log::BooleanLogEntry le{ *(log), s };
+//     le.Append( val );
+// }
 
-void DataLogger::Send( const std::string& s, const std::string& val ) { 
-    wpi::log::StringLogEntry le{ *(log), s };
-    le.Append( val );
-}
+// void DataLogger::Send( const std::string& s, const std::string& val ) { 
+//     wpi::log::StringLogEntry le{ *(log), s };
+//     le.Append( val );
+// }
 
 
-void DataLogger::SendNT( const std::string& s, const double& val )
+void DataLogger::Log( const std::string& s, const double& val )
 {
     nt::DoublePublisher* publisher;
     std::unordered_map<std::string, nt::Publisher*>::iterator i;
+    DataLogger *dl = GetInstance();
 
-    i = nt_map.find( s );
-    if( i == nt_map.end() ) {
+    i = dl->nt_map.find( s );
+    if( i == dl->nt_map.end() ) {
         publisher = new nt::DoublePublisher();
-        *publisher = nt_table->GetDoubleTopic( s ).Publish( );
-        i = nt_map.insert(std::make_pair(s, publisher)).first;
+        *publisher = dl->nt_table->GetDoubleTopic( s ).Publish( );
+        i = dl->nt_map.insert(std::make_pair(s, publisher)).first;
     }
     publisher = (nt::DoublePublisher*) i->second;
     publisher->Set( val );
 }
 
-void DataLogger::SendNT( const std::string& s, const int64_t& val )
+void DataLogger::Log( const std::string& s, const int64_t& val )
 {
     nt::IntegerPublisher* publisher;
     std::unordered_map<std::string, nt::Publisher*>::iterator i;
+    DataLogger *dl = GetInstance();
 
-    i = nt_map.find( s );
-    if( i == nt_map.end() ) {
+    i = dl->nt_map.find( s );
+    if( i == dl->nt_map.end() ) {
         publisher = new nt::IntegerPublisher();
-        *publisher = nt_table->GetIntegerTopic( s ).Publish( );
-        i = nt_map.insert(std::make_pair(s, publisher)).first;
+        *publisher = dl->nt_table->GetIntegerTopic( s ).Publish( );
+        i = dl->nt_map.insert(std::make_pair(s, publisher)).first;
     }
     publisher = (nt::IntegerPublisher*) i->second;
     publisher->Set( val );
 }
 
-void DataLogger::SendNT( const std::string& s, const bool& val )
+void DataLogger::Log( const std::string& s, const int& val )
+{
+    Log( s, (int64_t) val );
+}
+
+void DataLogger::Log( const std::string& s, const bool& val )
 {
     nt::BooleanPublisher* publisher;
     std::unordered_map<std::string, nt::Publisher*>::iterator i;
+    DataLogger *dl = GetInstance();
 
-    i = nt_map.find( s );
-    if( i == nt_map.end() ) {
+    i = dl->nt_map.find( s );
+    if( i == dl->nt_map.end() ) {
         publisher = new nt::BooleanPublisher();
-        *publisher = nt_table->GetBooleanTopic( s ).Publish( );
-        i = nt_map.insert(std::make_pair(s, publisher)).first;
+        *publisher = dl->nt_table->GetBooleanTopic( s ).Publish( );
+        i = dl->nt_map.insert(std::make_pair(s, publisher)).first;
     }
     publisher = (nt::BooleanPublisher*) i->second;
     publisher->Set( val );
 }
 
-void DataLogger::SendNT( const std::string &s, const std::string &val ) 
+void DataLogger::Log( const std::string &s, const std::string &val ) 
 {
     nt::StringPublisher* publisher;
     std::unordered_map<std::string, nt::Publisher*>::iterator i;
+    DataLogger *dl = GetInstance();
 
-    i = nt_map.find( s );
-    if( i == nt_map.end() ) {
+    i = dl->nt_map.find( s );
+    if( i == dl->nt_map.end() ) {
         publisher = new nt::StringPublisher();
-        *publisher = nt_table->GetStringTopic( s ).Publish( );
-        i = nt_map.insert(std::make_pair(s, publisher)).first;
+        *publisher = dl->nt_table->GetStringTopic( s ).Publish( );
+        i = dl->nt_map.insert(std::make_pair(s, publisher)).first;
     }
     publisher = (nt::StringPublisher*) i->second;
     publisher->Set( val );
+}
+
+void DataLogger::Log( const std::string &s, const char* val )
+{
+    Log( s, std::string{val} );
 }
 
 
@@ -159,24 +177,15 @@ void DataLogger::LogMetadata( void ) {
     binfo.open( fname, std::ios::in );
     if( binfo.is_open() ) {
         binfo.getline( line, 255 );
-        GetInstance().SendMetadata( "BUILD_DATE", line );
+        GetInstance()->Log( "Metadata/BUILD_DATE", line );
         binfo.getline( line, 255 );
-        GetInstance().SendMetadata( "GIT_REPO", line );
+        GetInstance()->Log( "Metadata/GIT_REPO", line );
         binfo.getline( line, 255 );
-        GetInstance().SendMetadata( "GIT_BRANCH", line );
+        GetInstance()->Log( "Metadata/GIT_BRANCH", line );
         binfo.getline( line, 255 );
-        GetInstance().SendMetadata( "GIT_VERSION", line );
+        GetInstance()->Log( "Metadata/GIT_VERSION", line );
         binfo.close();
     } else {
-        Log( "Cannot open Metadata file: " + fname );
+        fmt::print( "Cannot open Metadata file: {}\n", fname );
     }
-}
-
-void DataLogger::SendMetadata( std::string_view s, std::string_view val ) {
-        // AdvantageScope Chops off leading Character of the name so we add an underscore.
-        // Not sure why
-    std::string id = "RealMetadata/_";
-    id += s;
-    wpi::log::StringLogEntry le{ *(log), id };
-    le.Append( val );
 }

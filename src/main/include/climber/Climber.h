@@ -16,6 +16,7 @@ public:
     void Periodic() override;
 
     void SetGoal( units::degree_t goal );
+    units::degree_t GetAngle() { return metrics.angle; }
     void Nudge( units::degree_t nudge );
     void SetCageIntake( bool enable_rollers );
     bool AtGoal();

@@ -17,6 +17,7 @@ public:
     void SetElbowGoal( units::degree_t goal );
     void NudgeElbow( units::degree_t nudge );
 
+    units::degree_t GetWristAngle() { return metrics.wristPosition; }
     ArmIO::WristPosition GetWristGoal();
     void SetWristGoal( ArmIO::WristPosition pos );
 

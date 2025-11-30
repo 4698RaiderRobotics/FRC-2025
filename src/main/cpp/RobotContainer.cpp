@@ -4,6 +4,7 @@
 
 #include "Controls.h"
 #include "RobotContainer.h"
+#include "RobotState.h"
 
 #include <frc/RobotBase.h>
 #include <frc/DriverStation.h>
@@ -37,13 +38,13 @@ RobotContainer::RobotContainer()
     climber_nudge_axis{ operatorCtrlr.GetHID(), ctrl::nudge_climber_axis, true },
     nudge_hold_button{ operatorCtrlr.Button( ctrl::nudge_modifier ) }
 {
-
-    m_arm = new Arm( );
+    m_arm = new Arm();
     m_drive = new Drive( );
     m_intake = new Intake( );
     m_climber = new Climber( );
     m_elevator = new Elevator( );
     m_vision = new Vision( &m_drive->m_odometry );
+    m_state = new RobotState( m_arm, m_elevator, m_climber );
 
     ControllerIO::SetupControllerIO( m_drive, &driverCtrlr, &operatorCtrlr );
 
@@ -156,7 +157,7 @@ void RobotContainer::ConfigureBindings()
             SetReefPlacement( m_arm, m_elevator, m_intake, ReefPlacement::NONE )
         ));
 
-    (operatorCtrlr.POV( ctrl::intake_ground ) || operatorCtrlr.POV( ctrl::intake_ground + 45 ) || operatorCtrlr.POV( ctrl::intake_ground - 45 ) && !operatorCtrlr.Start())
+    ((operatorCtrlr.POV( ctrl::intake_ground ) || operatorCtrlr.POV( ctrl::intake_ground + 45 ) || operatorCtrlr.POV( ctrl::intake_ground - 45 )) && !operatorCtrlr.Start())
         .OnTrue( IntakeCommands::GroundPickup( m_arm, m_intake, m_elevator ) )
         .OnFalse( IntakeCommands::CoralHoldPos( m_arm, m_intake, m_elevator ) );
 

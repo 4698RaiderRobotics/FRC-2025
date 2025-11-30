@@ -202,7 +202,7 @@ void Drive::Periodic( void ) {
     }
 
     DataLogger::Log( "Swerve/actualStates",  GetModuleStates() );
-    DataLogger::Log( "Swerve/Pose2d", m_odometry.GetEstimatedPosition() );
+    DataLogger::Log( "Robot/Pose2d", m_odometry.GetEstimatedPosition() );
     m_field.SetRobotPose( m_odometry.GetEstimatedPosition() );
 }
 

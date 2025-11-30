@@ -35,15 +35,21 @@ private:
     static DataLogger *singleton;
 
     // Constructor is private
-    DataLogger() {}
-    static DataLogger& GetInstance();
+    DataLogger();
+    static DataLogger* GetInstance();
 
 public:
 
     // delete copy constructor
     DataLogger(const DataLogger& obj) = delete; 
 
+    static void Log( const std::string& s, const double& val );
+    static void Log( const std::string& s, const int64_t& val );
+    static void Log( const std::string& s, const int& val );
+    static void Log( const std::string& s, const bool& val );
     static void Log( const std::string& s, const std::string& val );
+    static void Log( const std::string& s, const char* val );
+
 
     template <class T>
      requires wpi::StructSerializable<T>
@@ -73,41 +79,39 @@ public:
     template<class T>
     static void Log( const std::string& s, const std::optional<T>& opt );
 
-    static void Log( const std::string& s );
-
     static void LogMetadata( void );
 
 private:
-    void Send( const std::string& s, const double& val );
-    void Send( const std::string& s, const int64_t& val );
-    void Send( const std::string& s, const bool& val );
-    void Send( const std::string& s, const std::string& val );
+    // void Send( const std::string& s, const double& val );
+    // void Send( const std::string& s, const int64_t& val );
+    // void Send( const std::string& s, const bool& val );
+    // void Send( const std::string& s, const std::string& val );
 
-    template <class T>
-     requires wpi::StructSerializable<T>
-    void Send( const std::string& s, const T& val );
-    template <class T>
-     requires wpi::StructSerializable<T>
-    void Send( const std::string& s, std::span<T> a );
+    // template <class T>
+    //  requires wpi::StructSerializable<T>
+    // void Send( const std::string& s, const T& val );
+    // template <class T>
+    //  requires wpi::StructSerializable<T>
+    // void Send( const std::string& s, std::span<T> a );
 
-    void SendNT( const std::string& s, const double& val );
-    void SendNT( const std::string& s, const int64_t& val );
-    void SendNT( const std::string& s, const bool& val );
-    void SendNT( const std::string& s, const std::string& val );
+    // void SendNT( const std::string& s, const double& val );
+    // void SendNT( const std::string& s, const int64_t& val );
+    // void SendNT( const std::string& s, const bool& val );
+    // void SendNT( const std::string& s, const std::string& val );
 
-    template <class T>
-     requires wpi::StructSerializable<T>
-    void SendNT( const std::string& s, const T& val );
-    template <class T>
-     requires wpi::StructSerializable<T>
-    void SendNT( const std::string& s, std::span<T> a );
+    // template <class T>
+    //  requires wpi::StructSerializable<T>
+    // void SendNT( const std::string& s, const T& val );
+    // template <class T>
+    //  requires wpi::StructSerializable<T>
+    // void SendNT( const std::string& s, std::span<T> a );
 
-    wpi::log::DataLog *log;
+    // wpi::log::DataLog *log;
     std::shared_ptr<nt::NetworkTable> nt_table;
     std::unordered_map<std::string, nt::Publisher*> nt_map;
-    bool isFMSAttached;
+    // bool isFMSAttached;
 
-    void SendMetadata( std::string_view s, std::string_view val );
+    // void SendMetadata( std::string_view s, const std::string& val );
 };
 
 template <class UnitType>
@@ -141,27 +145,27 @@ void DataLogger::Log( const std::string &s, const std::optional<T>& opt )
 template<> void DataLogger::Log( const std::string &s, const std::optional<frc::Pose2d>& opt );
 
 
-template <class T>
-    requires wpi::StructSerializable<T>
-void DataLogger::Log( const std::string& s, const T& val ) 
-{
-    if( GetInstance().isFMSAttached ) { 
-        GetInstance().Send(s,val); 
-    } else { 
-        GetInstance().SendNT(s,val); 
-    } 
-}
+// template <class T>
+//     requires wpi::StructSerializable<T>
+// void DataLogger::Log( const std::string& s, const T& val ) 
+// {
+//     if( GetInstance().isFMSAttached ) { 
+//         GetInstance().Send(s,val); 
+//     } else { 
+//         GetInstance().SendNT(s,val); 
+//     } 
+// }
 
-template <class T>
- requires wpi::StructSerializable<T>
-void DataLogger::Log( const std::string& s, std::span<T> a )
-{
-    if( GetInstance().isFMSAttached ) { 
-        GetInstance().Send(s,a); 
-    } else { 
-        GetInstance().SendNT(s,a); 
-    } 
-}
+// template <class T>
+//  requires wpi::StructSerializable<T>
+// void DataLogger::Log( const std::string& s, std::span<T> a )
+// {
+//     if( GetInstance().isFMSAttached ) { 
+//         GetInstance().Send(s,a); 
+//     } else { 
+//         GetInstance().SendNT(s,a); 
+//     } 
+// }
 
 template <class T>
  requires wpi::StructSerializable<T>
@@ -178,35 +182,36 @@ void DataLogger::Log( const std::string& s, wpi::array<T,N>& a )
 }
 
 
-template <class T>
-    requires wpi::StructSerializable<T>
-void DataLogger::Send( const std::string& s, const T& val )
-{
-    wpi::log::StructLogEntry<T> le{ *(log), s };
-    le.Append( val );    
-}
+// template <class T>
+//     requires wpi::StructSerializable<T>
+// void DataLogger::Send( const std::string& s, const T& val )
+// {
+//     wpi::log::StructLogEntry<T> le{ *(log), s };
+//     le.Append( val );    
+// }
 
-template <class T>
- requires wpi::StructSerializable<T>
-void DataLogger::Send( const std::string& s, std::span<T> a )
-{
-    wpi::log::StructArrayLogEntry<T> le{ *(log), s };
-    le.Append( a );    
-}
+// template <class T>
+//  requires wpi::StructSerializable<T>
+// void DataLogger::Send( const std::string& s, std::span<T> a )
+// {
+//     wpi::log::StructArrayLogEntry<T> le{ *(log), s };
+//     le.Append( a );    
+// }
 
 
 template <class T>
 requires wpi::StructSerializable<T>
-void DataLogger::SendNT( const std::string& s, const T& val ) 
+void DataLogger::Log( const std::string& s, const T& val ) 
 {
     nt::StructPublisher<T>* publisher;
     std::unordered_map<std::string, nt::Publisher*>::iterator i;
+    DataLogger *dl = GetInstance();
 
-    i = nt_map.find( s );
-    if( i == nt_map.end() ) {
+    i = dl->nt_map.find( s );
+    if( i == dl->nt_map.end() ) {
         publisher = new nt::StructPublisher<T>();
-        *publisher = nt_table->GetStructTopic<T>( s ).Publish();
-        i = nt_map.insert(std::make_pair(s, publisher) ).first;
+        *publisher = dl->nt_table->GetStructTopic<T>( s ).Publish();
+        i = dl->nt_map.insert(std::make_pair(s, publisher) ).first;
     }
     publisher = (nt::StructPublisher<T>*) i->second;
     publisher->Set( val );
@@ -214,16 +219,17 @@ void DataLogger::SendNT( const std::string& s, const T& val )
 
 template <class T>
  requires wpi::StructSerializable<T>
-void DataLogger::SendNT( const std::string& s, std::span<T> a ) 
+void DataLogger::Log( const std::string& s, std::span<T> a ) 
 {
     nt::StructArrayPublisher<T>* publisher;
     std::unordered_map<std::string, nt::Publisher*>::iterator i;
+    DataLogger *dl = GetInstance();
 
-    i = nt_map.find( s );
-    if( i == nt_map.end() ) {
+    i = dl->nt_map.find( s );
+    if( i == dl->nt_map.end() ) {
         publisher = new nt::StructArrayPublisher<T>();
-        *publisher = nt_table->GetStructArrayTopic<T>( s ).Publish();
-        i = nt_map.insert(std::make_pair(s, publisher) ).first;
+        *publisher = dl->nt_table->GetStructArrayTopic<T>( s ).Publish();
+        i = dl->nt_map.insert(std::make_pair(s, publisher) ).first;
     }
     publisher = (nt::StructArrayPublisher<T>*) i->second;
     publisher->Set( a );

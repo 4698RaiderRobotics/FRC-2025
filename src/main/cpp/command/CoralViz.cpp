@@ -21,7 +21,7 @@ void CoralViz::Init()
 }
 
 void CoralViz::Execute() {
-    frc::Transform3d elevTransform, elbowTransform, wristTransform;
+    frc::Transform3d elevTransform, elbowTransform, wristTransform, climberTransform;
     units::radian_t elbowAngle, wristAngle;
 
     elbowAngle =  96_deg + elbow_lig->GetAngle() * 1_deg;
@@ -32,7 +32,7 @@ void CoralViz::Execute() {
     elevTransform = { 8_in - elevPos.Y(), 0_m, elevPos.X() + 5.0_in, { 0_deg, 0_deg, 90_deg }  };
 
         // Rotate in the coral Y-Z plane
-    frc::Translation2d elbowPos = { 20_in, 0_in };
+    frc::Translation2d elbowPos = { 17_in, 0_in };
     elbowPos = elbowPos.RotateBy( elbowAngle );
     elbowTransform = { 0_in, -elbowPos.X(), elbowPos.Y(), { -elbowAngle, 0_deg, 0_deg } };
 

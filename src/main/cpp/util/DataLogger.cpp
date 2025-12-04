@@ -33,22 +33,11 @@ DataLogger* DataLogger::GetInstance() {
 
 DataLogger::DataLogger()
 {
-    // log = &frc::DataLogManager::GetLog();
     nt_table = nt::NetworkTableInstance::GetDefault().GetTable("");
-    // isFMSAttached = frc::DriverStation::IsFMSAttached();
-    // Log( "DataLogger/isFMSAttahed", isFMSAttached );
 }
 
-// void DataLogger::Log( const std::string& s, const std::string& val ) 
-// {
-//     if( GetInstance().isFMSAttached ) { 
-//         GetInstance().Send(s,val); 
-//     } else { 
-//         GetInstance().SendNT(s,val); 
-//     }
-//  }
-
-// Specialization for a std::optional<Pose2d>
+// Specialization for a std::optional<Pose2d> to write
+// empty array when optional is not set.
 template<>
 void DataLogger::Log( const std::string &s, const std::optional<frc::Pose2d>& opt ) {
     if( opt.has_value() ) {
@@ -58,38 +47,6 @@ void DataLogger::Log( const std::string &s, const std::optional<frc::Pose2d>& op
         DataLogger::Log( s, std::span<frc::Pose2d>{} );
     }
 }
-
-/**
- * Pass thru to the frc::DataLogManager::Log() command.
-*/
-// void DataLogger::Log( const std::string &s ) {
-//     frc::DataLogManager::Log( s );
-// }
-
-
-// void DataLogger::Send( const std::string& s, const double& val )
-// {
-//     wpi::log::DoubleLogEntry le{ *(log), s };
-//     le.Append( val );
-// }
-
-// void DataLogger::Send( const std::string& s, const int64_t& val )
-// {
-//     wpi::log::IntegerLogEntry le{ *(log), s };
-//     le.Append( val );
-// }
-
-// void DataLogger::Send( const std::string& s, const bool& val )
-// {
-//     wpi::log::BooleanLogEntry le{ *(log), s };
-//     le.Append( val );
-// }
-
-// void DataLogger::Send( const std::string& s, const std::string& val ) { 
-//     wpi::log::StringLogEntry le{ *(log), s };
-//     le.Append( val );
-// }
-
 
 void DataLogger::Log( const std::string& s, const double& val )
 {

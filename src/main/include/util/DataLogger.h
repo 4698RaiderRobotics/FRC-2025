@@ -27,7 +27,7 @@
  * 
  *  It uses the variable name as the field name and will add the units abbreviation for unit types.  
  */
-#define AUTOLOG(key,v) DataLogger::Log( key + "/" + #v, v );
+#define AUTOLOG(key,v) DataLogger::Log( std::string{key} + "/" + #v, v );
 
 class DataLogger {
 private:
@@ -82,36 +82,8 @@ public:
     static void LogMetadata( void );
 
 private:
-    // void Send( const std::string& s, const double& val );
-    // void Send( const std::string& s, const int64_t& val );
-    // void Send( const std::string& s, const bool& val );
-    // void Send( const std::string& s, const std::string& val );
-
-    // template <class T>
-    //  requires wpi::StructSerializable<T>
-    // void Send( const std::string& s, const T& val );
-    // template <class T>
-    //  requires wpi::StructSerializable<T>
-    // void Send( const std::string& s, std::span<T> a );
-
-    // void SendNT( const std::string& s, const double& val );
-    // void SendNT( const std::string& s, const int64_t& val );
-    // void SendNT( const std::string& s, const bool& val );
-    // void SendNT( const std::string& s, const std::string& val );
-
-    // template <class T>
-    //  requires wpi::StructSerializable<T>
-    // void SendNT( const std::string& s, const T& val );
-    // template <class T>
-    //  requires wpi::StructSerializable<T>
-    // void SendNT( const std::string& s, std::span<T> a );
-
-    // wpi::log::DataLog *log;
     std::shared_ptr<nt::NetworkTable> nt_table;
     std::unordered_map<std::string, nt::Publisher*> nt_map;
-    // bool isFMSAttached;
-
-    // void SendMetadata( std::string_view s, const std::string& val );
 };
 
 template <class UnitType>
@@ -144,29 +116,6 @@ void DataLogger::Log( const std::string &s, const std::optional<T>& opt )
         // frc::Pose2d specialization
 template<> void DataLogger::Log( const std::string &s, const std::optional<frc::Pose2d>& opt );
 
-
-// template <class T>
-//     requires wpi::StructSerializable<T>
-// void DataLogger::Log( const std::string& s, const T& val ) 
-// {
-//     if( GetInstance().isFMSAttached ) { 
-//         GetInstance().Send(s,val); 
-//     } else { 
-//         GetInstance().SendNT(s,val); 
-//     } 
-// }
-
-// template <class T>
-//  requires wpi::StructSerializable<T>
-// void DataLogger::Log( const std::string& s, std::span<T> a )
-// {
-//     if( GetInstance().isFMSAttached ) { 
-//         GetInstance().Send(s,a); 
-//     } else { 
-//         GetInstance().SendNT(s,a); 
-//     } 
-// }
-
 template <class T>
  requires wpi::StructSerializable<T>
 void DataLogger::Log( const std::string& s, std::vector<T>& v )
@@ -180,24 +129,6 @@ void DataLogger::Log( const std::string& s, wpi::array<T,N>& a )
 {
     Log( s, std::span<T>(a) );
 }
-
-
-// template <class T>
-//     requires wpi::StructSerializable<T>
-// void DataLogger::Send( const std::string& s, const T& val )
-// {
-//     wpi::log::StructLogEntry<T> le{ *(log), s };
-//     le.Append( val );    
-// }
-
-// template <class T>
-//  requires wpi::StructSerializable<T>
-// void DataLogger::Send( const std::string& s, std::span<T> a )
-// {
-//     wpi::log::StructArrayLogEntry<T> le{ *(log), s };
-//     le.Append( a );    
-// }
-
 
 template <class T>
 requires wpi::StructSerializable<T>

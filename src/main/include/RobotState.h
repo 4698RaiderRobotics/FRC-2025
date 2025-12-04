@@ -17,5 +17,4 @@ private:
     Arm *m_arm;
     Elevator *m_elev;
     Climber *m_climb;
-    frc::Pose3d statePoses[5];
 };

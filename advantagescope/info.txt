@@ -1,0 +1,8 @@
+folder : Robot_2025Reefscape
+
+model   : drivetrain
+model_0 : elevator stage 1
+model_1 : elevator stage 2
+model_2 : arm
+model_3 : intake
+model_4 : climber

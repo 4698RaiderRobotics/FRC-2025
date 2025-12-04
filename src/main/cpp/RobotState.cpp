@@ -17,6 +17,7 @@ RobotState::RobotState( Arm *a, Elevator *e, Climber *c )
 
 void RobotState::UpdateLoop()
 {
+    frc::Pose3d statePoses[5];
     frc::Transform3d elevator_angle, stage1Transform, stage2Transform, elbowTransform, wristTransform, climberTransform;
     units::radian_t elbowAngle, wristAngle;
 
